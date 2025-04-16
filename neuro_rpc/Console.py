@@ -23,66 +23,24 @@ class Console:
         self.client_class = Client
         self.client_config = client_config or {}
         self.client = None
-        self.client_thread = None
         self.running = False
         self.logger = Logger.get_logger(self.__class__.__name__)
 
     def start_client(self):
         """Start the client in a background thread."""
-        if self.running:
-            self.logger.error(f"Client is already thread_running in thread {self.client_thread.name}")
-            return
-
-        # Create a new client instance
-        #self.client = self.client_class(**self.client_config)
-
         # Use existing client instance or create a new one if needed
         if self.client is None:
             self.client = self.client_class(**self.client_config)
 
-        # Start the client in a separate thread
-        def client_thread_func():
-            try:
-                self.logger.debug(f"Starting client on thread {threading.current_thread().name}")
-                self.client.connect()
-            except Exception as e:
-                self.logger.error(f"Client error: {e}")
-            finally:
-                self.logger.info("Client thread terminated")
-                self.running = False
-
-        self.client_thread = threading.Thread(
-            target=client_thread_func,
-            name="ClientThread",
-            daemon=True  # Make it a daemon so it exits when the main thread exits
-        )
-
-        self.client_thread.start()
-        self.running = True
-        self.logger.debug("Client started in background thread")
+        self.client.start()
 
     def stop_client(self):
         """Stop the thread_running client."""
-        if not self.running:
-            self.logger.error("Client is not thread_running")
+        if self.client is None:
+            self.logger.error("Client object not initialized")
             return
 
-        self.logger.info("Stopping client...")
-        try:
-            self.client.disconnect()
-
-            self.client.handler.tracker.stop_monitoring()
-
-            # Wait for thread to terminate (with timeout)
-            self.client_thread.join(timeout=2.0)
-            if self.client_thread.is_alive():
-                self.logger.warning("Client thread did not terminate properly")
-
-            self.running = False
-            self.logger.info("Client stopped")
-
-        except Exception as e:
-            self.logger.error(f"Error stopping client: {e}")
+        self.client.stop()
 
     def client_status(self):
         """Check and display the current status of the client."""
@@ -100,8 +58,8 @@ class Console:
         status.append(f"Client connected: {self.client.connected}")
 
         if self.running:
-            status.append(f"Client thread_running in thread: {self.client_thread.name}")
-            status.append(f"Thread alive: {self.client_thread.is_alive()}")
+            status.append(f"Client thread_running in thread: {self.client.client_thread.name}")
+            status.append(f"Thread alive: {self.client.client_thread.is_alive()}")
         else:
             status.append("Client not thread_running in background")
 

@@ -1,6 +1,7 @@
 import inspect
 from typing import Callable, Dict, Any, Optional, Union
 
+from neuro_rpc.Benchmark import Benchmark
 from neuro_rpc.RPCTracker import RPCTracker
 from neuro_rpc.RPCMessage import RPCMessage, RPCRequest, RPCResponse, RPCError
 from neuro_rpc.Logger import Logger
@@ -43,7 +44,8 @@ class RPCHandler(RPCMessage):
         self._request_id = 0
 
         # Create tracker instance for message tracking (pending requests/responses)
-        self.tracker = RPCTracker()
+        #self.tracker = RPCTracker()
+        self.tracker = Benchmark()
 
         # Logger
         self.logger = Logger.get_logger(self.__class__.__name__)

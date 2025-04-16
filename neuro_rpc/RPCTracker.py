@@ -27,6 +27,7 @@ class RPCTracker:
         # Message tracking with thread safety
         self._tracking_lock = threading.Lock()
 
+        # TODO: Delete all timestamps from variables
         # Tracking dictionaries for each message type
         self.outgoing_requests = {}  # {id: (timestamp, method_name, timeout)}
         self.incoming_requests = {}  # {id: (timestamp, method_name)}
@@ -92,7 +93,7 @@ class RPCTracker:
             return False
         else:
             if self.logger:
-                self.logger.info("RPC tracking monitor stopped")
+                self.logger.debug("RPC tracking monitor stopped")
             return True
 
     def _monitor_loop(self):
@@ -162,12 +163,14 @@ class RPCTracker:
         """Track a response we've received from a remote service."""
         with self._tracking_lock:
             #self.logger.debug(f"Tracking incoming response: {response.to_dict()}")
-            self.incoming_responses[response.id] = (time.time(), response.is_success)
+            '''self.incoming_responses[response.id] = (time.time(), response.is_success)
+
             total_time = (self.incoming_responses[response.id][0] - self.outgoing_requests[response.id][0])*1000
             exec_time = response.exec_time/1000
             self.logger.debug(f"Total time: {total_time} ms")
             self.logger.debug(f"Execution time: {exec_time} ms")
-            self.logger.debug(f"Network roundtrip: {abs(total_time - exec_time)} ms")
+            self.logger.debug(f"Network roundtrip: {abs(total_time - exec_time)} ms")'''
+
             # Remove the outgoing request that this response addresses
             if response.id in self.outgoing_requests:
                 del self.outgoing_requests[response.id]

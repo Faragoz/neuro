@@ -33,7 +33,7 @@ class RPCMethods(RPCHandler):
         if error:
             logger.error(f"Echo operation failed: {error}")
         else:
-            logger.debug(f"Echo: {result.get("message")}")
+            logger.debug(f"Echo: size:{len(result.get("message"))}")
 
     @rpc_method(method_type="request")
     def add(self, a: float, b: float) -> float:

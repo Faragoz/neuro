@@ -2,8 +2,8 @@ import socket
 import struct
 import json
 import threading
-import timeit
 import time
+from random import randint
 from typing import Any, Dict, Optional, Union, Tuple, Callable
 from neuro_rpc.Logger import Logger
 from neuro_rpc.RPCMethods import RPCMethods
@@ -78,6 +78,13 @@ class Client:
             try:
                 self.logger.debug(f"Starting client on thread {threading.current_thread().name}")
                 self.connect()
+                self.thread_running = True
+
+                # Main thread loop
+                while self.thread_running:
+                    # TODO: handle reconnection logic here
+                    time.sleep(0.1)  # Prevent CPU hogging
+
             except Exception as e:
                 self.logger.error(f"Client error: {e}")
             finally:
@@ -91,7 +98,6 @@ class Client:
         )
 
         self.client_thread.start()
-        self.thread_running = True
         self.logger.debug("Client started in background thread")
 
     def stop(self):
@@ -104,6 +110,7 @@ class Client:
         try:
             self.disconnect()
 
+            # Stop monitor tracker
             self.handler.tracker.stop_monitoring()
 
             # Wait for thread to terminate (with timeout)
@@ -147,20 +154,6 @@ class Client:
                 self.client.connect((self.host, self.port))
                 self.connected = True
                 self.logger.info(f"Connected to server at {self.host}:{self.port}")
-
-                # Add a keep-alive loop to prevent immediate thread termination
-                while self.connected:
-                    try:
-                        # Add a small sleep to prevent CPU hogging
-                        time.sleep(0.1)
-
-                        # You may need to add logic here to handle incoming messages
-                        # For example, you could call self.receive_message() in a non-blocking way
-
-                    except Exception as e:
-                        self.logger.error(f"Error in server loop: {e}")
-                        # Consider whether you want to break the loop on errors
-                        # If this is a critical error, you might want to set self.connected = False
 
                 return True
 
@@ -378,11 +371,16 @@ class Client:
         else:
             self.logger.error("echo message must be a string")
 
-    def benchmark(self):
-        return self.echo()
+    def echo_benchmark(self):
+        self.handler.tracker.start_benchmark()
+
+        for i in range(100):
+            payload = "X" * randint(0, 3000)
+            self.echo(payload)
+
+        print(json.dumps(self.handler.tracker.stop_benchmark(), indent=4))
 
 if __name__ == "__main__":
     client = Client(host='172.16.100.9', port=6340, max_retries=2, timeout=10.0)
     client.start()
-
 #server = Client(host='172.16.100.9', port=6340, max_retries=2, timeout=10.0)
