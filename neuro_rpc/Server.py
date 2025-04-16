@@ -1,322 +1,203 @@
 import socket
 import struct
+import threading
 import json
-import time
-from typing import Any, Dict, Optional, Union, Tuple, Callable
-from neuro_rpc import logger
+import code
 
+from neuro_rpc.RPCMethods import RPCMethods
+from neuro_rpc.Logger import Logger
 
-class ConnectionError(Exception):
-    """Exception raised for connection-related errors."""
-    pass
-
-
-class TimeoutError(Exception):
-    """Exception raised when an operation times out."""
-    pass
-
-
-class MessageError(Exception):
-    """Exception raised for message-related errors."""
-    pass
-
-
-class Server:
-    def __init__(self,
-                 host: str = "127.0.0.1",
-                 port: int = 5555,
-                 encoding: str = 'UTF-8',
-                 endian: str = '>I',
-                 timeout: float = 30.0,
-                 max_retries: int = 3,
-                 retry_delay: float = 1.0):
-        """
-        Initialize a Server instance.
-
-        Args:
-            host: Server hostname or IP address
-            port: Server port number
-            encoding: Character encoding for messages
-            endian: Byte order for message size ('>I' for big-endian, '<I' for little-endian)
-            timeout: Socket timeout in seconds
-            max_retries: Maximum number of connection retry attempts
-            retry_delay: Delay between retry attempts in seconds
-        """
+class Client:
+    def __init__(self, host: str = "127.0.0.1", port: int = 5555, handler=None,
+                 encoding: str = 'UTF-8', endian: str = '>I', max_connections: int = 1):
         self.host = host
         self.port = port
         self.encoding = encoding
         self.endian = endian
+        self.max_connections = max_connections
+
+        self.logger = Logger.get_logger(self.__class__.__name__, Logger.WARNING
+                                        )
+
+        # Handling methods
+        if not handler:
+            self.handler = RPCMethods()
+
+        # Client status
+        self.running = False
         self.server = None
-        self.timeout = timeout
-        self.max_retries = max_retries
-        self.retry_delay = retry_delay
-        self.connected = False
+        self.server_thread = None
 
-    def connect(self, retry: bool = True) -> bool:
-        """
-        Establishes a connection with the server with retry mechanism.
+        # Semaphore to limit concurrent connections
+        self.connection_semaphore = threading.Semaphore(max_connections)
+        self.connection_count = 0
+        self.count_lock = threading.Lock()
 
-        Args:
-            retry: Whether to retry failed connection attempts
+        # Auto-start
+        self.handler.tracker.start_monitoring()
+        self.start_interactive_console()
 
-        Returns:
-            True if connection successful, False otherwise
+    def __str__(self):
+        if self.running:
+            return f"Running on {self.host}:{self.port} with {self.connection_count}/{self.max_connections} connections"
+        else:
+            return f"Disconnected"
 
-        Raises:
-            ConnectionError: If connection fails after all retries
-        """
-        attempts = 1 if not retry else self.max_retries
+    def start(self):
+        """Starts the server and accepts multiple connections up to max_connections."""
+        self.logger.info(f"Starting server on {self.host}:{self.port} with max {self.max_connections} connections...")
 
-        for attempt in range(1, attempts + 1):
-            try:
-                if self.server:
-                    self.disconnect()  # Close any existing connection
+        self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self.server.bind((self.host, self.port))
+        self.server.listen(5)  # Backlog size
+        self.running = True
 
-                self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                self.server.settimeout(self.timeout)
-                self.server.connect((self.host, self.port))
-                self.connected = True
-                logger.info(f"Connected to server at {self.host}:{self.port}")
-                return True
-
-            except socket.error as e:
-                if attempt < attempts:
-                    logger.warning(f"Connection attempt {attempt} failed: {e}. Retrying in {self.retry_delay}s...")
-                    time.sleep(self.retry_delay)
-                else:
-                    logger.error(f"Failed to connect after {attempts} attempts: {e}")
-                    self.server = None
-                    self.connected = False
-                    raise ConnectionError(f"Failed to connect to {self.host}:{self.port}: {e}")
-
-        return False
-
-    def disconnect(self) -> None:
-        """
-        Closes the connection with the server.
-        """
-        if self.server:
-            try:
-                self.server.close()
-            except socket.error as e:
-                logger.warning(f"Error during disconnection: {e}")
-            finally:
-                self.server = None
-                self.connected = False
-                logger.info("Disconnected from server")
-
-    def ensure_connected(self) -> None:
-        """
-        Ensures that the server is connected before attempting communication.
-
-        Raises:
-            ConnectionError: If the server is not connected
-        """
-        if not self.connected or self.server is None:
-            raise ConnectionError("Not connected to server. Call connect() first.")
-
-    def send_message(self,
-                     message: Dict[str, Any],
-                     retry_on_error: bool = True) -> bool:
-        """
-        Sends a JSON message to the server with retry mechanism.
-
-        Args:
-            message: Dictionary to be sent as JSON
-            retry_on_error: Whether to retry on connection errors
-
-        Returns:
-            True if message sent successfully, False otherwise
-
-        Raises:
-            ConnectionError: If server is not connected or connection fails
-            MessageError: If there's an error encoding or sending the message
-        """
-        self.ensure_connected()
-
-        attempts = 1 if not retry_on_error else self.max_retries
-
-        for attempt in range(1, attempts + 1):
-            try:
-                # Serialize message as JSON
-                message_json = json.dumps(message).encode(self.encoding)
-
-                # Send the size of the message first
-                message_size = len(message_json)
-                self.server.sendall(struct.pack(self.endian, message_size))
-
-                # Send the actual message
-                self.server.sendall(message_json)
-
-                logger.debug(f"Sent: {message}")
-                return True
-
-            except (socket.error, struct.error) as e:
-                if attempt < attempts:
-                    logger.warning(f"Send attempt {attempt} failed: {e}. Retrying...")
-                    # Try to reconnect before retrying
-                    try:
-                        self.connect(retry=False)
-                    except ConnectionError:
-                        pass  # Will be caught in the next iteration
-                else:
-                    logger.error(f"Failed to send message after {attempts} attempts: {e}")
-                    raise MessageError(f"Failed to send message: {e}")
-
-        return False
-
-    def receive_message(self,
-                        timeout: Optional[float] = None,
-                        partial_timeout: Optional[float] = None) -> Any:
-        """
-        Receives and parses a JSON response from the server.
-
-        Args:
-            timeout: Optional timeout override for this specific receive operation
-            partial_timeout: Timeout for receiving the remainder of a partial message
-
-        Returns:
-            Parsed JSON response
-
-        Raises:
-            ConnectionError: If server is not connected
-            TimeoutError: If receive operation times out
-            MessageError: If message cannot be parsed
-        """
-        self.ensure_connected()
-
-        # Set timeout for this operation if provided
-        original_timeout = None
-        if timeout is not None:
-            original_timeout = self.server.gettimeout()
-            self.server.settimeout(timeout)
+        self.logger.info(f"Client started on {self.host}:{self.port}. Waiting for connections...")
 
         try:
-            # Read the message size
-            message_size_data = self._recv_exactly(4)
+            while self.running:
+                try:
+                    # Socket timeout to allow interruptions
+                    self.server.settimeout(1.0)
+                    server_conn, server_addr = self.server.accept()
 
-            # Unpack the message size
-            message_size = struct.unpack(self.endian, message_size_data)[0]
+                    # Try to acquire semaphore without blocking
+                    if not self.connection_semaphore.acquire(blocking=False):
+                        # No slot available, reject connection
+                        self.logger.info(f"Connection from {server_addr} rejected - maximum connections reached")
+                        server_conn.close()
+                        continue
 
-            # Set partial timeout for remainder of message if specified
-            if partial_timeout is not None and original_timeout is None:
-                original_timeout = self.server.gettimeout()
-                self.server.settimeout(partial_timeout)
+                    # Connection accepted
+                    with self.count_lock:
+                        self.connection_count += 1
 
-            # Read the actual message based on the size
-            message_data = self._recv_exactly(message_size)
+                    conn_id = id(server_conn)
+                    self.logger.info(
+                        f"Client connected: {conn_id} from {server_addr}. Active connections: {self.connection_count}")
 
-            # Decode and parse the message
-            response = json.loads(message_data.decode(self.encoding))
-            logger.debug(f"Received: {response}")
-            return response
+                    # Create thread for this connection
+                    server_thread = threading.Thread(
+                        target=self.handle_server,
+                        args=(server_conn, server_addr, conn_id),
+                        daemon=True
+                    )
+                    server_thread.start()
 
-        except socket.timeout as e:
-            logger.error(f"Timeout receiving message: {e}")
-            raise TimeoutError(f"Timed out waiting for response: {e}")
-
-        except socket.error as e:
-            logger.error(f"Socket error: {e}")
-            self.connected = False  # Mark as disconnected since the connection probably dropped
-            raise ConnectionError(f"Connection error while receiving: {e}")
-
-        except (struct.error, json.JSONDecodeError) as e:
-            logger.error(f"Error parsing message: {e}")
-            raise MessageError(f"Invalid message format: {e}")
+                except socket.timeout:
+                    # Accept() timeout, just continue
+                    continue
+                except socket.error as e:
+                    if self.running:  # Only log if we're still thread_running
+                        self.logger.error(f"Error accepting connection: {e}")
+                    continue
 
         finally:
-            # Restore original timeout if it was changed
-            if original_timeout is not None:
-                self.server.settimeout(original_timeout)
+            self.stop()
 
-    def _recv_exactly(self, n: int) -> bytes:
+    def stop(self):
+        """Stops the server and closes all connections."""
+        self.logger.info("Stopping server...")
+        self.running = False
+
+        # Close main socket
+        if self.server:
+            self.server.close()
+
+        self.logger.info("Client closed.")
+
+    def handle_server(self, server_conn, server_addr, conn_id):
+        """Handles communication with a server in a separate thread."""
+        try:
+            self.logger.info(f"Starting handler for server {conn_id} from {server_addr}")
+            while self.running:
+                message = self.read(server_conn, conn_id)
+                if not message:
+                    break
+                # Process the JSON-RPC 2.0 message and get a response
+                response = self.handler.process_message(message)
+                if response:  # Only send response if there is one
+                    self.write(server_conn, response, conn_id)
+
+        except (socket.error, struct.error) as e:
+            self.logger.error(f"Error with server {conn_id}: {e}")
+        finally:
+            self.logger.info(f"Client {conn_id} disconnected.")
+            try:
+                server_conn.close()
+            except:
+                pass
+
+            # Update counter and release semaphore
+            with self.count_lock:
+                self.connection_count -= 1
+
+            self.connection_semaphore.release()
+            self.logger.info(f"Connection slot freed. Active connections: {self.connection_count}")
+
+    def read(self, server_conn, conn_id):
+        """Reads a message from a server connection."""
+        try:
+            message_size_data = server_conn.recv(4)
+            if len(message_size_data) < 4:
+                return None
+
+            message_size = struct.unpack(self.endian, message_size_data)[0]
+            message_data = server_conn.recv(message_size)
+            if len(message_data) < message_size:
+                return None
+
+            self.logger.debug(f"[{conn_id}] << {message_data.decode(self.encoding)}")
+            return json.loads(message_data.decode(self.encoding))
+        except (socket.error, struct.error):
+            return None
+
+    def write(self, server_conn, response, conn_id):
+        """Sends a response to a server connection."""
+        try:
+            message = json.dumps(response)
+            message_size = len(message)
+            server_conn.sendall(struct.pack(self.endian, message_size))  # Size header
+            server_conn.sendall(message.encode(self.encoding))  # JSON content
+            self.logger.debug(f"[{conn_id}] >> {message}")
+        except (socket.error, struct.error):
+            pass
+
+    # Interactive consol
+    def start_interactive_console(self):
         """
-        Receives exactly n bytes from the socket, blocking until all bytes are received.
+        Start an interactive console with access to the server object.
+        The console runs in the main thread while the server runs in a background thread.
 
-        Args:
-            n: Number of bytes to receive
-
-        Returns:
-            Exactly n bytes of data
-
-        Raises:
-            socket.error: If a socket error occurs
-            ConnectionError: If connection is closed before receiving all bytes
+        Press Ctrl+D (or Ctrl+Z on Windows) to exit the console.
         """
-        data = b''
-        remaining = n
+        # Start server in a separate thread if it's not already thread_running
+        if not hasattr(self, 'thread') or self.server_thread is None or not self.server_thread.is_alive():
+            self.server_thread = threading.Thread(target=self.start, name="RPC-Interactive-Console", daemon=True)
+            self.server_thread.start()
 
-        while remaining > 0:
-            chunk = self.server.recv(remaining)
-            if not chunk:  # Connection closed
-                raise ConnectionError("Connection closed by server")
-            data += chunk
-            remaining -= len(chunk)
+        console_banner = (
+            "\nInteractive console started.\n"
+            "You can access the 'server' object directly here.\n"
+            "Press Ctrl+D (or Ctrl+Z on Windows) to exit the console."
+        )
 
-        return data
+        # Make server available in the console's local namespace
+        local_vars = {'server': self}
 
-    def send_and_receive(self,
-                         message: Dict[str, Any],
-                         timeout: Optional[float] = None,
-                         retry_on_error: bool = True) -> Any:
-        """
-        Convenience method to send a message and wait for a response.
-
-        Args:
-            message: Dictionary to be sent as JSON
-            timeout: Timeout for receiving the response
-            retry_on_error: Whether to retry on connection errors
-
-        Returns:
-            Parsed JSON response
-
-        Raises:
-            ConnectionError: If server is not connected
-            TimeoutError: If receive operation times out
-            MessageError: If message cannot be parsed or sent
-        """
-        self.send_message(message, retry_on_error)
-        return self.receive_message(timeout)
+        # Start the interactive console
+        code.interact(banner=console_banner, local=local_vars)
 
 
 if __name__ == "__main__":
-    # Example server usage
-    server = Server(max_retries=2, timeout=10.0)
+    server = Server()
+    server_thread = threading.Thread(target=server.start, daemon=True)
+    server_thread.start()
 
+    # Keep main thread alive
     try:
-        # Connect with retry mechanism
-        server.connect()
-
-        # Example message to send to the server
-        message = {
-            "jsonrpc": "2.0",
-            "id": 1,
-            "method": "echo",
-            "params": {"message": "Hello, Server!"}
-        }
-
-        # Send message and wait for response
-        try:
-            response = server.send_and_receive(message)
-            logger.info(f"Response received: {response}")
-        except (ConnectionError, TimeoutError, MessageError) as e:
-            logger.error(f"Communication error: {e}")
-
-        # Another example with different message
-        add_message = {
-            "jsonrpc": "2.0",
-            "id": 2,
-            "method": "add",
-            "params": {"a": 5, "b": 8}
-        }
-
-        try:
-            add_response = server.send_and_receive(add_message)
-            logger.info(f"Add result: {add_response}")
-        except (ConnectionError, TimeoutError, MessageError) as e:
-            logger.error(f"Communication error: {e}")
-
-    except ConnectionError as e:
-        logger.error(f"Failed to connect: {e}")
-    finally:
-        server.disconnect()
+        while True:
+            threading.Event().wait(1)
+    except KeyboardInterrupt:
+        server.stop()

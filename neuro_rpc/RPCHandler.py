@@ -1,12 +1,9 @@
 import inspect
-import json
-import threading
-import time
 from typing import Callable, Dict, Any, Optional, Union
 
-from neuro_rpc import logger
-from neuro_rpc.RPCTracking import RPCTracker
-from neuro_rpc.RPCMessage import RPCMessage, RPCRequest, RPCResponse
+from neuro_rpc.RPCTracker import RPCTracker
+from neuro_rpc.RPCMessage import RPCMessage, RPCRequest, RPCResponse, RPCError
+from neuro_rpc.Logger import Logger
 
 # RPC Methods Decorator
 def rpc_method(method_type: str = "both", name: Optional[str] = None):
@@ -33,20 +30,9 @@ def rpc_method(method_type: str = "both", name: Optional[str] = None):
 class RPCHandler(RPCMessage):
     """Handler for JSON-RPC 2.0 protocol operations."""
 
-    # Standard JSON-RPC 2.0 error codes
-    ERROR_CODES = {
-        "PARSE_ERROR": {"code": -32700, "message": "Parse error"},
-        "INVALID_REQUEST": {"code": -32600, "message": "Invalid Request"},
-        "METHOD_NOT_FOUND": {"code": -32601, "message": "Method not found"},
-        "INVALID_PARAMS": {"code": -32602, "message": "Invalid params"},
-        "INTERNAL_ERROR": {"code": -32603, "message": "Internal error"},
-        "METHOD_EXISTS": {"code": -32000, "message": "Method already exists"},
-        "SERVER_ERROR": {"code": -32001, "message": "Server error"}
-    }
-
     def __init__(self):
         """Initialize the RPC handler."""
-        # Initializa RPC Message Protocol
+        # Initialize RPC Message Protocol
         super().__init__()
 
         # Methods registry
@@ -57,7 +43,10 @@ class RPCHandler(RPCMessage):
         self._request_id = 0
 
         # Create tracker instance for message tracking (pending requests/responses)
-        self.tracker = RPCTracker(logger=logger)
+        self.tracker = RPCTracker()
+
+        # Logger
+        self.logger = Logger.get_logger(self.__class__.__name__)
 
     def register_methods(self, instance) -> None:
         """
@@ -76,6 +65,9 @@ class RPCHandler(RPCMessage):
                 if method_type in ["response", "both"]:
                     self.register_response(method_name, method)
 
+        self.logger.debug(f"Registered request methods: {list(self.request_methods.keys())}")
+        self.logger.debug(f"Registered response methods: {list(self.response_methods.keys())}")
+
     def register_request(self, method_name: str, method: Callable) -> None:
         """
         Register a method to handle incoming JSON-RPC requests.
@@ -87,10 +79,10 @@ class RPCHandler(RPCMessage):
             raise ValueError(f"Request handler for {method_name} must be callable")
 
         if method_name in self.request_methods:
-            logger.warning(f"Overriding existing request method: {method_name}")
+            self.logger.warning(f"Overriding existing request method: {method_name}")
 
         self.request_methods[method_name] = method
-        logger.debug(f"Registered request method: {method_name}")
+        #self.logger.debug(f"Registered request method: {method_name}")
 
     def register_response(self, method_name: str, method: Callable) -> None:
         """
@@ -103,141 +95,169 @@ class RPCHandler(RPCMessage):
             raise ValueError(f"Response handler for {method_name} must be callable")
 
         if method_name in self.response_methods:
-            logger.warning(f"Overriding existing response method: {method_name}")
+            self.logger.warning(f"Overriding existing response method: {method_name}")
 
         self.response_methods[method_name] = method
-        logger.debug(f"Registered response method: {method_name}")
+        #self.logger.debug(f"Registered response method: {method_name}")
 
     def next_request_id(self) -> int:
         """Generate a new unique request ID."""
         self._request_id += 1
         return self._request_id
 
-    def create_request(self, method: str, params: Any = None, id: Any = None) -> Dict[str, Any]:
+    def create_request(self, method, params=None, request_id=None):
         """
-        Create a JSON-RPC 2.0 request object.
+        Creates a JSON-RPC request message
 
-        :param id: ID to assign to the request (optional)
-        :param method: Name of the method to call
-        :param params: Parameters to pass to the method
-        :return: JSON-RPC request dictionary
+        Args:
+            method (str): The method name to call
+            params (dict, optional): Parameters to pass to the method
+            request_id: Optional custom ID for the request
+
+        Returns:
+            dict: A JSON-RPC request object
         """
-        request_id = id if id is not None else self.next_request_id()
+        if request_id is None:
+            request_id = self.next_request_id()
 
-        request = {
-            "jsonrpc": "2.0",
-            "method": method,
-            "id": request_id
-        }
+        # Create a proper RPCRequest object
+        request = RPCRequest(method=method, id=request_id, params=params)
+        request_dict = request.to_dict()
 
-        # Track this outgoing request using the tracker
-        self.tracker.track_outgoing_request(request_id, method)
+        # If we have a tracker, track this outgoing request
+        if self.tracker:
+            self.tracker.track_outgoing_request(request)
 
-        if params is not None:
-            request["params"] = params
+        return request_dict
 
-        return request
-
-    def create_response(self, id: Any, result: Any = None, error: Dict[str, Any] = None) -> Dict[str, Any]:
+    def create_response(self, result, request_id):
         """
-        Create a JSON-RPC 2.0 response object.
+        Creates a JSON-RPC response message
 
-        :param id: ID from the request
-        :param result: Result data (if successful)
-        :param error: Error object (if failed)
-        :return: JSON-RPC response dictionary
+        Args:
+            result: The result of the method call
+            request_id: The ID of the request this response corresponds to
+
+        Returns:
+            dict: A JSON-RPC response object
         """
-        response = {
-            "jsonrpc": "2.0",
-            "id": id
-        }
+        # Create a proper RPCResponse object
+        response = RPCResponse(result=result, id=request_id)
+        response_dict = response.to_dict()
 
-        success = error is None
-        if error is not None:
-            response["error"] = error
-        else:
-            response["result"] = result
+        # If we have a tracker, track this outgoing response
+        if self.tracker:
+            self.tracker.track_outgoing_response(response)
 
-        # Track this outgoing response
-        self.tracker.track_outgoing_response(id, success=success)
+        return response_dict
 
-        return response
-
-    def create_error(self, error_type: str, data: Any = None, id: Any = None) -> Dict[str, Any]:
+    def create_error(self, error_type, data=None, id=None):
         """
-        Create a JSON-RPC 2.0 error response.
+        Creates a JSON-RPC error response
 
-        :param error_type: Error code key from ERROR_CODES
-        :param data: Additional error data
-        :param id: Request ID
-        :return: JSON-RPC error response dictionary
+        Args:
+            error_type: The error type (from RPCError constants)
+            data: Optional additional error data
+            id: The ID this error is responding to
+
+        Returns:
+            dict: A JSON-RPC error response object
         """
-        error = self.ERROR_CODES.get(error_type, self.ERROR_CODES["INTERNAL_ERROR"]).copy()
+        # Create an RPCError object
+        error = RPCError(error_type=error_type, data=data)
 
-        if data is not None:
-            error["data"] = data
+        # Create an RPCResponse with the error
+        response = RPCResponse(error=error.error, id=id)
 
-        return self.create_response(id, error=error)
+        # If we have a tracker, track this outgoing response
+        if self.tracker:
+            self.tracker.track_outgoing_response(response)
 
-    def process_message(self, message: Union[Dict[str, Any], str]) -> Optional[Dict[str, Any]]:
+        return response.to_dict()
+
+    def process_message(self, message: Union[Dict[str, Any], str, RPCMessage]) -> Optional[Dict[str, Any]]:
         """
         Process an incoming JSON-RPC 2.0 message.
         Automatically determines if it's a request or a response and handles it accordingly.
 
-        :param message: The JSON-RPC message (dictionary or JSON string)
+        :param message: The JSON-RPC message (dict, JSON string, or RPCMessage object)
         :return: Response if it's a request, None if it's a response
         """
-        # Parse JSON if string
-        if isinstance(message, str):
-            try:
-                message = json.loads(message)
-            except json.JSONDecodeError:
-                return self.create_error("PARSE_ERROR")
+        try:
+            # Handle different input types
+            if isinstance(message, str):
+                try:
+                    rpc_message = RPCMessage.from_json(message)
+                except Exception as e:
+                    self.logger.error(f"JSON parse error: {e}")
+                    return self.create_error(RPCError.PARSE_ERROR)
+            elif isinstance(message, dict):
+                # Convert dict to appropriate RPCMessage object
+                if "method" in message:
+                    try:
+                        rpc_message = RPCRequest.from_dict(message)
+                    except Exception:
+                        return self.create_error(RPCError.INVALID_REQUEST)
+                elif "result" in message or "error" in message:
+                    try:
+                        rpc_message = RPCResponse.from_dict(message)
+                    except Exception:
+                        return self.create_error(RPCError.INVALID_REQUEST)
+                else:
+                    return self.create_error(RPCError.INVALID_REQUEST)
+            elif isinstance(message, RPCMessage):
+                # Already an RPCMessage object
+                rpc_message = message
+            else:
+                return self.create_error(RPCError.INVALID_REQUEST)
 
-        # Validate basic structure
-        if not isinstance(message, dict) or "jsonrpc" not in message or message.get("jsonrpc") != "2.0":
-            return self.create_error("INVALID_REQUEST")
+            # Process based on message type
+            if isinstance(rpc_message, RPCRequest):
+                '''if rpc_message.id is not None:
+                    self.tracker.track_incoming_request(rpc_message)'''
+                return self._process_request(rpc_message)
+            elif isinstance(rpc_message, RPCResponse):
+                '''if rpc_message.id is not None:
+                    self.tracker.track_incoming_response(rpc_message)'''
+                self._process_response(rpc_message)
+                return None  # No need to respond to a response
+            else:
+                return self.create_error(RPCError.INVALID_REQUEST)
+        except Exception as e:
+            self.logger.error(f"Error processing message: {e}", exc_info=True)
+            return self.create_error(RPCError.INTERNAL_ERROR, data=str(e))
 
-        # Determine if it's a request or response
-        if "method" in message and ("id" in message or "params" in message):
-            # It's a request
-            return self._process_request(message)
-        elif "id" in message and ("result" in message or "error" in message):
-            # It's a response
-            self._process_response(message)
-            return None  # No need to respond to a response
-        else:
-            # Invalid format
-            return self.create_error("INVALID_REQUEST")
-
-    def _process_request(self, request: Dict[str, Any]) -> Dict[str, Any]:
+    def _process_request(self, request: Union[Dict[str, Any], RPCRequest]) -> Dict[str, Any]:
         """
         Process an incoming request.
 
-        :param request: The request dictionary
+        :param request: The request object or dictionary
         :return: Response dictionary
         """
-        method_name = request.get("method")
-        request_id = request.get("id")
+        # Convert dict to RPCRequest if needed
+        if isinstance(request, dict):
+            try:
+                request = RPCRequest.from_dict(request)
+            except Exception:
+                return self.create_error(RPCError.INVALID_REQUEST)
 
-        if not method_name or not isinstance(method_name, str):
-            return self.create_error("INVALID_REQUEST", id=request.get("id"))
+        method = request.method
+        request.id = request.id
 
-        method = self.request_methods.get(method_name)
-        if not method:
-            return self.create_error("METHOD_NOT_FOUND", id=request.get("id"))
+        if not method or not isinstance(method, str):
+            return self.create_error(RPCError.INVALID_REQUEST, id=request.id)
 
-        # Track this incoming request if it has an ID (not a notification)
-        if request_id is not None:
-            self.tracker.track_incoming_request(request_id, method_name)
+        callback = self.request_methods.get(method)
+        if not callback:
+            return self.create_error(RPCError.METHOD_NOT_FOUND, id=request.id)
 
-        params = request.get("params", {})
+        params = request.params or {}
 
         try:
             # Check method signature to ensure we have the necessary parameters
-            sig = inspect.signature(method)
+            sig = inspect.signature(callback)
 
-            # For dict params, validate against required parameters
+            # Execute method with appropriate parameters
             if isinstance(params, dict):
                 # Check for required parameters that are missing
                 missing_params = []
@@ -246,64 +266,71 @@ class RPCHandler(RPCMessage):
                         missing_params.append(param_name)
 
                 if missing_params:
-                    return self.create_error(
-                        "INVALID_PARAMS",
-                        data=f"Missing required parameters: {', '.join(missing_params)}",
-                        id=request.get("id")
-                    )
-                result = method(**params)
+                    error_data = f"Missing required parameters: {', '.join(missing_params)}"
+                    return self.create_error(RPCError.INVALID_PARAMS, data=error_data, id=request.id)
+                result = callback(**params)
             elif isinstance(params, list):
                 # For list params, ensure we have enough positional arguments
                 required_count = sum(1 for param in sig.parameters.values()
                                      if param.default == inspect.Parameter.empty and param.name != 'self')
 
                 if len(params) < required_count:
-                    return self.create_error(
-                        "INVALID_PARAMS",
-                        data=f"Method requires {required_count} positional arguments, got {len(params)}",
-                        id=request.get("id")
-                    )
-                result = method(*params)
+                    error_data = f"Method requires {required_count} positional arguments, got {len(params)}"
+                    return self.create_error(RPCError.INVALID_PARAMS, data=error_data, id=request.id)
+                result = callback(*params)
             else:
                 # No parameters
-                result = method()
+                result = callback()
 
-            return self.create_response(request.get("id"), result=result)
+            # Track for incoming request
+            if request.id is not None:
+                self.tracker.track_incoming_request(request)
+
+            response = self.create_response(result=result, request_id=request.id)
+            return response
         except Exception as e:
-            logger.error(f"Error executing method {method_name}", exc_info=True)
-            return self.create_error("INTERNAL_ERROR", data=str(e), id=request.get("id"))
+            self.logger.error(f"Error executing method {method}", exc_info=True)
+            return self.create_error(RPCError.INTERNAL_ERROR, data=str(e), id=request.id)
 
-    def _process_response(self, response: Dict[str, Any]) -> None:
+    def _process_response(self, response: Union[Dict[str, Any], RPCResponse]) -> None:
         """
         Process an incoming response.
 
-        :param response: The response dictionary
+        :param response: The response object or dictionary
         """
-        request_id = response.get("id")
-
-        request_data = self.tracker.outgoing_requests.get(request_id)
+        # Convert dict to RPCResponse if needed
+        if isinstance(response, dict):
+            try:
+                response = RPCResponse.from_dict(response)
+            except Exception:
+                self.logger.error("Invalid response format")
+                return
+        request_data = self.tracker.outgoing_requests.get(response.id)
         if request_data:
             method_name = request_data[1]  # Access the second element (index 1) which is method_name
         else:
             method_name = "default"
-
-        success = "result" in response
-
-        # Track this incoming response
-        if request_id is not None:
-            self.tracker.track_incoming_response(request_id, success=success)
 
         handler = self.response_methods.get(method_name)
         if not handler:
             # Try to use default handler if available
             handler = self.response_methods.get("default")
             if not handler:
-                logger.warning(f"No response handler for method: {method_name}")
+                self.logger.warning(f"No response handler for method: {method_name}")
                 return
 
         try:
-            result = response.get("result")
-            error = response.get("error")
-            handler(id=response.get("id"), result=result, error=error)
+            if response.is_success:
+                result = response.result
+                error = None
+            else:
+                result = None
+                error = response.error
+
+            # Track this incoming response
+            if response.id is not None:
+                self.tracker.track_incoming_response(response)
+
+            handler(id=response.id, result=result, error=error)
         except Exception as e:
-            logger.exception(f"Error handling response for {method_name}")
+            self.logger.exception(f"Error handling response for {method_name}")

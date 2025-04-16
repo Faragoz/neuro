@@ -1,6 +1,9 @@
 import threading
 import time
 
+from neuro_rpc.RPCMessage import RPCRequest, RPCResponse
+from neuro_rpc.Logger import Logger
+
 
 class RPCTracker:
     """
@@ -8,16 +11,16 @@ class RPCTracker:
     Handles request/response tracking, statistics and monitoring.
     """
 
-    def __init__(self, logger=None, monitor_interval=60, cleanup_interval=300):
+    def __init__(self, monitor_interval=1, cleanup_interval=60):
         """
         Initialize the RPC tracker.
 
         Args:
-            logger: Logger instance for reporting issues
             monitor_interval: How often to check for timed-out requests (seconds)
             cleanup_interval: How often to clean old tracking data (seconds)
         """
-        self.logger = logger
+        self.logger = Logger.get_logger(self.__class__.__name__)
+
         self.monitor_interval = monitor_interval
         self.cleanup_interval = cleanup_interval
 
@@ -46,6 +49,10 @@ class RPCTracker:
         # Callbacks
         self.timeout_callback = None
 
+        # TODO: Delete auto-start
+        # Auto-start
+        self.start_monitoring()
+
     def start_monitoring(self, timeout_callback=None):
         """
         Start the background monitoring thread.
@@ -55,7 +62,7 @@ class RPCTracker:
         """
         if self._monitor_thread is not None and self._monitor_thread.is_alive():
             if self.logger:
-                self.logger.warning("Monitoring thread already running")
+                self.logger.warning("Monitoring thread already thread_running")
             return False
 
         self.timeout_callback = timeout_callback
@@ -68,7 +75,7 @@ class RPCTracker:
         self._monitor_thread.start()
 
         if self.logger:
-            self.logger.info("RPC tracking monitor started")
+            self.logger.debug("RPC tracking monitor started")
         return True
 
     def stop_monitoring(self):
@@ -123,39 +130,51 @@ class RPCTracker:
                 # Don't bombard with error messages if there's a persistent problem
                 time.sleep(min(self.monitor_interval, 10))
 
-    def track_outgoing_request(self, request_id, method_name, timeout=60):
+    def track_outgoing_request(self, request: RPCRequest, timeout=60):
         """Track a request we're sending to a remote service."""
         with self._tracking_lock:
-            self.outgoing_requests[request_id] = (time.time(), method_name, timeout)
+            #self.logger.debug(f"Tracking outgoing request [{timeout}s]: {request.to_dict()}")
+            self.outgoing_requests[request.id] = (time.time(), request.method, timeout)
             self.stats["outgoing_requests_count"] += 1
 
-    def track_incoming_request(self, request_id, method_name):
-        """Track a request received from a client."""
+    # TODO: Exec_time is only supported as client (python) - server (labview).
+    #  incoming_request and outgoing_response doesn't (?) support exec_time.
+    #  Check RPCRequest and related methods to add this functionality.
+    def track_incoming_request(self, request: RPCRequest):
+        """Track a request received from a server."""
         with self._tracking_lock:
-            self.incoming_requests[request_id] = (time.time(), method_name)
+            self.logger.debug(f"Tracking incoming request: {request}")
+            self.incoming_requests[request.id] = (time.time(), request.method)
             self.stats["incoming_requests_count"] += 1
 
-    def track_outgoing_response(self, request_id, success=True):
-        """Track a response we're sending to a client."""
+    def track_outgoing_response(self, response: RPCResponse):
+        """Track a response we're sending to a server."""
         with self._tracking_lock:
+            self.logger.debug(f"Tracking outgoing response: {response.id}, {response.is_success}")
             # Remove the incoming request that this response addresses
-            if request_id in self.incoming_requests:
-                del self.incoming_requests[request_id]
-
+            if response.id in self.incoming_requests:
+                del self.incoming_requests[response.id]
             # Track that we sent a response
-            self.outgoing_responses[request_id] = (time.time(), success)
+            self.outgoing_responses[response.id] = (time.time(), response.is_success)
             self.stats["outgoing_responses_count"] += 1
 
-    def track_incoming_response(self, request_id, success=True):
+    def track_incoming_response(self, response: RPCResponse):
         """Track a response we've received from a remote service."""
         with self._tracking_lock:
+            #self.logger.debug(f"Tracking incoming response: {response.to_dict()}")
+            self.incoming_responses[response.id] = (time.time(), response.is_success)
+            total_time = (self.incoming_responses[response.id][0] - self.outgoing_requests[response.id][0])*1000
+            exec_time = response.exec_time/1000
+            self.logger.debug(f"Total time: {total_time} ms")
+            self.logger.debug(f"Execution time: {exec_time} ms")
+            self.logger.debug(f"Network roundtrip: {abs(total_time - exec_time)} ms")
             # Remove the outgoing request that this response addresses
-            if request_id in self.outgoing_requests:
-                del self.outgoing_requests[request_id]
+            if response.id in self.outgoing_requests:
+                del self.outgoing_requests[response.id]
                 self.stats["incoming_responses_count"] += 1
             else:
                 if self.logger:
-                    self.logger.warning(f"Received response for unknown request ID: {request_id}")
+                    self.logger.warning(f"Received response for unknown request ID: {response.id}")
 
     def get_statistics(self):
         """Get statistics about message handling."""
@@ -175,7 +194,6 @@ class RPCTracker:
                     if now - timestamp > max_age_seconds:
                         del storage[req_id]
                         cleaned += 1
-
         return cleaned
 
     def monitor_messages(self):

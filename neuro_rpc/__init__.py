@@ -5,10 +5,10 @@ __all__ = ['logger']
 #  url: https://realpython.com/python-project-documentation-with-mkdocs/
 import logging
 
-from neuro_rpc.Logger import CustomLogger
+from neuro_rpc.Logger import Logger
 
-# Initialize a CustomLogger instance
-logger = CustomLogger("__neuro__", logging.DEBUG, True)
+# Initialize a Logger instance
+logger = Logger.get_logger("__neuro__")
 
 if __name__ == "__main__":
-    logger.test()
+    pass

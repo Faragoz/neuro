@@ -1,7 +1,6 @@
 from typing import Any, Dict, Optional, Union, List
 import json
 
-
 class RPCError(Exception):
     """Exception class for JSON-RPC 2.0 errors."""
 
@@ -14,11 +13,20 @@ class RPCError(Exception):
 
     # Implementation-defined error codes
     METHOD_EXISTS = {"code": -32000, "message": "Method already exists"}
-    SERVER_ERROR = {"code": -32001, "message": "Server error"}
+    SERVER_ERROR = {"code": -32001, "message": "Client error"}
 
-    def __init__(self, error_type: str, data: Any = None):
-        self.error_type = error_type
-        self.error = self._create_error(error_type, data)
+    def __init__(self, error_type=None, data: Any = None):
+        if isinstance(error_type, dict):
+            # Direct error dictionary provided
+            self.error_type = None  # No type name when direct dict is used
+            self.error = error_type.copy()  # Use the provided error dict
+            if data is not None:
+                self.error["data"] = data
+        else:
+            # String identifier provided
+            self.error_type = error_type
+            self.error = self._create_error(error_type, data)
+
         super().__init__(f"{self.error['code']}: {self.error['message']} - {data if data else ''}")
 
     def _create_error(self, error_type: str, data: Any = None) -> Dict[str, Any]:
@@ -29,7 +37,6 @@ class RPCError(Exception):
             error["data"] = data
 
         return error
-
 
 class RPCMessage:
     """Base class for JSON-RPC 2.0 messages."""
@@ -49,9 +56,9 @@ class RPCMessage:
     def from_dict(cls, data: Dict[str, Any]) -> 'RPCMessage':
         """Create message from dictionary."""
         if not isinstance(data, dict):
-            raise RPCError("INVALID_REQUEST", "Data must be a dictionary")
+            raise RPCError(RPCError.INVALID_REQUEST, "Data must be a dictionary")
         if data.get("jsonrpc") != "2.0":
-            raise RPCError("INVALID_REQUEST", "Invalid JSON-RPC version")
+            raise RPCError(RPCError.INVALID_REQUEST, "Invalid JSON-RPC version")
         return cls()
 
     @classmethod
@@ -61,8 +68,7 @@ class RPCMessage:
             data = json.loads(json_str)
             return cls.from_dict(data)
         except json.JSONDecodeError:
-            raise RPCError("PARSE_ERROR", "Invalid JSON string")
-
+            raise RPCError(RPCError.PARSE_ERROR, "Invalid JSON string")
 
 class RPCRequest(RPCMessage):
     """Class representing a JSON-RPC 2.0 request."""
@@ -89,10 +95,10 @@ class RPCRequest(RPCMessage):
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> 'RPCRequest':
         """Create request from dictionary."""
-        super().from_dict(data)  # Validate base message
+        RPCMessage.from_dict(data)  # Validate base message
 
         if "method" not in data or not isinstance(data["method"], str):
-            raise RPCError("INVALID_REQUEST", "Request must include a valid method name")
+            raise RPCError(RPCError.INVALID_REQUEST, "Request must include a valid method name")
 
         method = data["method"]
         id = data.get("id")
@@ -105,11 +111,10 @@ class RPCRequest(RPCMessage):
         """Check if this request is a notification (no ID)."""
         return self.id is None
 
-
 class RPCResponse(RPCMessage):
     """Class representing a JSON-RPC 2.0 response."""
 
-    def __init__(self, id: Any, result: Any = None, error: Optional[Dict[str, Any]] = None):
+    def __init__(self, id: Any, result: Any = None, error: Optional[Dict[str, Any]] = None, exec_time: Optional[int] = None,):
         super().__init__()
         self.id = id
 
@@ -119,6 +124,7 @@ class RPCResponse(RPCMessage):
 
         self.result = result
         self.error = error
+        self.exec_time = exec_time
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert the response to a dictionary."""
@@ -130,28 +136,31 @@ class RPCResponse(RPCMessage):
         else:
             response["result"] = self.result
 
+        if self.exec_time is not None:
+            response["exec_time"] = self.exec_time
+
         return response
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> 'RPCResponse':
         """Create response from dictionary."""
-        super().from_dict(data)  # Validate base message
+        RPCMessage.from_dict(data)  # Validate base message
 
         if "id" not in data:
-            raise RPCError("INVALID_REQUEST", "Response must include an ID")
-
-        id = data["id"]
+            raise RPCError(RPCError.INVALID_REQUEST, "Response must include an ID")
 
         if "result" in data and "error" in data:
-            raise RPCError("INVALID_REQUEST", "Response cannot contain both result and error")
+            raise RPCError(RPCError.INVALID_REQUEST, "Response cannot contain both result and error")
 
         if "result" not in data and "error" not in data:
-            raise RPCError("INVALID_REQUEST", "Response must contain either result or error")
+            raise RPCError(RPCError.INVALID_REQUEST, "Response must contain either result or error")
 
+        id = data["id"]
         result = data.get("result")
         error = data.get("error")
+        exec_time = data.get("exec_time")
 
-        return cls(id=id, result=result, error=error)
+        return cls(id=id, result=result, error=error, exec_time=exec_time)
 
     @property
     def is_error(self) -> bool:

@@ -1,11 +1,10 @@
-import inspect
 from typing import Callable, Dict, Any, Optional, Union
 import json
 
-from neuro_rpc import *
+from neuro_rpc import logger
 from neuro_rpc.RPCHandler import RPCHandler, rpc_method
 
-class RPCMethods:
+class RPCMethods(RPCHandler):
     """Container for RPC methods with handler delegation."""
 
     def __init__(self, auto_register: bool = True):
@@ -14,33 +13,32 @@ class RPCMethods:
 
         :param auto_register: Whether to automatically register methods with the handler
         """
-        self.handler = RPCHandler()
-        self.tracker = self.handler.tracker
+        super().__init__()
+
 
         # Auto-register if specified
         if auto_register:
-            self.handler.register_methods(self)
-
-    def process_message(self, message: Union[Dict[str, Any], str]) -> Optional[Dict[str, Any]]:
-        """
-        Delegate message processing to the handler.
-
-        :param message: The JSON-RPC message
-        :return: Response if it's a request, None if it's a response
-        """
-        return self.handler.process_message(message)
+            self.register_methods(self)
 
     # Example RPC methods
     @rpc_method(method_type="request")
     def echo(self, message: str) -> str:
         """Echo the input message."""
-        logger.debug(f"Echo request received: {message}")
+        #logger.debug(f"Echo request received: {message}")
         return message
+
+    @rpc_method(method_type="response", name="echo")
+    def handle_echo_response(self, id: Any = None, result: Any = None, error: Any = None) -> None:
+        """Handle response from add request."""
+        if error:
+            logger.error(f"Echo operation failed: {error}")
+        else:
+            logger.debug(f"Echo: {result.get("message")}")
 
     @rpc_method(method_type="request")
     def add(self, a: float, b: float) -> float:
         """Add two numbers."""
-        logger.debug(f"Add request: {a} + {b}")
+        #logger.debug(f"Add request: {a} + {b}")
         return a + b
 
     @rpc_method(method_type="response", name="add")
@@ -54,7 +52,7 @@ class RPCMethods:
     @rpc_method(method_type="request")
     def subtract(self, a: float, b: float) -> float:
         """Subtract b from a."""
-        logger.debug(f"Subtract request: {a} - {b}")
+        #logger.debug(f"Subtract request: {a} - {b}")
         return a - b
 
     @rpc_method(method_type="response", name="subtract")
@@ -65,16 +63,7 @@ class RPCMethods:
         else:
             logger.debug(f"Subtract operation result: {result}")
 
-    # Generic methods that utilize the handler directly
-
-    def create_request(self, method: str, params: Any = None) -> Dict[str, Any]:
-        """Create a request using the handler."""
-        return self.handler.create_request(method, params)
-
-    def create_response(self, id: Any, result: Any = None, error: Dict[str, Any] = None) -> Dict[str, Any]:
-        """Create a response using the handler."""
-        return self.handler.create_response(id, result, error)
-
+    # Default handling
     @rpc_method(method_type="response", name="default")
     def default_response_handler(self, id: Any = None, result: Any = None, error: Any = None) -> None:
         """Default handler for responses without specific handlers."""

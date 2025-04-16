@@ -1,1 +1,0 @@
-# TODO: Process all incoming and outgoing message formats in a class
