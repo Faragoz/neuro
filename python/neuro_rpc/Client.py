@@ -1,12 +1,12 @@
 import socket
 import struct
-import json
 import threading
 import time
-from random import randint
-from typing import Any, Dict, Optional, Union, Tuple, Callable
-from neuro_rpc.Logger import Logger
-from neuro_rpc.RPCMethods import RPCMethods
+from typing import Dict, Any, Optional
+
+from python.neuro_rpc.Logger import Logger
+from python.neuro_rpc.RPCMethods import RPCMethods
+from python.neuro_rpc.Proxy import *
 
 
 class ConnectionError(Exception):
@@ -23,11 +23,39 @@ class MessageError(Exception):
     """Exception raised for message-related errors."""
     pass
 
+import subprocess
+
+
+def create_qos_policy_on_port(port: int, dscp_value: int = 46):
+    name = f"PyQoS_Port_{port}"
+    # Construimos el comando con GUIONES ASCII (U+002D) y cmdlets correctos
+    ps_cmd = (
+        "Import-Module NetQos; "
+        f"if (-not (Get-NetQosPolicy -Name '{name}' -ErrorAction SilentlyContinue)) {{ "
+        f"    New-NetQosPolicy -Name '{name}' "
+        f"-IPProtocolMatchCondition TCP -DestinationPort {port} -DSCPAction {dscp_value} "
+        "}} else {{ Write-Host 'Policy already exists.' }}"
+    )
+
+    full_cmd = [
+        "powershell.exe",
+        "-NoProfile",
+        "-ExecutionPolicy", "Bypass",
+        "-Command", ps_cmd
+    ]
+    # Esto debe correrse con permisos de Administrador
+    result = subprocess.run(full_cmd, capture_output=True, text=True)
+    if result.returncode != 0:
+        raise RuntimeError(
+            f"Error creando política QoS (exit {result.returncode}):\n"
+            f"STDOUT: {result.stdout}\nSTDERR: {result.stderr}"
+        )
+    return result.stdout.strip()
 
 class Client:
     def __init__(self,
                  host: str = "127.0.0.1",
-                 port: int = 6340,
+                 port: int = 6363,
                  encoding: str = 'UTF-8',
                  endian: str = '>I',
                  timeout: float = 10.0,
@@ -66,6 +94,9 @@ class Client:
 
         # Handling methods
         self.handler = RPCMethods()
+
+        self.header_bytes = 4
+        self.trailer_bytes = 4
 
     def start(self):
         """Start the client in a background thread."""
@@ -148,7 +179,15 @@ class Client:
 
                 if self.no_delay:
                     self.client.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
-                    self.logger.debug("Nagle's algorithm disabled for better latency.")
+                    self.client.setsockopt(socket.IPPROTO_IP , socket.IP_TOS, 46 << 2)  # Set TOS for low latency
+                    #self.client.setsockopt(socket.IPPROTO_IPV6, socket.IPV6_TCLASS, 0xB8)
+                    self.logger.debug("Nagle's algorithm disabled for better latency. TOS set to EF.")
+
+                    '''try:
+                        create_qos_policy_on_port(self.port)
+                        self.logger.debug("QoS2 DSCP EF applied via QOSAddSocketToFlow/QOSSetFlow2")
+                    except Exception as e:
+                        self.logger.warning(f"QoS2 setup failed: {e}")'''
 
                 self.client.settimeout(self.timeout)
                 self.client.connect((self.host, self.port))
@@ -192,6 +231,30 @@ class Client:
         """
         if not self.connected or self.client is None:
             raise ConnectionError("Not connected to server. Call connect() first.")
+
+    def _build_packet(self, data, tail = 0):
+        # TODO: Check endianess
+        if isinstance(data, dict):
+            data = json.dumps(data)
+
+        header = (len(data) + self.trailer_bytes).to_bytes(self.header_bytes)
+        trailer = tail.to_bytes(self.trailer_bytes)
+
+        packet = bytearray()
+        packet.extend(header)                       # 4 bytes header
+        if isinstance(data, str):
+            packet.extend(data.encode(self.encoding))   # n bytes payload
+        elif isinstance(data, bytes):
+            packet.extend(data)
+        else:
+            raise TypeError('data must be str or bytes')
+        packet.extend(trailer)                      # 4 bytes tail
+        return packet
+
+    def _unbuild_packet(self, packet, size: int):
+        data = packet[:size-self.trailer_bytes]
+        tail = int.from_bytes(packet[-self.trailer_bytes:])
+        return data, tail
 
     def send_message(self,
                      message: Dict[str, Any],
@@ -314,7 +377,7 @@ class Client:
             n: Number of bytes to receive
 
         Returns:
-            Exactly n bytes of data
+            Exactly n bytes of metadata
 
         Raises:
             socket.error: If a socket error occurs
@@ -325,12 +388,38 @@ class Client:
 
         while remaining > 0:
             chunk = self.client.recv(remaining)
+            # self.logger.info(f"Received chunk: {chunk}")
             if not chunk:  # Connection closed
                 raise ConnectionError("Connection closed by server")
             data += chunk
             remaining -= len(chunk)
 
         return data
+
+    def recv_packet(self):
+        try:
+            length_bytes = self._recv_exactly(self.header_bytes)
+            size = int.from_bytes(length_bytes)
+            full_packet = self._recv_exactly(size)
+            data, tail = self._unbuild_packet(full_packet, size)
+            # print(f"size: {size}, tail {tail}")
+            return size, data, tail
+
+        except Exception as e:
+            self.logger.error(f"Error receiving packet: {e}")
+            return None
+
+    def send_packet(self, packet):
+        """
+        Send a data packet with reliable byte writing.
+        """
+        try:
+            # Send packet
+            self.client.sendall(packet)
+            return True
+        except Exception as e:
+            self.logger.error(f"Error sending packet: {e}")
+            return False
 
     def send_and_receive(self,
                          message: Dict[str, Any],
@@ -357,30 +446,84 @@ class Client:
 
     # Wrappers
     def rpc(self, method, params, response=True):
-        message = self.handler.create_request(method,params)
+        proxy = Proxy()
+        request = self.handler.create_request(method, params)
+        request, hdr_tree = proxy.to_act(request)
+        packet = self._build_packet(request)
 
         if response:
-            return self.send_and_receive(message)
+            self.send_packet(packet)
+            size, data, tail = self.recv_packet()
+            data = proxy.from_act(data, hdr_tree)
+            tail = tail
+            data = json.dumps(data, cls=NpEncoder)
+            return size, data, tail
         else:
-            self.send_message(message)
+            self.send_packet(packet)
             return None
 
     def echo(self, message='test'):
         if isinstance(message, str):
-            self.handler.process_message(self.rpc("echo", {'message': message}))
+            size, data, tail = self.rpc("echo", {'Message': message})
+            data = json.loads(data)
+            exec_time = tail
+
+            self.handler.process_message(data)
+            self.handler.tracker.set_exec_time(data['id'], exec_time)
         else:
             self.logger.error("echo message must be a string")
 
     def echo_benchmark(self):
+        import numpy
+        sizes = numpy.linspace(0, 9600, 21, dtype=int)
+        iter = 10
+
         self.handler.tracker.start_benchmark()
+        for i, size in enumerate(sizes):
+            size_progress = (i / len(sizes)) * 100
+            # self.logger.info(f"Testing payload size {size} bytes - {size_progress:.1f}% complete")
 
-        for i in range(100):
-            payload = "X" * randint(0, 3000)
-            self.echo(payload)
+            for j in range(iter):
+                payload = "X" * size
+                self.echo(payload)
+        self.handler.tracker.stop_benchmark()
 
-        print(json.dumps(self.handler.tracker.stop_benchmark(), indent=4))
+        self.handler.tracker.start_benchmark()
+        for i, size in enumerate(sizes):
+
+            for j in range(iter):
+                payload = "X" * size
+                self.echo(payload)
+        self.handler.tracker.stop_benchmark()
+
+        self.handler.tracker.start_benchmark()
+        for i, size in enumerate(sizes):
+            for j in range(iter):
+                payload = "X" * size
+                self.echo(payload)
+        self.handler.tracker.stop_benchmark()
+
+        #self.handler.tracker.export(format='json', filename='actor_benchmark_optimized')
 
 if __name__ == "__main__":
-    client = Client(host='172.16.100.9', port=6340, max_retries=2, timeout=10.0)
-    client.start()
-#server = Client(host='172.16.100.9', port=6340, max_retries=2, timeout=10.0)
+    local = True
+
+    if local:
+        host = 'localhost'
+    else:
+        host = '172.16.100.9'
+
+    server_config = {
+        'host': host,
+        'port': 2001,
+        'no_delay': True,
+    }
+    print(server_config['host'])
+
+    client = Client(host=server_config['host'], port=server_config['port'], no_delay=server_config['no_delay'])
+    client.connect()
+
+    client.echo_benchmark()
+    #client.rpc("Display Text", {"Message": "Trying something :)", "exec_time": 0}, False)
+
+    client.disconnect()

@@ -2,9 +2,9 @@ from typing import Any, Dict, Optional, Union, List
 import json
 
 class RPCError(Exception):
-    """Exception class for JSON-RPC 2.0 errors."""
+    """Exception class for JSON-Message 2.0 errors."""
 
-    # Standard JSON-RPC 2.0 error codes
+    # Standard JSON-Message 2.0 error codes
     PARSE_ERROR = {"code": -32700, "message": "Parse error"}
     INVALID_REQUEST = {"code": -32600, "message": "Invalid Request"}
     METHOD_NOT_FOUND = {"code": -32601, "message": "Method not found"}
@@ -21,7 +21,7 @@ class RPCError(Exception):
             self.error_type = None  # No type name when direct dict is used
             self.error = error_type.copy()  # Use the provided error dict
             if data is not None:
-                self.error["data"] = data
+                self.error["metadata"] = data
         else:
             # String identifier provided
             self.error_type = error_type
@@ -34,12 +34,12 @@ class RPCError(Exception):
         error = getattr(self, error_type, self.INTERNAL_ERROR).copy()
 
         if data is not None:
-            error["data"] = data
+            error["metadata"] = data
 
         return error
 
 class RPCMessage:
-    """Base class for JSON-RPC 2.0 messages."""
+    """Base class for JSON-Message 2.0 messages."""
 
     def __init__(self):
         self.jsonrpc = "2.0"
@@ -58,7 +58,7 @@ class RPCMessage:
         if not isinstance(data, dict):
             raise RPCError(RPCError.INVALID_REQUEST, "Data must be a dictionary")
         if data.get("jsonrpc") != "2.0":
-            raise RPCError(RPCError.INVALID_REQUEST, "Invalid JSON-RPC version")
+            raise RPCError(RPCError.INVALID_REQUEST, "Invalid JSON-Message version")
         return cls()
 
     @classmethod
@@ -71,7 +71,7 @@ class RPCMessage:
             raise RPCError(RPCError.PARSE_ERROR, "Invalid JSON string")
 
 class RPCRequest(RPCMessage):
-    """Class representing a JSON-RPC 2.0 request."""
+    """Class representing a JSON-Message 2.0 request."""
 
     def __init__(self, method: str, id: Any = None, params: Optional[Union[Dict, List]] = None):
         super().__init__()
@@ -112,7 +112,7 @@ class RPCRequest(RPCMessage):
         return self.id is None
 
 class RPCResponse(RPCMessage):
-    """Class representing a JSON-RPC 2.0 response."""
+    """Class representing a JSON-Message 2.0 response."""
 
     def __init__(self, id: Any, result: Any = None, error: Optional[Dict[str, Any]] = None, exec_time: Optional[int] = None,):
         super().__init__()
@@ -158,7 +158,7 @@ class RPCResponse(RPCMessage):
         id = data["id"]
         result = data.get("result")
         error = data.get("error")
-        exec_time = data.get("exec_time")
+        exec_time = data.get("exec_time", 0)
 
         return cls(id=id, result=result, error=error, exec_time=exec_time)
 

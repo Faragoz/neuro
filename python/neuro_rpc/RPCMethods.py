@@ -1,15 +1,15 @@
-from typing import Callable, Dict, Any, Optional, Union
+from typing import Any
 import json
 
-from neuro_rpc import logger
-from neuro_rpc.RPCHandler import RPCHandler, rpc_method
+from python.neuro_rpc import logger
+from python.neuro_rpc.RPCHandler import RPCHandler, rpc_method
 
 class RPCMethods(RPCHandler):
-    """Container for RPC methods with handler delegation."""
+    """Container for Message methods with handler delegation."""
 
     def __init__(self, auto_register: bool = True):
         """
-        Initialize the RPC methods container.
+        Initialize the Message methods container.
 
         :param auto_register: Whether to automatically register methods with the handler
         """
@@ -20,7 +20,7 @@ class RPCMethods(RPCHandler):
         if auto_register:
             self.register_methods(self)
 
-    # Example RPC methods
+    # Example Message methods
     @rpc_method(method_type="request")
     def echo(self, message: str) -> str:
         """Echo the input message."""
@@ -33,7 +33,8 @@ class RPCMethods(RPCHandler):
         if error:
             logger.error(f"Echo operation failed: {error}")
         else:
-            logger.debug(f"Echo: size:{len(result.get("message"))}")
+            #logger.debug(f"Echo: size:{result.get("message")}")
+            pass
 
     @rpc_method(method_type="request")
     def add(self, a: float, b: float) -> float:

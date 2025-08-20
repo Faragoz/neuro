@@ -3,9 +3,8 @@ __all__ = ['logger']
 
 # TODO: Generate documentations for GitHub Pages with mkdocs (read the docs)
 #  url: https://realpython.com/python-project-documentation-with-mkdocs/
-import logging
 
-from neuro_rpc.Logger import Logger
+from python.neuro_rpc.Logger import Logger
 
 # Initialize a Logger instance
 logger = Logger.get_logger("__neuro__")

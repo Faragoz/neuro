@@ -1,23 +1,23 @@
 import threading
 import time
 
-from neuro_rpc.RPCMessage import RPCRequest, RPCResponse
-from neuro_rpc.Logger import Logger
+from python.neuro_rpc.RPCMessage import RPCRequest, RPCResponse
+from python.neuro_rpc.Logger import Logger
 
 
 class RPCTracker:
     """
-    Dedicated class for tracking JSON-RPC 2.0 message flows.
+    Dedicated class for tracking JSON-Message 2.0 message flows.
     Handles request/response tracking, statistics and monitoring.
     """
 
-    def __init__(self, monitor_interval=1, cleanup_interval=60):
+    def __init__(self, monitor_interval=1, cleanup_interval=60, autostart=True):
         """
-        Initialize the RPC tracker.
+        Initialize the Message tracker.
 
         Args:
             monitor_interval: How often to check for timed-out requests (seconds)
-            cleanup_interval: How often to clean old tracking data (seconds)
+            cleanup_interval: How often to clean old tracking metadata (seconds)
         """
         self.logger = Logger.get_logger(self.__class__.__name__)
 
@@ -52,7 +52,8 @@ class RPCTracker:
 
         # TODO: Delete auto-start
         # Auto-start
-        self.start_monitoring()
+        if autostart:
+            self.start_monitoring()
 
     def start_monitoring(self, timeout_callback=None):
         """
@@ -76,7 +77,7 @@ class RPCTracker:
         self._monitor_thread.start()
 
         if self.logger:
-            self.logger.debug("RPC tracking monitor started")
+            self.logger.debug("Message tracking monitor started")
         return True
 
     def stop_monitoring(self):
@@ -93,11 +94,11 @@ class RPCTracker:
             return False
         else:
             if self.logger:
-                self.logger.debug("RPC tracking monitor stopped")
+                self.logger.debug("Message tracking monitor stopped")
             return True
 
     def _monitor_loop(self):
-        """Background thread that periodically monitors messages and cleans up old data."""
+        """Background thread that periodically monitors messages and cleans up old metadata."""
         last_cleanup = time.time()
 
         while not self._should_stop.is_set():
@@ -113,7 +114,7 @@ class RPCTracker:
                         if self.logger:
                             self.logger.error(f"Error in timeout callback: {e}")
 
-                # Periodically clean up old tracking data
+                # Periodically clean up old tracking metadata
                 now = time.time()
                 if now - last_cleanup > self.cleanup_interval:
                     cleaned = self.clean_tracking_data(self.cleanup_interval)
@@ -126,7 +127,7 @@ class RPCTracker:
 
             except Exception as e:
                 if self.logger:
-                    self.logger.error(f"Error in RPC tracking monitor: {e}")
+                    self.logger.error(f"Error in Message tracking monitor: {e}")
 
                 # Don't bombard with error messages if there's a persistent problem
                 time.sleep(min(self.monitor_interval, 10))
@@ -186,7 +187,7 @@ class RPCTracker:
             return self.stats.copy()
 
     def clean_tracking_data(self, max_age_seconds=3600):
-        """Clean up old tracking data."""
+        """Clean up old tracking metadata."""
         now = time.time()
         cleaned = 0
 

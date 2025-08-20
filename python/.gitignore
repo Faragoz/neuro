@@ -117,14 +117,10 @@ fabric.properties
 # End of https://www.toptal.com/developers/gitignore/api/pycharm
 
 # User ignored files
-**/.test/
 **/.idea/
-main.py
 /.idea/.gitignore
 /.idea/misc.xml
 /.idea/modules.xml
 /.idea/neuro.iml
 /.idea/inspectionProfiles/profiles_settings.xml
 /.idea/vcs.xml
-/neuro_rpc/RPCHandler3.py
-/neuro_rpc/RPCMethods3.py

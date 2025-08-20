@@ -1,16 +1,14 @@
 import code
-import threading
-import time
 import os
 import platform
 
-from neuro_rpc.Logger import Logger, LoggerConfig
-from neuro_rpc.Client import Client
+from python.neuro_rpc.Logger import Logger, LoggerConfig
+from python.neuro_rpc.Client import Client
 
 class Console:
     """
     A simple interactive console that allows user to manually start
-    an RPC client when needed.
+    an Message client when needed.
     """
 
     def __init__(self, client_config=None):
@@ -105,7 +103,7 @@ class Console:
         # Prepare the welcome message
         banner = """
 =================================================================
-RPC Client Interactive Console
+Message Client Interactive Console
 =================================================================
 
 The client is not thread_running yet. To start it, use:

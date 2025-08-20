@@ -1,18 +1,18 @@
 import inspect
 from typing import Callable, Dict, Any, Optional, Union
 
-from neuro_rpc.Benchmark import Benchmark
-from neuro_rpc.RPCTracker import RPCTracker
-from neuro_rpc.RPCMessage import RPCMessage, RPCRequest, RPCResponse, RPCError
-from neuro_rpc.Logger import Logger
+from python.neuro_rpc.Benchmark import Benchmark
+from python.neuro_rpc.RPCMessage import RPCMessage, RPCRequest, RPCResponse, RPCError
+from python.neuro_rpc.Logger import Logger
+import uuid
 
-# RPC Methods Decorator
+# Message Methods Decorator
 def rpc_method(method_type: str = "both", name: Optional[str] = None):
     """
-    Decorator to mark methods for RPC registration.
+    Decorator to mark methods for Message registration.
 
     :param method_type: Type of method - "request", "response", or "both"
-    :param name: Optional custom name for the RPC method
+    :param name: Optional custom name for the Message method
     """
 
     def decorator(func):
@@ -29,11 +29,11 @@ def rpc_method(method_type: str = "both", name: Optional[str] = None):
 
 
 class RPCHandler(RPCMessage):
-    """Handler for JSON-RPC 2.0 protocol operations."""
+    """Handler for JSON-Message 2.0 protocol operations."""
 
     def __init__(self):
-        """Initialize the RPC handler."""
-        # Initialize RPC Message Protocol
+        """Initialize the Message handler."""
+        # Initialize Message Message Protocol
         super().__init__()
 
         # Methods registry
@@ -72,9 +72,9 @@ class RPCHandler(RPCMessage):
 
     def register_request(self, method_name: str, method: Callable) -> None:
         """
-        Register a method to handle incoming JSON-RPC requests.
+        Register a method to handle incoming JSON-Message requests.
 
-        :param method_name: Name of the JSON-RPC method
+        :param method_name: Name of the JSON-Message method
         :param method: Callable to execute for this method
         """
         if not callable(method):
@@ -88,9 +88,9 @@ class RPCHandler(RPCMessage):
 
     def register_response(self, method_name: str, method: Callable) -> None:
         """
-        Register a method to handle incoming JSON-RPC responses.
+        Register a method to handle incoming JSON-Message responses.
 
-        :param method_name: Name of the JSON-RPC method
+        :param method_name: Name of the JSON-Message method
         :param method: Callable to handle responses for this method
         """
         if not callable(method):
@@ -109,7 +109,7 @@ class RPCHandler(RPCMessage):
 
     def create_request(self, method, params=None, request_id=None):
         """
-        Creates a JSON-RPC request message
+        Creates a JSON-Message request message
 
         Args:
             method (str): The method name to call
@@ -117,10 +117,10 @@ class RPCHandler(RPCMessage):
             request_id: Optional custom ID for the request
 
         Returns:
-            dict: A JSON-RPC request object
+            dict: A JSON-Message request object
         """
         if request_id is None:
-            request_id = self.next_request_id()
+            request_id = str(uuid.uuid4()) #self.next_request_id()
 
         # Create a proper RPCRequest object
         request = RPCRequest(method=method, id=request_id, params=params)
@@ -134,14 +134,14 @@ class RPCHandler(RPCMessage):
 
     def create_response(self, result, request_id):
         """
-        Creates a JSON-RPC response message
+        Creates a JSON-Message response message
 
         Args:
             result: The result of the method call
             request_id: The ID of the request this response corresponds to
 
         Returns:
-            dict: A JSON-RPC response object
+            dict: A JSON-Message response object
         """
         # Create a proper RPCResponse object
         response = RPCResponse(result=result, id=request_id)
@@ -155,15 +155,15 @@ class RPCHandler(RPCMessage):
 
     def create_error(self, error_type, data=None, id=None):
         """
-        Creates a JSON-RPC error response
+        Creates a JSON-Message error response
 
         Args:
             error_type: The error type (from RPCError constants)
-            data: Optional additional error data
+            data: Optional additional error metadata
             id: The ID this error is responding to
 
         Returns:
-            dict: A JSON-RPC error response object
+            dict: A JSON-Message error response object
         """
         # Create an RPCError object
         error = RPCError(error_type=error_type, data=data)
@@ -179,21 +179,23 @@ class RPCHandler(RPCMessage):
 
     def process_message(self, message: Union[Dict[str, Any], str, RPCMessage]) -> Optional[Dict[str, Any]]:
         """
-        Process an incoming JSON-RPC 2.0 message.
+        Process an incoming JSON-Message 2.0 message.
         Automatically determines if it's a request or a response and handles it accordingly.
 
-        :param message: The JSON-RPC message (dict, JSON string, or RPCMessage object)
+        :param message: The JSON-Message message (dict, JSON string, or RPCMessage object)
         :return: Response if it's a request, None if it's a response
         """
         try:
             # Handle different input types
             if isinstance(message, str):
                 try:
-                    rpc_message = RPCMessage.from_json(message)
+                    import json
+                    message = json.loads(message)#RPCMessage.from_json(message).to_dict()
                 except Exception as e:
                     self.logger.error(f"JSON parse error: {e}")
                     return self.create_error(RPCError.PARSE_ERROR)
-            elif isinstance(message, dict):
+
+            if isinstance(message, dict):
                 # Convert dict to appropriate RPCMessage object
                 if "method" in message:
                     try:
@@ -207,9 +209,7 @@ class RPCHandler(RPCMessage):
                         return self.create_error(RPCError.INVALID_REQUEST)
                 else:
                     return self.create_error(RPCError.INVALID_REQUEST)
-            elif isinstance(message, RPCMessage):
-                # Already an RPCMessage object
-                rpc_message = message
+
             else:
                 return self.create_error(RPCError.INVALID_REQUEST)
 
