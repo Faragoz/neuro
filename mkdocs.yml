@@ -1,0 +1,29 @@
+site_name: NeuroRPC Docs
+site_url: https://faragoz.github.io/neuro
+repo_url: https://github.com/faragoz/neuro
+
+theme:
+  name: material
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths:
+            - python
+          options:
+            show_source: true
+            docstring_style: google
+            merge_init_into_class: true
+nav:
+  - Home: index.md
+  - API Reference:
+      - Benchmark: reference/Benchmark.md
+      - Client: reference/Client.md
+      - Console: reference/Console.md
+      - Logger: reference/Logger.md
+      - Proxy: reference/Proxy.md
+      - RPCHandler: reference/RPCHandler.md
+      - RPCMessage: reference/RPCMessage.md
+      - RPCMethods: reference/RPCMethods.md
+      - RPCTracker: reference/RPCTracker.md
