@@ -3,7 +3,7 @@ site_url: https://faragoz.github.io/neuro
 repo_url: https://github.com/faragoz/neuro
 
 theme:
-  name: material
+  name: readthedocs
 plugins:
   - search
   - mkdocstrings:
