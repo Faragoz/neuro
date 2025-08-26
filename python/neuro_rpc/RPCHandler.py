@@ -1,3 +1,13 @@
+"""
+@file RPCHandler.py
+@brief Registration and dispatch of RPC request/response methods.
+@details Implements a handler for JSON-Message 2.0 (similar to JSON-RPC 2.0), providing:
+ - Method registration via the @rpc_method decorator.
+ - Creation of request, response, and error messages.
+ - Processing of incoming messages (both requests and responses).
+ - Integration with Benchmark to track latency and round-trip times.
+@note Acts as the bridge between raw JSON messages and Python method calls.
+"""
 import inspect
 from typing import Callable, Dict, Any, Optional, Union
 
@@ -9,10 +19,12 @@ import uuid
 # Message Methods Decorator
 def rpc_method(method_type: str = "both", name: Optional[str] = None):
     """
-    Decorator to mark methods for Message registration.
-
-    :param method_type: Type of method - "request", "response", or "both"
-    :param name: Optional custom name for the Message method
+    @brief Decorator to mark methods for RPC registration.
+    @details Annotates a function so that RPCHandler.register_methods()
+    can discover and register it as a request and/or response handler.
+    @param method_type str One of {"request", "response", "both"} (default "both").
+    @param name str Optional alias under which the method is registered.
+    @return Callable Decorated function.
     """
 
     def decorator(func):
@@ -29,10 +41,19 @@ def rpc_method(method_type: str = "both", name: Optional[str] = None):
 
 
 class RPCHandler(RPCMessage):
-    """Handler for JSON-Message 2.0 protocol operations."""
+    """
+    @brief Core handler for JSON-Message 2.0 operations.
+    @details Manages registration of request/response handlers,
+    creation of message objects, and routing of incoming messages.
+    Integrates with Benchmark to track requests/responses.
+    """
 
     def __init__(self):
-        """Initialize the Message handler."""
+        """
+        @brief Initialize the RPCHandler.
+        @details Creates registries for request/response methods,
+        sets up a Benchmark tracker, and initializes a logger.
+        """
         # Initialize Message Message Protocol
         super().__init__()
 
@@ -52,9 +73,9 @@ class RPCHandler(RPCMessage):
 
     def register_methods(self, instance) -> None:
         """
-        Register methods from an instance that are decorated with @rpc_method.
-
-        :param instance: Object instance containing decorated methods
+        @brief Register decorated methods from an instance.
+        @details Scans instance methods and registers those annotated with @rpc_method.
+        @param instance Any Object instance containing decorated methods.
         """
         for name, method in inspect.getmembers(instance, predicate=inspect.ismethod):
             if hasattr(method, "_is_rpc_method"):
@@ -72,10 +93,10 @@ class RPCHandler(RPCMessage):
 
     def register_request(self, method_name: str, method: Callable) -> None:
         """
-        Register a method to handle incoming JSON-Message requests.
-
-        :param method_name: Name of the JSON-Message method
-        :param method: Callable to execute for this method
+        @brief Register a request handler.
+        @param method_name str Name of the RPC method.
+        @param method Callable Function to call when this request is received.
+        @raises ValueError If the provided method is not callable.
         """
         if not callable(method):
             raise ValueError(f"Request handler for {method_name} must be callable")
@@ -88,10 +109,10 @@ class RPCHandler(RPCMessage):
 
     def register_response(self, method_name: str, method: Callable) -> None:
         """
-        Register a method to handle incoming JSON-Message responses.
-
-        :param method_name: Name of the JSON-Message method
-        :param method: Callable to handle responses for this method
+        @brief Register a response handler.
+        @param method_name str Name of the RPC method.
+        @param method Callable Function to call when a response is received.
+        @raises ValueError If the provided method is not callable.
         """
         if not callable(method):
             raise ValueError(f"Response handler for {method_name} must be callable")
@@ -103,21 +124,20 @@ class RPCHandler(RPCMessage):
         #self.logger.debug(f"Registered response method: {method_name}")
 
     def next_request_id(self) -> int:
-        """Generate a new unique request ID."""
+        """
+        @brief Generate a new request ID.
+        @return int Incremental request ID.
+        """
         self._request_id += 1
         return self._request_id
 
     def create_request(self, method, params=None, request_id=None):
         """
-        Creates a JSON-Message request message
-
-        Args:
-            method (str): The method name to call
-            params (dict, optional): Parameters to pass to the method
-            request_id: Optional custom ID for the request
-
-        Returns:
-            dict: A JSON-Message request object
+        @brief Create a JSON-Message request object.
+        @param method str Method name to call.
+        @param params dict|list Optional parameters for the request.
+        @param request_id str Optional custom request ID (UUID by default).
+        @return dict Serialized request object.
         """
         if request_id is None:
             request_id = str(uuid.uuid4()) #self.next_request_id()
@@ -134,14 +154,10 @@ class RPCHandler(RPCMessage):
 
     def create_response(self, result, request_id):
         """
-        Creates a JSON-Message response message
-
-        Args:
-            result: The result of the method call
-            request_id: The ID of the request this response corresponds to
-
-        Returns:
-            dict: A JSON-Message response object
+        @brief Create a JSON-Message response object.
+        @param result Any The result to return.
+        @param request_id str ID of the original request.
+        @return dict Serialized response object.
         """
         # Create a proper RPCResponse object
         response = RPCResponse(result=result, id=request_id)
@@ -155,15 +171,11 @@ class RPCHandler(RPCMessage):
 
     def create_error(self, error_type, data=None, id=None):
         """
-        Creates a JSON-Message error response
-
-        Args:
-            error_type: The error type (from RPCError constants)
-            data: Optional additional error metadata
-            id: The ID this error is responding to
-
-        Returns:
-            dict: A JSON-Message error response object
+        @brief Create a JSON-Message error object.
+        @param error_type str|dict Error type (see RPCError constants).
+        @param data Any Optional additional error details.
+        @param id str Optional ID of the related request.
+        @return dict Serialized error response object.
         """
         # Create an RPCError object
         error = RPCError(error_type=error_type, data=data)
@@ -179,11 +191,12 @@ class RPCHandler(RPCMessage):
 
     def process_message(self, message: Union[Dict[str, Any], str, RPCMessage]) -> Optional[Dict[str, Any]]:
         """
-        Process an incoming JSON-Message 2.0 message.
-        Automatically determines if it's a request or a response and handles it accordingly.
-
-        :param message: The JSON-Message message (dict, JSON string, or RPCMessage object)
-        :return: Response if it's a request, None if it's a response
+        @brief Process an incoming JSON-Message.
+        @details Parses input (string/dict/RPCMessage), converts to RPCRequest or RPCResponse,
+        and dispatches to the appropriate handler. Returns a response dict if needed.
+        @param message dict|str|RPCMessage Incoming message.
+        @return dict|None Response dict if request, None if response.
+        @raises RPCError If message is invalid or cannot be parsed.
         """
         try:
             # Handle different input types
@@ -231,10 +244,10 @@ class RPCHandler(RPCMessage):
 
     def _process_request(self, request: Union[Dict[str, Any], RPCRequest]) -> Dict[str, Any]:
         """
-        Process an incoming request.
-
-        :param request: The request object or dictionary
-        :return: Response dictionary
+        @brief Process an incoming RPCRequest.
+        @details Validates method existence and parameters, invokes callback, and returns a response dict.
+        @param request dict|RPCRequest Incoming request.
+        @return dict Serialized response or error.
         """
         # Convert dict to RPCRequest if needed
         if isinstance(request, dict):
@@ -296,9 +309,9 @@ class RPCHandler(RPCMessage):
 
     def _process_response(self, response: Union[Dict[str, Any], RPCResponse]) -> None:
         """
-        Process an incoming response.
-
-        :param response: The response object or dictionary
+        @brief Process an incoming RPCResponse.
+        @details Routes result/error to the appropriate registered response handler.
+        @param response dict|RPCResponse Incoming response.
         """
         # Convert dict to RPCResponse if needed
         if isinstance(response, dict):

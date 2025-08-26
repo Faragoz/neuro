@@ -1,3 +1,11 @@
+"""
+@file Proxy.py
+@brief Conversion utilities between Python dictionaries/tuples and LabVIEW Clusters.
+@details Provides serialization and deserialization helpers to encode/decode nested
+data structures into LabVIEW's Cluster representation. Also integrates with RPCRequest/RPCResponse
+to support actor-style communication with LabVIEW classes.
+@note Extends ClusterConverter from `python.labview_data.type_converters`.
+"""
 from python.labview_data.types import Cluster
 from python.labview_data.utils import SerializationData, HeaderInfo, DeserializationData
 from python.labview_data.type_converters import ClusterConverter
@@ -7,9 +15,18 @@ import json
 
 from python.neuro_rpc.RPCMessage import RPCRequest, RPCResponse
 
-
 class NpEncoder(json.JSONEncoder):
+    """
+    @brief JSON encoder for NumPy data types.
+    @details Converts numpy.integer, numpy.floating, and numpy.ndarray into standard Python
+    int, float, and list for JSON serialization compatibility.
+    """
     def default(self, obj):
+        """
+        @brief Override JSON encoding for NumPy objects.
+        @param obj Any Object to encode.
+        @return Encoded Python-native type.
+        """
         if isinstance(obj, np.integer):
             return int(obj)
         if isinstance(obj, np.floating):
@@ -19,9 +36,21 @@ class NpEncoder(json.JSONEncoder):
         return super().default(obj)
 
 class Proxy(ClusterConverter):
+    """
+    @class Proxy.py
+    @brief Proxy class to convert between Python dicts and LabVIEW Cluster bytes.
+    @details Implements bidirectional mapping of nested dict/tuple structures to LabVIEW Cluster format,
+    supporting serialization for sending RPC requests and deserialization of responses.
+    """
     Actor = {"Class name": "", "Priority": np.int32(2), "Data": {}}
 
     def dict_to_tuple(self, d: dict) -> tuple[list, list]:
+        """
+        @brief Convert a dictionary into a (values, keys) tuple.
+        @details Recursively descends into nested dictionaries to preserve structure.
+        @param d dict Input dictionary.
+        @return tuple (values, keys) representing the dict in cluster-compatible form.
+        """
         keys = list(d.keys())
         values = []
         for k in keys:
@@ -34,8 +63,10 @@ class Proxy(ClusterConverter):
 
     def tuple_to_dict(self, values_keys) -> dict:
         """
-        Convierte la tupla (values, keys) en dict,
-        descendiendo recursivamente donde encuentre más tuplas de esa forma.
+        @brief Convert a (values, keys) tuple back into a dictionary.
+        @details Recursively reconstructs nested dictionaries from tuple representations.
+        @param values_keys tuple (values, keys) pair.
+        @return dict Reconstructed dictionary.
         """
         values, keys = values_keys
         result = {}
@@ -58,8 +89,12 @@ class Proxy(ClusterConverter):
                                    encoding: str = "ansi") \
             -> tuple[bytes, dict]:
         """
-        Serializa el tuple (values, keys) en un Cluster (flat_buffer bytes) y devuelve,
-        además, un árbol de metadatos con headers, claves y posición de cada sub-cluster.
+        @brief Serialize a (values, keys) tuple into a LabVIEW Cluster flat buffer.
+        @details Returns both the serialized bytes and a metadata tree describing the structure.
+        @param tup tuple (values, keys) representation of the cluster.
+        @param sdata SerializationData Optional serialization metadata (default version=0).
+        @param encoding str Encoding to use for nested buffers (default "ansi").
+        @return tuple(bytes flat_buffer, dict metadata_tree).
         """
         if sdata is None:
             sdata = SerializationData(version=0)
@@ -99,9 +134,12 @@ class Proxy(ClusterConverter):
                                     sdata: SerializationData = None,
                                     encoding: str = "ansi") -> tuple[list, list]:
         """
-        Reconstruye la tupla (values, keys) a partir de:
-          - raw_bytes: flat_buffer() del cluster de nivel actual
-          - hdr_tree : dict con 'header', 'keys' y 'children' (posiciones + subárboles)
+        @brief Reconstruct a (values, keys) tuple from Cluster bytes and metadata tree.
+        @param raw_bytes bytes Flat buffer for the cluster.
+        @param hdr_tree dict Metadata tree including headers, keys, and children.
+        @param sdata SerializationData Optional deserialization context.
+        @param encoding str Encoding used for string payloads (default "ansi").
+        @return tuple(list values, list keys).
         """
 
         if sdata is None:
@@ -133,6 +171,12 @@ class Proxy(ClusterConverter):
         return vals, keys
 
     def to_act(self, Message):
+        """
+        @brief Convert an RPCRequest/Message dict into a LabVIEW Actor Cluster.
+        @details Prepares an "Actor" structure with class name and payload for LabVIEW actors.
+        @param Message dict|RPCRequest Message to encode.
+        @return tuple(bytes flat_buffer, dict metadata_tree).
+        """
         if isinstance(Message, RPCRequest):
             Message = Message.to_dict()
 
@@ -148,6 +192,12 @@ class Proxy(ClusterConverter):
 
 
     def from_act(self, raw_bytes: bytes, hdr_tree: dict):
+        """
+        @brief Convert LabVIEW Actor Cluster bytes back into an RPCResponse.
+        @param raw_bytes bytes Cluster flat buffer.
+        @param hdr_tree dict Metadata tree from serialization.
+        @return dict RPCResponse serialized as dictionary.
+        """
         recovered_vals, recovered_keys = self.from_cluster_bytes_and_tree(raw_bytes, hdr_tree)
         dict = self.tuple_to_dict((recovered_vals, recovered_keys))
         id = dict["Data"].pop("id")
@@ -155,6 +205,7 @@ class Proxy(ClusterConverter):
         return RPCResponse(id=id, result=dict["Data"]).to_dict()
 
 if __name__ == '__main__':
+    # Example usage for debugging
     id = "6b371397-9fbe-4d90-9283-6aec836abe68"#str(uuid.uuid4())
     RPC = RPCRequest(method='echo reply', id=id, params={"Message": "", "exec_time": 0}).to_dict()
 

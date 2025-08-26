@@ -1,3 +1,11 @@
+"""
+@file RPCMethods.py
+@brief Example RPC methods built on top of RPCHandler.
+@details Provides a container of request/response methods for testing and demonstration.
+Includes echo, add, subtract, and a default response handler.
+Can be extended with custom RPC logic as needed.
+@note Uses the @rpc_method decorator to auto-register methods with RPCHandler.
+"""
 from typing import Any
 import json
 
@@ -5,13 +13,16 @@ from python.neuro_rpc import logger
 from python.neuro_rpc.RPCHandler import RPCHandler, rpc_method
 
 class RPCMethods(RPCHandler):
-    """Container for Message methods with handler delegation."""
+    """
+    @brief Container for RPC methods.
+    @details Extends RPCHandler and defines example request/response methods
+    that are automatically registered at initialization if `auto_register=True`.
+    """
 
     def __init__(self, auto_register: bool = True):
         """
-        Initialize the Message methods container.
-
-        :param auto_register: Whether to automatically register methods with the handler
+        @brief Initialize the RPCMethods container.
+        @param auto_register bool If True, automatically registers decorated methods.
         """
         super().__init__()
 
@@ -23,13 +34,22 @@ class RPCMethods(RPCHandler):
     # Example Message methods
     @rpc_method(method_type="request")
     def echo(self, message: str) -> str:
-        """Echo the input message."""
+        """
+        @brief RPC request method: echo a message.
+        @param message str String to echo back.
+        @return str The same message that was received.
+        """
         #logger.debug(f"Echo request received: {message}")
         return message
 
     @rpc_method(method_type="response", name="echo")
     def handle_echo_response(self, id: Any = None, result: Any = None, error: Any = None) -> None:
-        """Handle response from add request."""
+        """
+        @brief Response handler for echo.
+        @param id Any ID of the corresponding request.
+        @param result Any Result content (dict with "message").
+        @param error Any Error object if the request failed.
+        """
         if error:
             logger.error(f"Echo operation failed: {error}")
         else:
@@ -38,13 +58,23 @@ class RPCMethods(RPCHandler):
 
     @rpc_method(method_type="request")
     def add(self, a: float, b: float) -> float:
-        """Add two numbers."""
+        """
+        @brief RPC request method: add two numbers.
+        @param a float First number.
+        @param b float Second number.
+        @return float Sum of a and b.
+        """
         #logger.debug(f"Add request: {a} + {b}")
         return a + b
 
     @rpc_method(method_type="response", name="add")
     def handle_add_response(self, id: Any = None, result: Any = None, error: Any = None) -> None:
-        """Handle response from add request."""
+        """
+        @brief Response handler for add.
+        @param id Any ID of the corresponding request.
+        @param result Any Result (sum).
+        @param error Any Error object if the request failed.
+        """
         if error:
             logger.error(f"Add operation failed: {error}")
         else:
@@ -52,13 +82,23 @@ class RPCMethods(RPCHandler):
 
     @rpc_method(method_type="request")
     def subtract(self, a: float, b: float) -> float:
-        """Subtract b from a."""
+        """
+        @brief RPC request method: subtract b from a.
+        @param a float Minuend.
+        @param b float Subtrahend.
+        @return float Result of a - b.
+        """
         #logger.debug(f"Subtract request: {a} - {b}")
         return a - b
 
     @rpc_method(method_type="response", name="subtract")
     def handle_subtract_response(self, id: Any = None, result: Any = None, error: Any = None) -> None:
-        """Handle response from subtract request."""
+        """
+        @brief Response handler for subtract.
+        @param id Any ID of the corresponding request.
+        @param result Any Result (difference).
+        @param error Any Error object if the request failed.
+        """
         if error:
             logger.error(f"Subtract operation failed: {error}")
         else:
@@ -67,7 +107,13 @@ class RPCMethods(RPCHandler):
     # Default handling
     @rpc_method(method_type="response", name="default")
     def default_response_handler(self, id: Any = None, result: Any = None, error: Any = None) -> None:
-        """Default handler for responses without specific handlers."""
+        """
+        @brief Default response handler.
+        @details Invoked if no specific handler is registered for a response.
+        @param id Any ID of the response.
+        @param result Any Result payload if success.
+        @param error Any Error payload if failure.
+        """
         if error:
             logger.warning(f"Unhandled response error for ID {id}: {error}")
         else:

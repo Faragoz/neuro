@@ -1,3 +1,12 @@
+"""
+@file RPCTracker.py
+@brief Message tracking utility for JSON-Message 2.0 protocol.
+@details Tracks outgoing/incoming requests and responses, monitors for timeouts,
+keeps statistics, and runs an optional background monitoring thread.
+Designed for integration with RPCHandler and Benchmark to provide runtime visibility
+of pending and completed RPC calls.
+@note Thread-safe using locks; intended for long-running client/server sessions.
+"""
 import threading
 import time
 
@@ -7,17 +16,17 @@ from python.neuro_rpc.Logger import Logger
 
 class RPCTracker:
     """
-    Dedicated class for tracking JSON-Message 2.0 message flows.
-    Handles request/response tracking, statistics and monitoring.
+    @brief Tracks request/response lifecycle for RPC messages.
+    @details Maintains dictionaries of outgoing/incoming requests and responses,
+    updates statistics, and detects timeouts via a background thread.
     """
 
     def __init__(self, monitor_interval=1, cleanup_interval=60, autostart=True):
         """
-        Initialize the Message tracker.
-
-        Args:
-            monitor_interval: How often to check for timed-out requests (seconds)
-            cleanup_interval: How often to clean old tracking metadata (seconds)
+        @brief Initialize RPCTracker.
+        @param monitor_interval int Interval in seconds to check for timeouts.
+        @param cleanup_interval int Interval in seconds to clean old entries.
+        @param autostart bool Whether to immediately start monitoring.
         """
         self.logger = Logger.get_logger(self.__class__.__name__)
 
@@ -57,10 +66,9 @@ class RPCTracker:
 
     def start_monitoring(self, timeout_callback=None):
         """
-        Start the background monitoring thread.
-
-        Args:
-            timeout_callback: Function to call when timeouts are detected
+        @brief Start the background monitoring thread.
+        @param timeout_callback Callable Optional callback called with a list of timed-out requests.
+        @return bool True if started, False if already running.
         """
         if self._monitor_thread is not None and self._monitor_thread.is_alive():
             if self.logger:
@@ -81,7 +89,10 @@ class RPCTracker:
         return True
 
     def stop_monitoring(self):
-        """Stop the background monitoring thread."""
+        """
+        @brief Stop the background monitoring thread.
+        @return bool True if stopped cleanly, False otherwise.
+        """
         if self._monitor_thread is None or not self._monitor_thread.is_alive():
             return False
 
@@ -98,7 +109,10 @@ class RPCTracker:
             return True
 
     def _monitor_loop(self):
-        """Background thread that periodically monitors messages and cleans up old metadata."""
+        """
+        @brief Background loop that monitors timeouts and cleans old entries.
+        @note Calls timeout_callback if provided.
+        """
         last_cleanup = time.time()
 
         while not self._should_stop.is_set():
@@ -133,7 +147,11 @@ class RPCTracker:
                 time.sleep(min(self.monitor_interval, 10))
 
     def track_outgoing_request(self, request: RPCRequest, timeout=60):
-        """Track a request we're sending to a remote service."""
+        """
+        @brief Track an outgoing request.
+        @param request RPCRequest Request object being sent.
+        @param timeout int Timeout in seconds for this request.
+        """
         with self._tracking_lock:
             #self.logger.debug(f"Tracking outgoing request [{timeout}s]: {request.to_dict()}")
             self.outgoing_requests[request.id] = (time.time(), request.method, timeout)
@@ -143,14 +161,20 @@ class RPCTracker:
     #  incoming_request and outgoing_response doesn't (?) support exec_time.
     #  Check RPCRequest and related methods to add this functionality.
     def track_incoming_request(self, request: RPCRequest):
-        """Track a request received from a server."""
+        """
+        @brief Track an incoming request from server.
+        @param request RPCRequest Request object received.
+        """
         with self._tracking_lock:
             self.logger.debug(f"Tracking incoming request: {request}")
             self.incoming_requests[request.id] = (time.time(), request.method)
             self.stats["incoming_requests_count"] += 1
 
     def track_outgoing_response(self, response: RPCResponse):
-        """Track a response we're sending to a server."""
+        """
+        @brief Track an outgoing response.
+        @param response RPCResponse Response object being sent.
+        """
         with self._tracking_lock:
             self.logger.debug(f"Tracking outgoing response: {response.id}, {response.is_success}")
             # Remove the incoming request that this response addresses
@@ -161,7 +185,10 @@ class RPCTracker:
             self.stats["outgoing_responses_count"] += 1
 
     def track_incoming_response(self, response: RPCResponse):
-        """Track a response we've received from a remote service."""
+        """
+        @brief Track an incoming response from server.
+        @param response RPCResponse Response object received.
+        """
         with self._tracking_lock:
             #self.logger.debug(f"Tracking incoming response: {response.to_dict()}")
             '''self.incoming_responses[response.id] = (time.time(), response.is_success)
@@ -181,13 +208,20 @@ class RPCTracker:
                     self.logger.warning(f"Received response for unknown request ID: {response.id}")
 
     def get_statistics(self):
-        """Get statistics about message handling."""
+        """
+        @brief Get current statistics snapshot.
+        @return dict Copy of statistics counters.
+        """
         with self._tracking_lock:
             # Create a copy to avoid threading issues
             return self.stats.copy()
 
     def clean_tracking_data(self, max_age_seconds=3600):
-        """Clean up old tracking metadata."""
+        """
+        @brief Remove old tracking entries.
+        @param max_age_seconds int Max age in seconds to keep entries.
+        @return int Number of entries cleaned.
+        """
         now = time.time()
         cleaned = 0
 
@@ -202,9 +236,8 @@ class RPCTracker:
 
     def monitor_messages(self):
         """
-        Monitor all message types, checking for issues like timed-out requests.
-
-        :return: Dictionary with monitoring information
+        @brief Inspect current requests for timeouts and pending states.
+        @return dict Dictionary with lists of timed-out and pending requests.
         """
         now = time.time()
         results = {

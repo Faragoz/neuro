@@ -1,8 +1,22 @@
+"""
+@file RPCMessage.py
+@brief Message and error classes for JSON-Message 2.0 protocol.
+@details Provides base classes for JSON-Message 2.0 communication (similar to JSON-RPC 2.0):
+ - RPCError: structured error objects.
+ - RPCMessage: base class for all messages.
+ - RPCRequest: request with method, params, and id.
+ - RPCResponse: response with result or error.
+@note Ensures compatibility with NeuroRPC stack (Client, RPCHandler, Benchmark).
+"""
 from typing import Any, Dict, Optional, Union, List
 import json
 
 class RPCError(Exception):
-    """Exception class for JSON-Message 2.0 errors."""
+    """
+    @brief Exception class for JSON-Message 2.0 errors.
+    @details Encapsulates standard and implementation-specific error codes
+    as structured dictionaries, used for request/response validation.
+    """
 
     # Standard JSON-Message 2.0 error codes
     PARSE_ERROR = {"code": -32700, "message": "Parse error"}
@@ -16,6 +30,11 @@ class RPCError(Exception):
     SERVER_ERROR = {"code": -32001, "message": "Client error"}
 
     def __init__(self, error_type=None, data: Any = None):
+        """
+        @brief Initialize RPCError with a given type and optional metadata.
+        @param error_type str|dict One of the error constants or a full error dict.
+        @param data Any Optional additional metadata (attached as "metadata" field).
+        """
         if isinstance(error_type, dict):
             # Direct error dictionary provided
             self.error_type = None  # No type name when direct dict is used
@@ -30,7 +49,12 @@ class RPCError(Exception):
         super().__init__(f"{self.error['code']}: {self.error['message']} - {data if data else ''}")
 
     def _create_error(self, error_type: str, data: Any = None) -> Dict[str, Any]:
-        """Create a standard error object."""
+        """
+        @brief Create a standard error object from a type and metadata.
+        @param error_type str Error type name (must map to a class constant).
+        @param data Any Optional metadata.
+        @return dict Error object with code, message, and optional metadata.
+        """
         error = getattr(self, error_type, self.INTERNAL_ERROR).copy()
 
         if data is not None:
@@ -39,22 +63,37 @@ class RPCError(Exception):
         return error
 
 class RPCMessage:
-    """Base class for JSON-Message 2.0 messages."""
+    """
+    @brief Base class for JSON-Message 2.0 messages.
+    @details Defines the `jsonrpc` version and common serialization/deserialization helpers.
+    """
 
     def __init__(self):
+        """@brief Initialize with version '2.0'."""
         self.jsonrpc = "2.0"
 
     def to_dict(self) -> Dict[str, Any]:
-        """Convert the message to a dictionary."""
+        """
+        @brief Serialize the message to a dictionary.
+        @return dict Dictionary containing the jsonrpc version.
+        """
         return {"jsonrpc": self.jsonrpc}
 
     def to_json(self) -> str:
-        """Convert the message to a JSON string."""
+        """
+        @brief Serialize the message to a JSON string.
+        @return str JSON string with message content.
+        """
         return json.dumps(self.to_dict())
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> 'RPCMessage':
-        """Create message from dictionary."""
+        """
+        @brief Validate and create a message from dictionary.
+        @param data dict Dictionary to parse.
+        @return RPCMessage Instance of the base class.
+        @raises RPCError If input is not dict or version is invalid.
+        """
         if not isinstance(data, dict):
             raise RPCError(RPCError.INVALID_REQUEST, "Data must be a dictionary")
         if data.get("jsonrpc") != "2.0":
@@ -63,7 +102,12 @@ class RPCMessage:
 
     @classmethod
     def from_json(cls, json_str: str) -> 'RPCMessage':
-        """Create message from JSON string."""
+        """
+        @brief Create message from JSON string.
+        @param json_str str Input JSON string.
+        @return RPCMessage Parsed object.
+        @raises RPCError If parsing fails.
+        """
         try:
             data = json.loads(json_str)
             return cls.from_dict(data)
@@ -71,16 +115,28 @@ class RPCMessage:
             raise RPCError(RPCError.PARSE_ERROR, "Invalid JSON string")
 
 class RPCRequest(RPCMessage):
-    """Class representing a JSON-Message 2.0 request."""
+    """
+    @brief JSON-Message 2.0 Request.
+    @details Contains method name, parameters, and identifier (id).
+    Supports both positional (list) and named (dict) parameters.
+    """
 
     def __init__(self, method: str, id: Any = None, params: Optional[Union[Dict, List]] = None):
+        """
+        @param method str Method name to call.
+        @param id Any Optional identifier for correlation (can be None for notifications).
+        @param params dict|list Optional parameters for the call.
+        """
         super().__init__()
         self.method = method
         self.id = id
         self.params = params
 
     def to_dict(self) -> Dict[str, Any]:
-        """Convert the request to a dictionary."""
+        """
+        @brief Serialize the request to a dictionary.
+        @return dict Request with jsonrpc, method, id, and params.
+        """
         request = super().to_dict()
         request["method"] = self.method
 
@@ -94,7 +150,12 @@ class RPCRequest(RPCMessage):
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> 'RPCRequest':
-        """Create request from dictionary."""
+        """
+        @brief Create a request from dictionary.
+        @param data dict Input dictionary.
+        @return RPCRequest Parsed request.
+        @raises RPCError If validation fails.
+        """
         RPCMessage.from_dict(data)  # Validate base message
 
         if "method" not in data or not isinstance(data["method"], str):
@@ -108,13 +169,28 @@ class RPCRequest(RPCMessage):
 
     @property
     def is_notification(self) -> bool:
-        """Check if this request is a notification (no ID)."""
+        """
+        @brief Check if this request is a notification.
+        @details Notifications do not have an id and therefore do not expect a response.
+        @return bool True if id is None.
+        """
         return self.id is None
 
 class RPCResponse(RPCMessage):
-    """Class representing a JSON-Message 2.0 response."""
+    """
+    @brief JSON-Message 2.0 Response.
+    @details Contains either a `result` or an `error`, but never both.
+    Optionally includes execution time (exec_time) for benchmarking.
+    """
 
     def __init__(self, id: Any, result: Any = None, error: Optional[Dict[str, Any]] = None, exec_time: Optional[int] = None,):
+        """
+        @param id Any ID of the original request.
+        @param result Any Optional result of the request.
+        @param error dict Optional error object.
+        @param exec_time int Optional execution time (μs, provided by server).
+        @raises RPCError If both result and error are provided.
+        """
         super().__init__()
         self.id = id
 
@@ -127,7 +203,10 @@ class RPCResponse(RPCMessage):
         self.exec_time = exec_time
 
     def to_dict(self) -> Dict[str, Any]:
-        """Convert the response to a dictionary."""
+        """
+        @brief Serialize the response to a dictionary.
+        @return dict Response with jsonrpc, id, and either result or error.
+        """
         response = super().to_dict()
         response["id"] = self.id
 
@@ -143,7 +222,12 @@ class RPCResponse(RPCMessage):
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> 'RPCResponse':
-        """Create response from dictionary."""
+        """
+        @brief Create a response from dictionary.
+        @param data dict Input dictionary.
+        @return RPCResponse Parsed response.
+        @raises RPCError If validation fails.
+        """
         RPCMessage.from_dict(data)  # Validate base message
 
         if "id" not in data:
@@ -164,10 +248,16 @@ class RPCResponse(RPCMessage):
 
     @property
     def is_error(self) -> bool:
-        """Check if this response is an error response."""
+        """
+        @brief Check if this response is an error response.
+        @return bool True if error is not None.
+        """
         return self.error is not None
 
     @property
     def is_success(self) -> bool:
-        """Check if this response is a success response."""
+        """
+        @brief Check if this response is a success response.
+        @return bool True if error is None.
+        """
         return self.error is None

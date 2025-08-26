@@ -1,3 +1,12 @@
+"""
+@file Logger.py
+@brief Colorized, structured logging utilities for the NeuroRPC stack.
+@details Provides a compact ANSI color formatter and a reusable Logger factory.
+All modules (Client, Benchmark, RPC stack, Console) use this centralized logging
+infrastructure to ensure consistent formatting and runtime readability.
+@note Uses colorama for cross-platform color handling. Verbosity can be adjusted dynamically.
+"""
+
 import logging
 
 from colorama import Fore, Back, Style, init
@@ -7,7 +16,9 @@ init(autoreset=True)
 
 class ColoredFormatter(logging.Formatter):
     """
-    Custom Formatter that applies colors to log levels using ANSI codes.
+    @brief Minimal ANSI color formatter.
+    @details Extends logging.Formatter to prepend log messages with ANSI color codes
+    depending on the log level. Colors are reset automatically after each message.
     """
     COLORS = {
         logging.DEBUG: Fore.BLUE,
@@ -20,7 +31,10 @@ class ColoredFormatter(logging.Formatter):
 
     def format(self, record):
         """
-        Overrides the default format method to add color to log levels.
+        @brief Apply color formatting to a log record.
+        @param record logging.LogRecord Log record object to format.
+        @return str Formatted string with ANSI colors.
+        @note Original message content is preserved; only colored prefix/suffix is added.
         """
         msg = super().format(record)
         color = self.COLORS.get(record.levelno, self.RESET)
@@ -29,7 +43,10 @@ class ColoredFormatter(logging.Formatter):
 
 class Logger(logging.Logger):
     """
-    Custom Logger with ANSI-colored logging and support for flexible handlers.
+    @class Logger
+    @brief Factory for module-level loggers with a shared format.
+    @details Ensures all modules share a consistent format and color scheme.
+    Provides caching of Logger instances by name, synchronized levels, and verbosity toggling.
     """
     DEBUG = logging.DEBUG
     INFO = logging.INFO
@@ -42,6 +59,10 @@ class Logger(logging.Logger):
 
     @staticmethod
     def print_loggers():
+        """
+        @brief Print currently registered loggers.
+        @details Useful for debugging which loggers are active and their configuration.
+        """
         #= lambda: print(Logger._instances)
         for name, logger in Logger._instances.items():
             print(f"{name}: {logger} {logger.handlers} {logger.level}")
@@ -49,21 +70,24 @@ class Logger(logging.Logger):
     @staticmethod
     def get_logger(name="__neuro__", level=logging.DEBUG, verbose=True):
         """
-        Get or create a logger instance with the given name.
-
-        Args:
-            name (str): Logger name
-            level (int): Logging level
-            verbose (bool): Whether to use verbose format
-
-        Returns:
-            Logger: The logger instance for the given name
+        @brief Get or create a configured logger.
+        @param name str Logger identifier (typically module or class name).
+        @param level int Log level (default DEBUG).
+        @param verbose bool Whether to include extended context (process/thread info).
+        @return Logger Configured logger instance.
+        @note Attaches a StreamHandler on first creation.
         """
         if name not in Logger._instances:
             Logger._instances[name] = Logger(name, level, verbose)
         return Logger._instances[name]
 
     def __init__(self, name: str, level=logging.DEBUG, verbose: bool = True):
+        """
+        @brief Initialize a Logger instance.
+        @param name str Name of the logger.
+        @param level int Log level.
+        @param verbose bool Whether verbose format is enabled.
+        """
         super().__init__(name, level)
 
         # Set up attributes
@@ -82,7 +106,8 @@ class Logger(logging.Logger):
 
     def _set_formatter(self) -> None:
         """
-        Configure the formatter for the stream handler.
+        @brief Configure formatter for the stream handler.
+        @details Chooses between compact and verbose formats depending on verbosity flag.
         """
         info = '[%(levelname)s] [%(name)s] [%(module)s:%(lineno)d] - %(message)s'
         if self.verbose:
@@ -92,19 +117,25 @@ class Logger(logging.Logger):
 
     def setLevel(self, level) -> None:
         """
-        Override logger level setter to synchronize both logger and stream handler levels.
+        @brief Override setLevel to synchronize handler level.
+        @param level int New log level.
         """
         super().setLevel(level)
         self.stream_handler.setLevel(level)  # Ensure handler level matches logger level
 
     def setVerbose(self, verbose: bool) -> None:
         """
-        Dynamically updates the verbosity and re-applies the formatter.
+        @brief Dynamically update verbosity and re-apply formatter.
+        @param verbose bool True for detailed context, False for compact output.
         """
         self.verbose = verbose
         self._set_formatter()
 
     def test(self) -> None:
+        """
+        @brief Emit test messages at all levels.
+        @details Useful for verifying logger color and format configuration.
+        """
         # Log messages of different levels
         self.debug("This is a DEBUG message.")
         self.info("This is an INFO message.")
@@ -113,9 +144,18 @@ class Logger(logging.Logger):
         self.critical("This is a CRITICAL message.")
 
 class LoggerConfig:
+    """
+    @class LoggerConfig
+    @brief Default logging configuration holder.
+    @details Provides presets for production, development, and per-component debugging.
+    """
+
     @staticmethod
     def configure_for_production():
-        """Configure all loggers for production environment"""
+        """
+        @brief Configure all loggers for production.
+        @details Sets INFO level and disables verbose formatting.
+        """
         # Configurar loggers por defecto
         for name, logger_instance in Logger._instances.items():
             logger_instance.setLevel(logging.INFO)
@@ -124,14 +164,23 @@ class LoggerConfig:
 
     @staticmethod
     def configure_for_development():
-        """Configure all loggers for development environment"""
+        """
+        @brief Configure all loggers for development.
+        @details Sets DEBUG level and enables verbose formatting.
+        """
         for name, logger_instance in Logger._instances.items():
             logger_instance.setLevel(logging.DEBUG)
             logger_instance.setVerbose(True)
 
     @staticmethod
     def configure_for_debugging(component_name, level=logging.DEBUG, verbose=True):
-        """Configure a specific component for detailed debugging"""
+        """
+        @brief Configure a specific component for debugging.
+        @param component_name str Name of the component/logger.
+        @param level int Log level (default DEBUG).
+        @param verbose bool Verbosity flag.
+        @note Creates a new logger if not already registered.
+        """
         if component_name in Logger._instances:
             Logger._instances[component_name].setLevel(level)
             Logger._instances[component_name].setVerbose(verbose)
