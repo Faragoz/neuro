@@ -1,10 +1,14 @@
 """
-@file Benchmark.py
-@brief Benchmarking mixin to track round-trip/network latency and execution time for RPC calls.
-@details This module is part of the NeuroRPC library for low-latency closed-loop experiments integrating Python and LabVIEW (NI Linux RT).
-It extends the RPCTracker with the ability to record request/response samples, compute execution and network latencies,
-and export results in multiple formats (JSON, CSV, Excel).
-@note All time metrics are stored in milliseconds; timestamps use both wall-clock (time.time) and high-precision counters (time.perf_counter).
+Benchmarking utilities to track round-trip/network latency and execution time for RPC calls.
+
+This module is part of the NeuroRPC library for low-latency closed-loop experiments
+integrating Python and LabVIEW (NI Linux RT). It extends the RPCTracker with the ability
+to record request/response samples, compute execution and network latencies, and export
+results in multiple formats (JSON, CSV, Excel).
+
+Notes:
+    - All time metrics are stored in milliseconds.
+    - Timestamps use both wall-clock (time.time) and high-precision counters (time.perf_counter).
 """
 
 import time
@@ -17,16 +21,17 @@ from python.neuro_rpc.RPCTracker import RPCTracker
 
 class Sample:
     """
-    @brief Represents a single request-response pair with timing and size metadata.
-    @details Each Sample records request and response timestamps, payload sizes,
-    and computed metrics such as execution time (on the server), total latency,
+    Represents a single request-response pair with timing and size metadata.
+
+    Each sample records request and response timestamps, payload sizes, and computed
+    metrics such as execution time (server side), total latency (request→response),
     and estimated network latency.
     """
     def __init__(self):
         """
-        @brief Initialize an empty Sample object.
-        @details All timestamps are initialized to None and metrics to 0.
-        @return None
+        Initialize an empty Sample.
+
+        All timestamps are initialized to None and metrics to 0.
         """
         self.request = {
             'timestamp': None,
@@ -46,8 +51,10 @@ class Sample:
 
     def to_dict(self):
         """
-        @brief Serialize the Sample into a plain dictionary.
-        @return dict containing request, response, and metrics fields.
+        Serialize the sample to a plain dictionary.
+
+        Returns:
+            dict: A dictionary with ``request``, ``response``, and ``metrics`` fields.
         """
         return {
             'request': self.request,
@@ -57,16 +64,17 @@ class Sample:
 
 class BenchmarkRun:
     """
-    @brief Represents a full benchmark run containing multiple samples and statistics.
-    @details A BenchmarkRun groups samples under a common identifier and stores timing information
-    (start/end/duration) as well as aggregate statistics (average execution time, total latency, etc.).
+    Represents a full benchmark run containing multiple samples and statistics.
+
+    A BenchmarkRun groups samples under a common identifier and stores timing
+    information (start/end/duration) as well as aggregate statistics
+    (average execution time, total latency, network latency).
     """
     def __init__(self):
         """
-        @brief Initialize an empty BenchmarkRun object.
-        @details All timing fields are None until the run is started,
-        and stats are initialized to zero.
-        @return None
+        Initialize an empty BenchmarkRun.
+
+        Timing fields are None until the run is started; stats are initialized to zero.
         """
         self.timing = {
             'start_time': None,
@@ -83,9 +91,12 @@ class BenchmarkRun:
 
     def to_dict(self):
         """
-        @brief Serialize the BenchmarkRun to a dictionary.
-        @details Includes timing, statistics, and all nested samples.
-        @return dict with timing, stats, and serialized samples.
+        Serialize the benchmark run to a dictionary.
+
+        Includes timing, statistics, and all nested samples.
+
+        Returns:
+            dict: A dictionary with ``timing``, ``samples`` (serialized), and ``stats``.
         """
         return {
             'timing': self.timing,
@@ -95,15 +106,19 @@ class BenchmarkRun:
 
 class Benchmark(RPCTracker):
     """
-    @brief Benchmark manager for RPC experiments.
-    @details Extends RPCTracker with functionality to record request/response metadata,
-    calculate latency metrics, and export results. Multiple runs can be stored in the same instance.
+    Benchmark manager for RPC experiments.
+
+    Extends RPCTracker with functionality to record request/response metadata,
+    compute latency metrics, and export results. Multiple runs can be stored
+    in the same instance.
     """
     def __init__(self, *args, **kwargs):
         """
-        @brief Initialize the Benchmark manager.
-        @param args forwarded to RPCTracker
-        @param kwargs forwarded to RPCTracker
+        Initialize the Benchmark manager.
+
+        Args:
+            *args: Positional arguments forwarded to ``RPCTracker``.
+            **kwargs: Keyword arguments forwarded to ``RPCTracker``.
         """
         super().__init__(*args, **kwargs)
         self.bid = None
@@ -113,10 +128,16 @@ class Benchmark(RPCTracker):
 
     def check_bid(self, benchmark_id=None):
         """
-        @brief Ensure that a benchmark ID exists in memory.
-        @param benchmark_id Optional benchmark ID. If None, the current active bid is used.
-        @return str A valid benchmark ID present in self.data.
-        @raises ValueError if the benchmark ID is not found.
+        Ensure that a benchmark ID exists in memory.
+
+        Args:
+            benchmark_id (str | None): Optional benchmark ID. If None, use the current active ``bid``.
+
+        Returns:
+            str: A valid benchmark ID present in ``self.data``.
+
+        Raises:
+            ValueError: If the benchmark ID is not found.
         """
         bid = benchmark_id or self.bid
         if bid not in self.data:
@@ -125,10 +146,16 @@ class Benchmark(RPCTracker):
 
     def start_benchmark(self, bid=None):
         """
-        @brief Start a new benchmark run.
-        @param bid Optional benchmark ID. If None, a new UUID is generated.
-        @return str The benchmark ID assigned to this run.
-        @note Also resets the current run pointer.
+        Start a new benchmark run.
+
+        Args:
+            bid (str | None): Optional benchmark ID. If None, a new UUID is generated.
+
+        Returns:
+            str: The benchmark ID assigned to this run.
+
+        Notes:
+            Resets the current run pointer.
         """
         self.bid = bid or str(uuid.uuid4())
         self.benchmark_active = True
@@ -145,11 +172,15 @@ class Benchmark(RPCTracker):
 
     def track_outgoing_request(self, request, timeout=60, raw=False):
         """
-        @brief Track an outgoing request and create a Sample entry.
-        @param request RPCRequest object being sent.
-        @param timeout int Timeout in seconds to associate with the request.
-        @param raw bool Whether to store the raw request dict.
-        @return result from RPCTracker.track_outgoing_request.
+        Track an outgoing request and create a Sample entry.
+
+        Args:
+            request: RPCRequest object being sent (must expose ``id``, ``to_json()``, and ``to_dict()``).
+            timeout (int): Timeout in seconds associated with the request.
+            raw (bool): If True, store the raw request dict under ``request['raw']``.
+
+        Returns:
+            Any: The result of ``RPCTracker.track_outgoing_request``.
         """
         result = super().track_outgoing_request(request, timeout=timeout)
 
@@ -167,10 +198,15 @@ class Benchmark(RPCTracker):
 
     def track_incoming_response(self, response, raw=False):
         """
-        @brief Track an incoming response and update the corresponding Sample.
-        @param response RPCResponse object being received.
-        @param raw bool Whether to store the raw response dict.
-        @return result from RPCTracker.track_incoming_response.
+        Track an incoming response and update the corresponding Sample.
+
+        Args:
+            response: RPCResponse object being received (must expose ``id``, ``to_json()``,
+                ``to_dict()``, and ``exec_time`` in microseconds).
+            raw (bool): If True, store the raw response dict under ``response['raw']``.
+
+        Returns:
+            Any: The result of ``RPCTracker.track_incoming_response``.
         """
         result = super().track_incoming_response(response)
 
@@ -181,7 +217,7 @@ class Benchmark(RPCTracker):
             if raw:
                 sample.response['raw'] = response.to_dict()
 
-            sample.metrics['exec_time'] = response.exec_time / 1000  # Convert to ms
+            sample.metrics['exec_time'] = response.exec_time / 1000  # Convert μs → ms
             # Calculate latencies
             sample.metrics['total_latency'] = sample.response['timestamp'] - sample.request['timestamp']
             sample.metrics['network_latency'] = abs(
@@ -192,9 +228,11 @@ class Benchmark(RPCTracker):
 
     def set_exec_time(self, response_id, exec_time):
         """
-        @brief Manually set execution time for a response sample.
-        @param response_id str ID of the response sample.
-        @param exec_time float Execution time in μs (converted internally to ms).
+        Manually set execution time for a response sample.
+
+        Args:
+            response_id (str): ID of the response sample.
+            exec_time (float): Execution time in microseconds (μs). Internally converted to milliseconds (ms).
         """
         if self.benchmark_active and response_id in self._current_run.samples:
             sample = self._current_run.samples[response_id]
@@ -205,9 +243,13 @@ class Benchmark(RPCTracker):
 
     def stop_benchmark(self, benchmark_id=None):
         """
-        @brief Stop the current benchmark run and compute statistics.
-        @param benchmark_id Optional benchmark ID. If None, uses the active run.
-        @return None
+        Stop the current benchmark run and compute statistics.
+
+        Args:
+            benchmark_id (str | None): Optional benchmark ID. If None, uses the active run.
+
+        Returns:
+            None
         """
         bid = self.check_bid(benchmark_id)
         run = self.data[bid]
@@ -230,9 +272,13 @@ class Benchmark(RPCTracker):
 
     def data_to_dataframe(self):
         """
-        @brief Convert all benchmark data into a Pandas DataFrame.
-        @details Each row corresponds to a sample with benchmark ID, timing, request/response, metrics, and run statistics.
-        @return pandas.DataFrame with normalized JSON fields.
+        Convert all benchmark data into a Pandas DataFrame.
+
+        Each row corresponds to a sample with benchmark ID, timing, request/response,
+        metrics, and run statistics.
+
+        Returns:
+            pandas.DataFrame: A flattened (normalized) table of benchmark data.
         """
         data_rows = []
 
@@ -255,10 +301,14 @@ class Benchmark(RPCTracker):
 
     def export(self, format='json', filename=None):
         """
-        @brief Export benchmark results to disk.
-        @param format str File format: 'json', 'csv', or 'excel'.
-        @param filename str Optional file base name. Defaults to 'benchmark_<id>'.
-        @return bool True if export succeeded.
+        Export benchmark results to disk.
+
+        Args:
+            format (str): File format. One of ``'json'``, ``'csv'``, or ``'excel'``.
+            filename (str | None): Optional base filename. Defaults to ``'benchmark_<id>'``.
+
+        Returns:
+            bool: True if export succeeded.
         """
         if not filename:
             filename = f"benchmark_{self.bid}"
@@ -283,10 +333,16 @@ class Benchmark(RPCTracker):
 
     def load(self, file_path: str):
         """
-        @brief Load benchmark data from a JSON file.
-        @param file_path str Path to the JSON file.
-        @return bool True if loaded successfully.
-        @note Overwrites current data in memory.
+        Load benchmark data from a JSON file.
+
+        Args:
+            file_path (str): Path to the JSON file.
+
+        Returns:
+            bool: True if loaded successfully.
+
+        Notes:
+            Overwrites current in-memory data and sets ``self.bid`` to the first run found.
         """
         with open(file_path, 'r') as f:
             raw_data = json.load(f)

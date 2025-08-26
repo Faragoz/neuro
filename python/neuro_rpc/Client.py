@@ -1,10 +1,13 @@
 """
-@file Client.py
-@brief TCP client for framed JSON-RPC-like communication.
-@details This module implements a Python client that communicates with a LabVIEW/CompactRIO server
-using a custom framed JSON message protocol. It manages socket lifecycle, message serialization,
-connection retries, and integration with the RPC stack.
-@note All socket operations are blocking; background operation is achieved by running the client in a thread.
+TCP client for framed JSON-RPC-like communication.
+
+This module implements a Python client that communicates with a LabVIEW/CompactRIO
+server using a custom framed JSON message protocol. It manages socket lifecycle,
+message serialization, connection retries, and integration with the RPC stack.
+
+Notes:
+    - All socket operations are blocking.
+    - Background operation is achieved by running the client in a thread.
 """
 import socket
 import struct
@@ -18,26 +21,27 @@ from python.neuro_rpc.Proxy import *
 
 
 class ConnectionError(Exception):
-    """@brief Raised for connection-related errors (e.g., failed connect or lost connection)."""
+    """Raised for connection-related errors (e.g., failed connect or lost connection)."""
     pass
 
 
 class TimeoutError(Exception):
-    """@brief Raised when a receive operation exceeds the configured timeout."""
+    """Raised when a receive operation exceeds the configured timeout."""
     pass
 
 
 class MessageError(Exception):
-    """@brief Raised when a message cannot be serialized, sent, or parsed."""
+    """Raised when a message cannot be serialized, sent, or parsed."""
     pass
 
 import subprocess
 
 class Client:
     """
-    @brief TCP Client for framed JSON messages.
-    @details Manages connection lifecycle, sending/receiving messages,
-    background thread execution, and integration with RPC handlers and trackers.
+    TCP Client for framed JSON messages.
+
+    Manages connection lifecycle, sending/receiving messages, background thread execution,
+    and integration with RPC handlers and trackers.
     """
     def __init__(self,
                  host: str = "127.0.0.1",
@@ -50,16 +54,18 @@ class Client:
                  handler=None,
                  no_delay = True):
         """
-        @brief Initialize a Client instance with connection parameters.
-        @param host str Target hostname or IP address.
-        @param port int TCP port of the server.
-        @param encoding str Encoding for JSON messages.
-        @param endian str Struct format for message length (e.g., '>I' big-endian).
-        @param timeout float Socket timeout in seconds.
-        @param max_retries int Max number of connection attempts.
-        @param retry_delay float Delay between retry attempts (s).
-        @param handler Optional RPC handler, defaults to RPCMethods().
-        @param no_delay bool If True, disables Nagle’s algorithm and sets DSCP EF.
+        Initialize a Client instance with connection parameters.
+
+        Args:
+            host (str): Target hostname or IP address.
+            port (int): TCP port of the server.
+            encoding (str): Encoding for JSON messages.
+            endian (str): Struct format for message length (e.g., ``'>I'`` big-endian).
+            timeout (float): Socket timeout in seconds.
+            max_retries (int): Maximum number of connection attempts.
+            retry_delay (float): Delay between retry attempts in seconds.
+            handler: Optional RPC handler, defaults to ``RPCMethods()``.
+            no_delay (bool): If True, disables Nagle’s algorithm and sets DSCP EF.
         """
         self.host = host
         self.port = port
@@ -75,7 +81,7 @@ class Client:
         self.connected = False
         self.thread_running = False
 
-        self.logger = Logger.get_logger(self.__class__.__name__)
+        self.logger = Logger.get_logger(self.__class__.__name__())
 
         # Handling methods
         self.handler = RPCMethods()
@@ -85,8 +91,10 @@ class Client:
 
     def start(self):
         """
-        @brief Start the client in a background thread.
-        @note Spawns a daemon thread that calls connect() and maintains the connection.
+        Start the client in a background thread.
+
+        Notes:
+            Spawns a daemon thread that calls ``connect()`` and maintains the connection.
         """
         if self.thread_running:
             self.logger.error(f"Client is already running in thread {self.client_thread.name}")
@@ -121,8 +129,9 @@ class Client:
 
     def stop(self):
         """
-        @brief Stop the client thread and disconnect.
-        @details Calls disconnect(), stops monitoring, and joins the thread.
+        Stop the client thread and disconnect.
+
+        Calls ``disconnect()``, stops monitoring, and joins the thread.
         """
         if not self.thread_running:
             self.logger.error("Client is not running")
@@ -148,10 +157,16 @@ class Client:
 
     def connect(self, retry: bool = True) -> bool:
         """
-        @brief Establish a TCP connection with retry support.
-        @param retry bool Whether to retry failed attempts.
-        @return bool True if connected successfully.
-        @raises ConnectionError If all attempts fail.
+        Establish a TCP connection with retry support.
+
+        Args:
+            retry (bool): Whether to retry failed attempts.
+
+        Returns:
+            bool: True if connected successfully.
+
+        Raises:
+            ConnectionError: If all attempts fail.
         """
         attempts = 1 if not retry else self.max_retries
 
@@ -195,8 +210,10 @@ class Client:
 
     def disconnect(self) -> None:
         """
-        @brief Close the TCP connection.
-        @note Resets the socket and updates state to disconnected.
+        Close the TCP connection.
+
+        Notes:
+            Resets the socket and updates state to disconnected.
         """
         if self.client:
             try:
@@ -210,18 +227,27 @@ class Client:
 
     def ensure_connected(self) -> None:
         """
-        @brief Verify connection before sending/receiving.
-        @raises ConnectionError If not connected.
+        Verify connection before sending/receiving.
+
+        Raises:
+            ConnectionError: If not connected.
         """
         if not self.connected or self.client is None:
             raise ConnectionError("Not connected to server. Call connect() first.")
 
     def _build_packet(self, data, tail = 0):
         """
-        @brief Build a framed packet with header, payload, and trailer.
-        @param data dict|str|bytes Payload data.
-        @param tail int Optional trailer integer.
-        @return bytes Complete packet ready to send.
+        Build a framed packet with header, payload, and trailer.
+
+        Args:
+            data (dict | str | bytes): Payload data.
+            tail (int): Optional trailer integer.
+
+        Returns:
+            bytes: Complete packet ready to send.
+
+        Raises:
+            TypeError: If ``data`` is not ``str`` or ``bytes`` after JSON serialization for ``dict``.
         """
         # TODO: Check endianess
         if isinstance(data, dict):
@@ -243,10 +269,14 @@ class Client:
 
     def _unbuild_packet(self, packet, size: int):
         """
-        @brief Parse a framed packet into payload and trailer.
-        @param packet bytes Raw packet.
-        @param size int Declared size.
-        @return tuple(payload_bytes, trailer_int).
+        Parse a framed packet into payload and trailer.
+
+        Args:
+            packet (bytes): Raw packet.
+            size (int): Declared size.
+
+        Returns:
+            tuple[bytes, int]: Payload bytes and trailer integer.
         """
         data = packet[:size-self.trailer_bytes]
         tail = int.from_bytes(packet[-self.trailer_bytes:])
@@ -256,12 +286,18 @@ class Client:
                      message: Dict[str, Any],
                      retry_on_error: bool = True) -> bool:
         """
-        @brief Send a JSON message with retry support.
-        @param message dict JSON-compatible message.
-        @param retry_on_error bool Whether to retry on socket errors.
-        @return bool True if sent successfully.
-        @raises ConnectionError If not connected.
-        @raises MessageError If serialization or send fails.
+        Send a JSON message with retry support.
+
+        Args:
+            message (dict): JSON-compatible message.
+            retry_on_error (bool): Whether to retry on socket errors.
+
+        Returns:
+            bool: True if sent successfully.
+
+        Raises:
+            ConnectionError: If not connected.
+            MessageError: If serialization or send fails.
         """
         self.ensure_connected()
 
@@ -300,13 +336,19 @@ class Client:
                         timeout: Optional[float] = None,
                         partial_timeout: Optional[float] = None) -> Any:
         """
-        @brief Receive and parse a JSON message.
-        @param timeout float Optional override for socket timeout.
-        @param partial_timeout float Timeout for remainder after header.
-        @return dict Parsed JSON response.
-        @raises ConnectionError If disconnected.
-        @raises TimeoutError If operation times out.
-        @raises MessageError If parsing fails.
+        Receive and parse a JSON message.
+
+        Args:
+            timeout (float | None): Optional override for socket timeout.
+            partial_timeout (float | None): Timeout for the remainder after the header.
+
+        Returns:
+            dict: Parsed JSON response.
+
+        Raises:
+            ConnectionError: If disconnected.
+            TimeoutError: If operation times out.
+            MessageError: If parsing fails.
         """
         self.ensure_connected()
 
@@ -355,10 +397,16 @@ class Client:
 
     def _recv_exactly(self, n: int) -> bytes:
         """
-        @brief Receive exactly n bytes.
-        @param n int Number of bytes expected.
-        @return bytes Data read.
-        @raises ConnectionError If socket closed before receiving.
+        Receive exactly ``n`` bytes.
+
+        Args:
+            n (int): Number of bytes expected.
+
+        Returns:
+            bytes: Data read.
+
+        Raises:
+            ConnectionError: If socket closed before receiving.
         """
         data = b''
         remaining = n
@@ -375,8 +423,10 @@ class Client:
 
     def recv_packet(self):
         """
-        @brief Receive a framed packet.
-        @return tuple(size, data_bytes, trailer_int) or None on error.
+        Receive a framed packet.
+
+        Returns:
+            tuple[int, bytes, int] | None: ``(size, data_bytes, trailer_int)`` or ``None`` on error.
         """
         try:
             length_bytes = self._recv_exactly(self.header_bytes)
@@ -392,9 +442,13 @@ class Client:
 
     def send_packet(self, packet):
         """
-        @brief Send a raw packet.
-        @param packet bytes Complete framed packet.
-        @return bool True if sent successfully.
+        Send a raw packet.
+
+        Args:
+            packet (bytes): Complete framed packet.
+
+        Returns:
+            bool: True if sent successfully.
         """
         try:
             # Send packet
@@ -409,11 +463,15 @@ class Client:
                          timeout: Optional[float] = None,
                          retry_on_error: bool = True) -> Any:
         """
-        @brief Convenience wrapper to send and immediately receive a message.
-        @param message dict Message to send.
-        @param timeout float Optional receive timeout.
-        @param retry_on_error bool Whether to retry on send errors.
-        @return dict Parsed JSON response.
+        Convenience wrapper to send and immediately receive a message.
+
+        Args:
+            message (dict): Message to send.
+            timeout (float | None): Optional receive timeout.
+            retry_on_error (bool): Whether to retry on send errors.
+
+        Returns:
+            dict: Parsed JSON response.
         """
         self.send_message(message, retry_on_error)
         return self.receive_message(timeout)
@@ -421,11 +479,15 @@ class Client:
     # Wrappers
     def rpc(self, method, params, response=True):
         """
-        @brief Perform an RPC call using Proxy encoding.
-        @param method str RPC method name.
-        @param params dict Parameters.
-        @param response bool Whether to wait for and return a response.
-        @return tuple(size, json_str, tail) if response=True, else None.
+        Perform an RPC call using Proxy encoding.
+
+        Args:
+            method (str): RPC method name.
+            params (dict): Parameters.
+            response (bool): Whether to wait for and return a response.
+
+        Returns:
+            tuple[int, str, int] | None: ``(size, json_str, tail)`` if ``response=True``, else ``None``.
         """
         proxy = Proxy()
         request = self.handler.create_request(method, params)
@@ -445,8 +507,10 @@ class Client:
 
     def echo(self, message='test'):
         """
-        @brief Send an 'echo' request and track its execution time.
-        @param message str String to send.
+        Send an ``echo`` request and track its execution time.
+
+        Args:
+            message (str): String to send.
         """
         if isinstance(message, str):
             size, data, tail = self.rpc("echo", {'Message': message})
@@ -460,8 +524,9 @@ class Client:
 
     def echo_benchmark(self):
         """
-        @brief Run a benchmark using echo requests with increasing payload sizes.
-        @details Iterates over multiple message sizes, repeating each size multiple times,
+        Run a benchmark using echo requests with increasing payload sizes.
+
+        Iterates over multiple message sizes, repeating each size multiple times,
         and records metrics through the Benchmark tracker.
         """
         import numpy

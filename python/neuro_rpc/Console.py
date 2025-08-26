@@ -1,10 +1,12 @@
 """
-@file Console.py
-@brief Interactive console wrapper for NeuroRPC client.
-@details Provides a REPL-style interface to manually start, stop, and inspect the state of
-the TCP client. The console is useful for debugging and testing RPC connections interactively.
-@note Runs with Python's built-in InteractiveConsole. Available commands and modules are preloaded
-in the interactive namespace.
+Interactive console wrapper for NeuroRPC client.
+
+Provides a REPL-style interface to manually start, stop, and inspect the state of
+the TCP client. Useful for debugging and testing RPC connections interactively.
+
+Notes:
+    - Runs with Python's built-in InteractiveConsole.
+    - Available commands and modules are preloaded in the interactive namespace.
 """
 
 import code
@@ -14,19 +16,23 @@ import platform
 from python.neuro_rpc.Logger import Logger, LoggerConfig
 from python.neuro_rpc.Client import Client
 
+
 class Console:
     """
-    @brief Interactive console for manual client control.
-    @details Encapsulates startup and shutdown logic for the NeuroRPC client and
-    exposes convenience commands in an interactive REPL environment.
-    Provides status checks and log outputs for debugging.
+    Interactive console for manual client control.
+
+    Encapsulates startup and shutdown logic for the NeuroRPC client and exposes
+    convenience commands in an interactive REPL environment. Provides status checks
+    and log outputs for debugging.
     """
 
     def __init__(self, client_config=None):
         """
-        @brief Initialize the interactive console with client configuration.
-        @param client_config dict Optional dictionary of client configuration parameters (host, port, etc.).
-        @note If no config is provided, defaults are used by Client.
+        Initialize the interactive console with client configuration.
+
+        Args:
+            client_config (dict | None): Optional dictionary of client configuration
+                parameters (host, port, etc.). If None, defaults from ``Client`` are used.
         """
         self.client_class = Client
         self.client_config = client_config or {}
@@ -36,8 +42,10 @@ class Console:
 
     def start_client(self):
         """
-        @brief Start the client in a background thread.
-        @details Instantiates Client if not yet created and calls start().
+        Start the client in a background thread.
+
+        Notes:
+            Instantiates ``Client`` if not yet created and calls ``start()``.
         """
         # Use existing client instance or create a new one if needed
         if self.client is None:
@@ -47,8 +55,10 @@ class Console:
 
     def stop_client(self):
         """
-        @brief Stop the running client thread.
-        @details Calls Client.stop(). Logs error if client is uninitialized.
+        Stop the running client thread.
+
+        Notes:
+            Calls ``Client.stop()``. Logs error if client is uninitialized.
         """
         if self.client is None:
             self.logger.error("Client object not initialized")
@@ -58,9 +68,10 @@ class Console:
 
     def client_status(self):
         """
-        @brief Display current client status in the logger.
-        @details Prints information about the client object, connection status,
-        active thread, and registered RPC methods (if handler available).
+        Display current client status in the logger.
+
+        Shows information about the client object, connection status,
+        active thread, and registered RPC methods (if available).
         """
         status = ["\n"]
 
@@ -81,8 +92,7 @@ class Console:
         else:
             status.append("Client not thread_running in background")
 
-        # TODO: Not printing methods. Check client instance.
-        # If client has a handler, show method information
+        # Show handler info if available
         if hasattr(self.client, 'handler'):
             handler = self.client.handler
             if hasattr(handler, 'request_methods'):
@@ -94,8 +104,10 @@ class Console:
 
     def clear_screen(self) -> None:
         """
-        @brief Clear the console screen.
-        @details Uses OS-specific commands: 'cls' on Windows, 'clear' on Unix-like systems.
+        Clear the console screen.
+
+        Notes:
+            Uses OS-specific commands: ``cls`` on Windows, ``clear`` on Unix-like systems.
         """
         system = platform.system().lower()
 
@@ -106,14 +118,12 @@ class Console:
 
     def run(self):
         """
-        @brief Run the interactive console.
-        @details Initializes the interactive console and blocks until exit.
+        Run the interactive console.
+
+        Initializes the interactive console and blocks until exit.
         Handles Ctrl+C gracefully, stopping the client if necessary.
         """
         try:
-            # Initialize client object but don't connect yet
-            # self.initialize_client()
-
             # Start the interactive console immediately
             self.start_interactive_console()
 
@@ -127,8 +137,9 @@ class Console:
 
     def start_interactive_console(self):
         """
-        @brief Start the REPL console with preloaded commands.
-        @details Provides start/stop/status/cls commands and access to Logger and LoggerConfig.
+        Start the REPL console with preloaded commands.
+
+        Provides start/stop/status/cls commands and access to Logger and LoggerConfig.
         A banner with usage instructions is displayed at startup.
         """
         # Prepare the welcome message

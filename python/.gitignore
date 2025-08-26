@@ -124,3 +124,6 @@ fabric.properties
 /.idea/neuro.iml
 /.idea/inspectionProfiles/profiles_settings.xml
 /.idea/vcs.xml
+
+/neuro_rpc/mkdocs.yml
+/test.ipynb
