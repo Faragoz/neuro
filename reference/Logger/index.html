@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+
+<html class="writer-html5" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/><link href="https://faragoz.github.io/neuro/reference/Logger/" rel="canonical"/>
+<link href="../../img/favicon.ico" rel="shortcut icon"/>
+<title>Logger - NeuroRPC Docs</title>
+<link href="../../css/theme.css" rel="stylesheet"/>
+<link href="../../css/theme_extra.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" rel="stylesheet"/>
+<link href="../../assets/_mkdocstrings.css" rel="stylesheet"/>
+<script>
+        // Current page data
+        var mkdocs_page_name = "Logger";
+        var mkdocs_page_input_path = "reference/Logger.md";
+        var mkdocs_page_url = "/neuro/reference/Logger/";
+      </script>
+<!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
+<link href="../../pdf/NeuroRPC.pdf" rel="alternate" title="PDF" type="application/pdf"/></head>
+<body class="wy-body-for-nav" role="document">
+<div class="wy-grid-for-nav">
+<nav class="wy-nav-side stickynav" data-toggle="wy-nav-shift">
+<div class="wy-side-scroll">
+<div class="wy-side-nav-search">
+<a class="icon icon-home" href="../.."> NeuroRPC Docs
+        </a><div role="search">
+<form action="../../search.html" class="wy-form" id="rtd-search-form" method="get">
+<input aria-label="Search docs" name="q" placeholder="Search docs" title="Type search term here" type="text"/>
+</form>
+</div>
+</div>
+<div aria-label="Navigation menu" class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Benchmark/">Benchmark</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Client/">Client</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Console/">Console</a>
+</li>
+<li class="toctree-l1 current"><a class="reference internal current" href="#">Logger</a>
+<ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="#neuro_rpc.Logger">Logger</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#neuro_rpc.Logger.ColoredFormatter">ColoredFormatter</a>
+<ul>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.Logger.ColoredFormatter.format">format</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#neuro_rpc.Logger.Logger">Logger</a>
+<ul>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.Logger.Logger.get_logger">get_logger</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.Logger.Logger.print_loggers">print_loggers</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.Logger.Logger.setLevel">setLevel</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.Logger.Logger.setVerbose">setVerbose</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.Logger.Logger.test">test</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#neuro_rpc.Logger.LoggerConfig">LoggerConfig</a>
+<ul>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.Logger.LoggerConfig.configure_for_debugging">configure_for_debugging</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.Logger.LoggerConfig.configure_for_development">configure_for_development</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.Logger.LoggerConfig.configure_for_production">configure_for_production</a>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Proxy/">Proxy</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../RPCHandler/">RPCHandler</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../RPCMessage/">RPCMessage</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../RPCMethods/">RPCMethods</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../RPCTracker/">RPCTracker</a>
+</li>
+</ul>
+</div>
+</div>
+</nav>
+<section class="wy-nav-content-wrap" data-toggle="wy-nav-shift">
+<nav aria-label="Mobile navigation menu" class="wy-nav-top" role="navigation">
+<i class="fa fa-bars" data-toggle="wy-nav-top"></i>
+<a href="../..">NeuroRPC Docs</a>
+</nav>
+<div class="wy-nav-content">
+<div class="rst-content"><div aria-label="breadcrumbs navigation" role="navigation">
+<ul class="wy-breadcrumbs">
+<li><a aria-label="Docs" class="icon icon-home" href="../.."></a></li>
+<li class="breadcrumb-item">API Reference</li>
+<li class="breadcrumb-item active">Logger</li>
+<li class="wy-breadcrumbs-aside">
+<a class="icon icon-github" href="https://github.com/faragoz/neuro/edit/master/docs/reference/Logger.md"> Edit on GitHub</a>
+</li>
+</ul>
+<hr/>
+</div>
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div class="section" itemprop="articleBody">
+<h1 id="logger">Logger</h1>
+<div class="doc doc-object doc-module">
+<a id="neuro_rpc.Logger"></a>
+<div class="doc doc-contents first">
+<p>Colorized, structured logging utilities for the NeuroRPC stack.</p>
+<p>Provides a compact ANSI color formatter and a reusable Logger factory.
+All modules (Client, Benchmark, RPC stack, Console) use this centralized logging
+infrastructure to ensure consistent formatting and runtime readability.</p>
+<details class="notes" open="">
+<summary>Notes</summary>
+<ul>
+<li>Uses colorama for cross-platform color handling.</li>
+<li>Verbosity can be adjusted dynamically.</li>
+</ul>
+</details>
+<div class="doc doc-children">
+<div class="doc doc-object doc-class">
+<h2 class="doc doc-heading" id="neuro_rpc.Logger.ColoredFormatter">
+<code>ColoredFormatter</code>
+</h2>
+<div class="doc doc-contents">
+<p class="doc doc-class-bases">
+              Bases: <code><span title="logging.Formatter">Formatter</span></code></p>
+<p>Minimal ANSI color formatter.</p>
+<p>Extends <code>logging.Formatter</code> to prepend log messages with ANSI color codes
+depending on the log level. Colors are reset automatically after each message.</p>
+<div class="doc doc-children">
+<div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="neuro_rpc.Logger.ColoredFormatter.format">
+<code class="highlight language-python">format(record)</code>
+</h3>
+<div class="doc doc-contents">
+<p>Apply color formatting to a log record.</p>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Parameters:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>record</code></b>
+                  (<code><span title="logging.LogRecord">LogRecord</span></code>)
+              –
+              <div class="doc-md-description">
+<p>Log record object to format.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Returns:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>str</code></b>              –
+              <div class="doc-md-description">
+<p>Formatted string with ANSI colors.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/Logger.py</code></summary>
+<pre class="highlight"><code class="language-python">def format(self, record):
+    """
+    Apply color formatting to a log record.
+
+    Args:
+        record (logging.LogRecord): Log record object to format.
+
+    Returns:
+        str: Formatted string with ANSI colors.
+    """
+    msg = super().format(record)
+    color = self.COLORS.get(record.levelno, self.RESET)
+    return f"{color}{msg}{self.RESET}"</code></pre>
+</details>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="doc doc-object doc-class">
+<h2 class="doc doc-heading" id="neuro_rpc.Logger.Logger">
+<code class="highlight language-python">Logger(name, level=logging.DEBUG, verbose=True)</code>
+</h2>
+<div class="doc doc-contents">
+<p class="doc doc-class-bases">
+              Bases: <code><span title="logging.Logger">Logger</span></code></p>
+<p>Factory for module-level loggers with a shared format.</p>
+<p>Ensures all modules share a consistent format and color scheme. Provides
+caching of Logger instances by name, synchronized levels, and verbosity toggling.</p>
+<p>Initialize a Logger instance.</p>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Parameters:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>name</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+<p>Name of the logger.</p>
+</div>
+</li>
+<li>
+<b><code>level</code></b>
+                  (<code><span title="int">int</span></code>, default:
+                      <code><span title="logging.DEBUG">DEBUG</span></code>
+)
+              –
+              <div class="doc-md-description">
+<p>Log level.</p>
+</div>
+</li>
+<li>
+<b><code>verbose</code></b>
+                  (<code><span title="bool">bool</span></code>, default:
+                      <code>True</code>
+)
+              –
+              <div class="doc-md-description">
+<p>Whether verbose format is enabled.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/Logger.py</code></summary>
+<pre class="highlight"><code class="language-python">def __init__(self, name: str, level=logging.DEBUG, verbose: bool = True):
+    """
+    Initialize a Logger instance.
+
+    Args:
+        name (str): Name of the logger.
+        level (int): Log level.
+        verbose (bool): Whether verbose format is enabled.
+    """
+    super().__init__(name, level)
+
+    # Set up attributes
+    self.verbose = verbose
+
+    # Add a StreamHandler
+    import sys
+    self.stream_handler = logging.StreamHandler(sys.stdout)
+    self.addHandler(self.stream_handler)
+
+    # Set initial levels and formatter
+    self.setLevel(level)
+    self._set_formatter()</code></pre>
+</details>
+<div class="doc doc-children">
+<div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="neuro_rpc.Logger.Logger.get_logger">
+<code class="highlight language-python">get_logger(name='__neuro__', level=logging.DEBUG, verbose=True)</code>
+<span class="doc doc-labels">
+<small class="doc doc-label doc-label-staticmethod"><code>staticmethod</code></small>
+</span>
+</h3>
+<div class="doc doc-contents">
+<p>Get or create a configured logger.</p>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Parameters:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>name</code></b>
+                  (<code><span title="str">str</span></code>, default:
+                      <code>'__neuro__'</code>
+)
+              –
+              <div class="doc-md-description">
+<p>Logger identifier (typically module or class name).</p>
+</div>
+</li>
+<li>
+<b><code>level</code></b>
+                  (<code><span title="int">int</span></code>, default:
+                      <code><span title="logging.DEBUG">DEBUG</span></code>
+)
+              –
+              <div class="doc-md-description">
+<p>Log level (default <code>DEBUG</code>).</p>
+</div>
+</li>
+<li>
+<b><code>verbose</code></b>
+                  (<code><span title="bool">bool</span></code>, default:
+                      <code>True</code>
+)
+              –
+              <div class="doc-md-description">
+<p>Whether to include extended context (process/thread info).</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Returns:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>Logger</code></b>              –
+              <div class="doc-md-description">
+<p>Configured logger instance.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="notes" open="">
+<summary>Notes</summary>
+<p>Attaches a StreamHandler on first creation.</p>
+</details>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/Logger.py</code></summary>
+<pre class="highlight"><code class="language-python">@staticmethod
+def get_logger(name="__neuro__", level=logging.DEBUG, verbose=True):
+    """
+    Get or create a configured logger.
+
+    Args:
+        name (str): Logger identifier (typically module or class name).
+        level (int): Log level (default ``DEBUG``).
+        verbose (bool): Whether to include extended context (process/thread info).
+
+    Returns:
+        Logger: Configured logger instance.
+
+    Notes:
+        Attaches a StreamHandler on first creation.
+    """
+    if name not in Logger._instances:
+        Logger._instances[name] = Logger(name, level, verbose)
+    return Logger._instances[name]</code></pre>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="neuro_rpc.Logger.Logger.print_loggers">
+<code class="highlight language-python">print_loggers()</code>
+<span class="doc doc-labels">
+<small class="doc doc-label doc-label-staticmethod"><code>staticmethod</code></small>
+</span>
+</h3>
+<div class="doc doc-contents">
+<p>Print currently registered loggers.</p>
+<p>Useful for debugging which loggers are active and their configuration.</p>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/Logger.py</code></summary>
+<pre class="highlight"><code class="language-python">@staticmethod
+def print_loggers():
+    """
+    Print currently registered loggers.
+
+    Useful for debugging which loggers are active and their configuration.
+    """
+    for name, logger in Logger._instances.items():
+        print(f"{name}: {logger} {logger.handlers} {logger.level}")</code></pre>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="neuro_rpc.Logger.Logger.setLevel">
+<code class="highlight language-python">setLevel(level)</code>
+</h3>
+<div class="doc doc-contents">
+<p>Override setLevel to synchronize handler level.</p>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Parameters:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>level</code></b>
+                  (<code><span title="int">int</span></code>)
+              –
+              <div class="doc-md-description">
+<p>New log level.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/Logger.py</code></summary>
+<pre class="highlight"><code class="language-python">def setLevel(self, level) -&gt; None:
+    """
+    Override setLevel to synchronize handler level.
+
+    Args:
+        level (int): New log level.
+    """
+    super().setLevel(level)
+    self.stream_handler.setLevel(level)  # Ensure handler level matches logger level</code></pre>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="neuro_rpc.Logger.Logger.setVerbose">
+<code class="highlight language-python">setVerbose(verbose)</code>
+</h3>
+<div class="doc doc-contents">
+<p>Dynamically update verbosity and re-apply formatter.</p>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Parameters:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>verbose</code></b>
+                  (<code><span title="bool">bool</span></code>)
+              –
+              <div class="doc-md-description">
+<p>True for detailed context, False for compact output.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/Logger.py</code></summary>
+<pre class="highlight"><code class="language-python">def setVerbose(self, verbose: bool) -&gt; None:
+    """
+    Dynamically update verbosity and re-apply formatter.
+
+    Args:
+        verbose (bool): True for detailed context, False for compact output.
+    """
+    self.verbose = verbose
+    self._set_formatter()</code></pre>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="neuro_rpc.Logger.Logger.test">
+<code class="highlight language-python">test()</code>
+</h3>
+<div class="doc doc-contents">
+<p>Emit test messages at all levels.</p>
+<p>Useful for verifying logger color and format configuration.</p>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/Logger.py</code></summary>
+<pre class="highlight"><code class="language-python">def test(self) -&gt; None:
+    """
+    Emit test messages at all levels.
+
+    Useful for verifying logger color and format configuration.
+    """
+    self.debug("This is a DEBUG message.")
+    self.info("This is an INFO message.")
+    self.warning("This is a WARNING message.")
+    self.error("This is an ERROR message.")
+    self.critical("This is a CRITICAL message.")</code></pre>
+</details>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="doc doc-object doc-class">
+<h2 class="doc doc-heading" id="neuro_rpc.Logger.LoggerConfig">
+<code>LoggerConfig</code>
+</h2>
+<div class="doc doc-contents">
+<p>Default logging configuration holder.</p>
+<p>Provides presets for production, development, and per-component debugging.</p>
+<div class="doc doc-children">
+<div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="neuro_rpc.Logger.LoggerConfig.configure_for_debugging">
+<code class="highlight language-python">configure_for_debugging(component_name, level=logging.DEBUG, verbose=True)</code>
+<span class="doc doc-labels">
+<small class="doc doc-label doc-label-staticmethod"><code>staticmethod</code></small>
+</span>
+</h3>
+<div class="doc doc-contents">
+<p>Configure a specific component for debugging.</p>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Parameters:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>component_name</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+<p>Name of the component/logger.</p>
+</div>
+</li>
+<li>
+<b><code>level</code></b>
+                  (<code><span title="int">int</span></code>, default:
+                      <code><span title="logging.DEBUG">DEBUG</span></code>
+)
+              –
+              <div class="doc-md-description">
+<p>Log level (default <code>DEBUG</code>).</p>
+</div>
+</li>
+<li>
+<b><code>verbose</code></b>
+                  (<code><span title="bool">bool</span></code>, default:
+                      <code>True</code>
+)
+              –
+              <div class="doc-md-description">
+<p>Verbosity flag.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="notes" open="">
+<summary>Notes</summary>
+<p>Creates a new logger if not already registered.</p>
+</details>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/Logger.py</code></summary>
+<pre class="highlight"><code class="language-python">@staticmethod
+def configure_for_debugging(component_name, level=logging.DEBUG, verbose=True):
+    """
+    Configure a specific component for debugging.
+
+    Args:
+        component_name (str): Name of the component/logger.
+        level (int): Log level (default ``DEBUG``).
+        verbose (bool): Verbosity flag.
+
+    Notes:
+        Creates a new logger if not already registered.
+    """
+    if component_name in Logger._instances:
+        Logger._instances[component_name].setLevel(level)
+        Logger._instances[component_name].setVerbose(verbose)
+    else:
+        Logger.get_logger(component_name, level, verbose)
+        Logger._instances[component_name].warning(f"Logger '{component_name}' not found. Creating a new one.")</code></pre>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="neuro_rpc.Logger.LoggerConfig.configure_for_development">
+<code class="highlight language-python">configure_for_development()</code>
+<span class="doc doc-labels">
+<small class="doc doc-label doc-label-staticmethod"><code>staticmethod</code></small>
+</span>
+</h3>
+<div class="doc doc-contents">
+<p>Configure all loggers for development.</p>
+<p>Sets <code>DEBUG</code> level and enables verbose formatting.</p>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/Logger.py</code></summary>
+<pre class="highlight"><code class="language-python">@staticmethod
+def configure_for_development():
+    """
+    Configure all loggers for development.
+
+    Sets ``DEBUG`` level and enables verbose formatting.
+    """
+    for name, logger_instance in Logger._instances.items():
+        logger_instance.setLevel(logging.DEBUG)
+        logger_instance.setVerbose(True)</code></pre>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="neuro_rpc.Logger.LoggerConfig.configure_for_production">
+<code class="highlight language-python">configure_for_production()</code>
+<span class="doc doc-labels">
+<small class="doc doc-label doc-label-staticmethod"><code>staticmethod</code></small>
+</span>
+</h3>
+<div class="doc doc-contents">
+<p>Configure all loggers for production.</p>
+<p>Sets <code>INFO</code> level and disables verbose formatting.</p>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/Logger.py</code></summary>
+<pre class="highlight"><code class="language-python">@staticmethod
+def configure_for_production():
+    """
+    Configure all loggers for production.
+
+    Sets ``INFO`` level and disables verbose formatting.
+    """
+    for name, logger_instance in Logger._instances.items():
+        logger_instance.setLevel(logging.INFO)
+        logger_instance.setVerbose(False)</code></pre>
+</details>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div><footer>
+<div aria-label="Footer Navigation" class="rst-footer-buttons" role="navigation">
+<a class="btn btn-neutral float-left" href="../Console/" title="Console"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+<a class="btn btn-neutral float-right" href="../Proxy/" title="Proxy">Next <span class="icon icon-circle-arrow-right"></span></a>
+</div>
+<hr/>
+<div role="contentinfo">
+<!-- Copyright etc -->
+</div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+</div>
+</div>
+</section>
+</div>
+<div aria-label="Versions" class="rst-versions" role="note">
+<span class="rst-current-version" data-toggle="rst-current-version">
+<span>
+<a class="fa fa-github" href="https://github.com/faragoz/neuro" style="color: #fcfcfc"> GitHub</a>
+</span>
+<span><a href="../Console/" style="color: #fcfcfc">« Previous</a></span>
+<span><a href="../Proxy/" style="color: #fcfcfc">Next »</a></span>
+</span>
+</div>
+<script src="../../js/jquery-3.6.0.min.js"></script>
+<script>var base_url = "../..";</script>
+<script src="../../js/theme_extra.js"></script>
+<script src="../../js/theme.js"></script>
+<script src="../../search/main.js"></script>
+<script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+</body>
+</html>

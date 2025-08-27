@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+
+<html class="writer-html5" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="None" name="description"/><link href="https://faragoz.github.io/neuro/" rel="canonical"/>
+<link href="img/favicon.ico" rel="shortcut icon"/>
+<title>NeuroRPC Docs</title>
+<link href="css/theme.css" rel="stylesheet"/>
+<link href="css/theme_extra.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" rel="stylesheet"/>
+<link href="assets/_mkdocstrings.css" rel="stylesheet"/>
+<script>
+        // Current page data
+        var mkdocs_page_name = "Home";
+        var mkdocs_page_input_path = "index.md";
+        var mkdocs_page_url = "/neuro/";
+      </script>
+<!--[if lt IE 9]>
+      <script src="js/html5shiv.min.js"></script>
+    <![endif]-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
+<link href="pdf/NeuroRPC.pdf" rel="alternate" title="PDF" type="application/pdf"/></head>
+<body class="wy-body-for-nav" role="document">
+<div class="wy-grid-for-nav">
+<nav class="wy-nav-side stickynav" data-toggle="wy-nav-shift">
+<div class="wy-side-scroll">
+<div class="wy-side-nav-search">
+<a class="icon icon-home" href="."> NeuroRPC Docs
+        </a><div role="search">
+<form action="./search.html" class="wy-form" id="rtd-search-form" method="get">
+<input aria-label="Search docs" name="q" placeholder="Search docs" title="Type search term here" type="text"/>
+</form>
+</div>
+</div>
+<div aria-label="Navigation menu" class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation">
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal current" href="#">Home</a>
+<ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="#objectives">Objectives</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#key-features">Key Features</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#structure-of-this-documentation">Structure of This Documentation</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#quickstart">Quickstart</a>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="reference/Benchmark/">Benchmark</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reference/Client/">Client</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reference/Console/">Console</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reference/Logger/">Logger</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reference/Proxy/">Proxy</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reference/RPCHandler/">RPCHandler</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reference/RPCMessage/">RPCMessage</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reference/RPCMethods/">RPCMethods</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reference/RPCTracker/">RPCTracker</a>
+</li>
+</ul>
+</div>
+</div>
+</nav>
+<section class="wy-nav-content-wrap" data-toggle="wy-nav-shift">
+<nav aria-label="Mobile navigation menu" class="wy-nav-top" role="navigation">
+<i class="fa fa-bars" data-toggle="wy-nav-top"></i>
+<a href=".">NeuroRPC Docs</a>
+</nav>
+<div class="wy-nav-content">
+<div class="rst-content"><div aria-label="breadcrumbs navigation" role="navigation">
+<ul class="wy-breadcrumbs">
+<li><a aria-label="Docs" class="icon icon-home" href="."></a></li>
+<li class="breadcrumb-item active">Home</li>
+<li class="wy-breadcrumbs-aside">
+<a class="icon icon-github" href="https://github.com/faragoz/neuro/edit/master/docs/index.md"> Edit on GitHub</a>
+</li>
+</ul>
+<hr/>
+</div>
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div class="section" itemprop="articleBody">
+<h1 id="neurorpc-documentation">NeuroRPC Documentation</h1>
+<p>Welcome to the <strong>NeuroRPC</strong> project documentation.  </p>
+<p><strong>NeuroRPC</strong> is a Python-based framework that provides an interface for <strong>remote procedure calls (RPC)</strong> over <strong>TCP/IP</strong> in the context of distributed and embedded systems.<br/>
+The library has been specifically developed to facilitate communication between Python applications and the <strong>LabVIEW Actor Framework</strong>, enabling reproducible, modular, and low-latency control architectures for experimental platforms.</p>
+<hr/>
+<h2 id="objectives">Objectives</h2>
+<p>The primary objectives of <strong>NeuroRPC</strong> are:</p>
+<ul>
+<li>To offer a <strong>transparent client–server model</strong> for exchanging structured messages between heterogeneous environments (Python ↔ LabVIEW).  </li>
+<li>To enable the design of <strong>actor-based systems</strong> in which commands and data streams are handled as serializable messages.  </li>
+<li>To support <strong>scientific instrumentation workflows</strong>, such as real-time data acquisition, signal analysis, and closed-loop experimental control.  </li>
+<li>To provide a foundation that can be <strong>extended to other protocols or platforms</strong> while preserving consistency and interoperability.</li>
+</ul>
+<hr/>
+<h2 id="key-features">Key Features</h2>
+<ul>
+<li><strong>TCP-based communication layer</strong> ensuring reliable and ordered message delivery.  </li>
+<li><strong>Serialization/deserialization</strong> mechanisms compatible with LabVIEW binary flattening.  </li>
+<li><strong>Actor-oriented modularity</strong>, allowing processes to be encapsulated as autonomous units.  </li>
+<li><strong>Cross-platform support</strong> through Python and LabVIEW integration.  </li>
+<li><strong>Documentation auto-generation</strong> via <a href="https://www.mkdocs.org/">MkDocs</a> and <a href="https://mkdocstrings.github.io/">mkdocstrings</a>.</li>
+</ul>
+<hr/>
+<h2 id="structure-of-this-documentation">Structure of This Documentation</h2>
+<ul>
+<li><strong>Conceptual Overview</strong> – background on the RPC model, actor-based design principles, and system architecture.  </li>
+<li><strong><a href="reference/Benchmark/">API Reference</a></strong> – detailed technical specification of modules, classes, and methods.  </li>
+<li><strong>Examples and Workflows</strong> – application to data acquisition, remote control, and message handling.  </li>
+<li><strong>Integration Guidelines</strong> – recommendations for extending NeuroRPC within experimental or industrial frameworks.</li>
+</ul>
+<hr/>
+<h2 id="quickstart">Quickstart</h2>
+<p>Minimal client example</p>
+<p>```bash
+from neuro_rpc import Client</p>
+<p>client = Client("127.0.0.1", port=2001)
+client.rpc("Display Text", {"Message": "Trying something :)", "exec_time": 0}, False)</p>
+</div>
+</div><footer>
+<div aria-label="Footer Navigation" class="rst-footer-buttons" role="navigation">
+<a class="btn btn-neutral float-right" href="reference/Benchmark/" title="Benchmark">Next <span class="icon icon-circle-arrow-right"></span></a>
+</div>
+<hr/>
+<div role="contentinfo">
+<!-- Copyright etc -->
+</div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+</div>
+</div>
+</section>
+</div>
+<div aria-label="Versions" class="rst-versions" role="note">
+<span class="rst-current-version" data-toggle="rst-current-version">
+<span>
+<a class="fa fa-github" href="https://github.com/faragoz/neuro" style="color: #fcfcfc"> GitHub</a>
+</span>
+<span><a href="reference/Benchmark/" style="color: #fcfcfc">Next »</a></span>
+</span>
+</div>
+<script src="js/jquery-3.6.0.min.js"></script>
+<script>var base_url = ".";</script>
+<script src="js/theme_extra.js"></script>
+<script src="js/theme.js"></script>
+<script src="search/main.js"></script>
+<script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+</body>
+</html>
+<!--
+MkDocs version : 1.6.1
+Build Date UTC : 2025-08-27 02:53:08.463650+00:00
+-->

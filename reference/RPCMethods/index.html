@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+
+<html class="writer-html5" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/><link href="https://faragoz.github.io/neuro/reference/RPCMethods/" rel="canonical"/>
+<link href="../../img/favicon.ico" rel="shortcut icon"/>
+<title>RPCMethods - NeuroRPC Docs</title>
+<link href="../../css/theme.css" rel="stylesheet"/>
+<link href="../../css/theme_extra.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" rel="stylesheet"/>
+<link href="../../assets/_mkdocstrings.css" rel="stylesheet"/>
+<script>
+        // Current page data
+        var mkdocs_page_name = "RPCMethods";
+        var mkdocs_page_input_path = "reference/RPCMethods.md";
+        var mkdocs_page_url = "/neuro/reference/RPCMethods/";
+      </script>
+<!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
+<link href="../../pdf/NeuroRPC.pdf" rel="alternate" title="PDF" type="application/pdf"/></head>
+<body class="wy-body-for-nav" role="document">
+<div class="wy-grid-for-nav">
+<nav class="wy-nav-side stickynav" data-toggle="wy-nav-shift">
+<div class="wy-side-scroll">
+<div class="wy-side-nav-search">
+<a class="icon icon-home" href="../.."> NeuroRPC Docs
+        </a><div role="search">
+<form action="../../search.html" class="wy-form" id="rtd-search-form" method="get">
+<input aria-label="Search docs" name="q" placeholder="Search docs" title="Type search term here" type="text"/>
+</form>
+</div>
+</div>
+<div aria-label="Navigation menu" class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Benchmark/">Benchmark</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Client/">Client</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Console/">Console</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Logger/">Logger</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Proxy/">Proxy</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../RPCHandler/">RPCHandler</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../RPCMessage/">RPCMessage</a>
+</li>
+<li class="toctree-l1 current"><a class="reference internal current" href="#">RPCMethods</a>
+<ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="#neuro_rpc.RPCMethods">RPCMethods</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#neuro_rpc.RPCMethods.RPCMethods">RPCMethods</a>
+<ul>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.RPCMethods.RPCMethods.add">add</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.RPCMethods.RPCMethods.default_response_handler">default_response_handler</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.RPCMethods.RPCMethods.echo">echo</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.RPCMethods.RPCMethods.handle_add_response">handle_add_response</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.RPCMethods.RPCMethods.handle_echo_response">handle_echo_response</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.RPCMethods.RPCMethods.handle_subtract_response">handle_subtract_response</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.RPCMethods.RPCMethods.subtract">subtract</a>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../RPCTracker/">RPCTracker</a>
+</li>
+</ul>
+</div>
+</div>
+</nav>
+<section class="wy-nav-content-wrap" data-toggle="wy-nav-shift">
+<nav aria-label="Mobile navigation menu" class="wy-nav-top" role="navigation">
+<i class="fa fa-bars" data-toggle="wy-nav-top"></i>
+<a href="../..">NeuroRPC Docs</a>
+</nav>
+<div class="wy-nav-content">
+<div class="rst-content"><div aria-label="breadcrumbs navigation" role="navigation">
+<ul class="wy-breadcrumbs">
+<li><a aria-label="Docs" class="icon icon-home" href="../.."></a></li>
+<li class="breadcrumb-item">API Reference</li>
+<li class="breadcrumb-item active">RPCMethods</li>
+<li class="wy-breadcrumbs-aside">
+<a class="icon icon-github" href="https://github.com/faragoz/neuro/edit/master/docs/reference/RPCMethods.md"> Edit on GitHub</a>
+</li>
+</ul>
+<hr/>
+</div>
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div class="section" itemprop="articleBody">
+<h1 id="rpcmethods">RPCMethods</h1>
+<div class="doc doc-object doc-module">
+<a id="neuro_rpc.RPCMethods"></a>
+<div class="doc doc-contents first">
+<p>Example RPC methods built on top of RPCHandler.</p>
+<p>Provides a container of request/response methods for testing and demonstration.
+Includes echo, add, subtract, and a default response handler.
+Can be extended with custom RPC logic as needed.</p>
+<details class="notes" open="">
+<summary>Notes</summary>
+<ul>
+<li>Uses the @rpc_method decorator to auto-register methods with RPCHandler.</li>
+</ul>
+</details>
+<div class="doc doc-children">
+<div class="doc doc-object doc-class">
+<h2 class="doc doc-heading" id="neuro_rpc.RPCMethods.RPCMethods">
+<code class="highlight language-python">RPCMethods(auto_register=True)</code>
+</h2>
+<div class="doc doc-contents">
+<p class="doc doc-class-bases">
+              Bases: <code><span title="python.neuro_rpc.RPCHandler.RPCHandler">RPCHandler</span></code></p>
+<p>Container for RPC methods.</p>
+<p>Extends RPCHandler and defines example request/response methods that are
+automatically registered at initialization if <code>auto_register=True</code>.</p>
+<p>Initialize the RPCMethods container.</p>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Parameters:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>auto_register</code></b>
+                  (<code><span title="bool">bool</span></code>, default:
+                      <code>True</code>
+)
+              –
+              <div class="doc-md-description">
+<p>If True, automatically registers decorated methods.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/RPCMethods.py</code></summary>
+<pre class="highlight"><code class="language-python">def __init__(self, auto_register: bool = True):
+    """
+    Initialize the RPCMethods container.
+
+    Args:
+        auto_register (bool): If True, automatically registers decorated methods.
+    """
+    super().__init__()
+
+    if auto_register:
+        self.register_methods(self)</code></pre>
+</details>
+<div class="doc doc-children">
+<div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="neuro_rpc.RPCMethods.RPCMethods.add">
+<code class="highlight language-python">add(a, b)</code>
+</h3>
+<div class="doc doc-contents">
+<p>RPC request method: add two numbers.</p>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Parameters:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>a</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+<p>First number.</p>
+</div>
+</li>
+<li>
+<b><code>b</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+<p>Second number.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Returns:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>float</code></b>(                  <code><span title="float">float</span></code>
+)              –
+              <div class="doc-md-description">
+<p>Sum of a and b.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/RPCMethods.py</code></summary>
+<pre class="highlight"><code class="language-python">@rpc_method(method_type="request")
+def add(self, a: float, b: float) -&gt; float:
+    """
+    RPC request method: add two numbers.
+
+    Args:
+        a (float): First number.
+        b (float): Second number.
+
+    Returns:
+        float: Sum of a and b.
+    """
+    return a + b</code></pre>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="neuro_rpc.RPCMethods.RPCMethods.default_response_handler">
+<code class="highlight language-python">default_response_handler(id=None, result=None, error=None)</code>
+</h3>
+<div class="doc doc-contents">
+<p>Default response handler.</p>
+<p>Invoked if no specific handler is registered for a response.</p>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Parameters:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>id</code></b>
+                  (<code><span title="typing.Any">Any</span></code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+<p>ID of the response.</p>
+</div>
+</li>
+<li>
+<b><code>result</code></b>
+                  (<code><span title="typing.Any">Any</span></code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+<p>Result payload if success.</p>
+</div>
+</li>
+<li>
+<b><code>error</code></b>
+                  (<code><span title="typing.Any">Any</span></code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+<p>Error payload if failure.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/RPCMethods.py</code></summary>
+<pre class="highlight"><code class="language-python">@rpc_method(method_type="response", name="default")
+def default_response_handler(self, id: Any = None, result: Any = None, error: Any = None) -&gt; None:
+    """
+    Default response handler.
+
+    Invoked if no specific handler is registered for a response.
+
+    Args:
+        id (Any, optional): ID of the response.
+        result (Any, optional): Result payload if success.
+        error (Any, optional): Error payload if failure.
+    """
+    if error:
+        logger.warning(f"Unhandled response error for ID {id}: {error}")
+    else:
+        logger.debug(f"Unhandled response result for ID {id}: {result}")</code></pre>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="neuro_rpc.RPCMethods.RPCMethods.echo">
+<code class="highlight language-python">echo(message)</code>
+</h3>
+<div class="doc doc-contents">
+<p>RPC request method: echo a message.</p>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Parameters:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>message</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+<p>String to echo back.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Returns:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>str</code></b>(                  <code><span title="str">str</span></code>
+)              –
+              <div class="doc-md-description">
+<p>The same message received.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/RPCMethods.py</code></summary>
+<pre class="highlight"><code class="language-python">@rpc_method(method_type="request")
+def echo(self, message: str) -&gt; str:
+    """
+    RPC request method: echo a message.
+
+    Args:
+        message (str): String to echo back.
+
+    Returns:
+        str: The same message received.
+    """
+    return message</code></pre>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="neuro_rpc.RPCMethods.RPCMethods.handle_add_response">
+<code class="highlight language-python">handle_add_response(id=None, result=None, error=None)</code>
+</h3>
+<div class="doc doc-contents">
+<p>Response handler for add.</p>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Parameters:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>id</code></b>
+                  (<code><span title="typing.Any">Any</span></code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+<p>ID of the corresponding request.</p>
+</div>
+</li>
+<li>
+<b><code>result</code></b>
+                  (<code><span title="typing.Any">Any</span></code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+<p>Result (sum).</p>
+</div>
+</li>
+<li>
+<b><code>error</code></b>
+                  (<code><span title="typing.Any">Any</span></code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+<p>Error object if the request failed.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/RPCMethods.py</code></summary>
+<pre class="highlight"><code class="language-python">@rpc_method(method_type="response", name="add")
+def handle_add_response(self, id: Any = None, result: Any = None, error: Any = None) -&gt; None:
+    """
+    Response handler for add.
+
+    Args:
+        id (Any, optional): ID of the corresponding request.
+        result (Any, optional): Result (sum).
+        error (Any, optional): Error object if the request failed.
+    """
+    if error:
+        logger.error(f"Add operation failed: {error}")
+    else:
+        logger.debug(f"Add operation result: {result}")</code></pre>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="neuro_rpc.RPCMethods.RPCMethods.handle_echo_response">
+<code class="highlight language-python">handle_echo_response(id=None, result=None, error=None)</code>
+</h3>
+<div class="doc doc-contents">
+<p>Response handler for echo.</p>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Parameters:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>id</code></b>
+                  (<code><span title="typing.Any">Any</span></code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+<p>ID of the corresponding request.</p>
+</div>
+</li>
+<li>
+<b><code>result</code></b>
+                  (<code><span title="typing.Any">Any</span></code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+<p>Result content.</p>
+</div>
+</li>
+<li>
+<b><code>error</code></b>
+                  (<code><span title="typing.Any">Any</span></code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+<p>Error object if the request failed.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/RPCMethods.py</code></summary>
+<pre class="highlight"><code class="language-python">@rpc_method(method_type="response", name="echo")
+def handle_echo_response(self, id: Any = None, result: Any = None, error: Any = None) -&gt; None:
+    """
+    Response handler for echo.
+
+    Args:
+        id (Any, optional): ID of the corresponding request.
+        result (Any, optional): Result content.
+        error (Any, optional): Error object if the request failed.
+    """
+    if error:
+        logger.error(f"Echo operation failed: {error}")
+    else:
+        pass</code></pre>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="neuro_rpc.RPCMethods.RPCMethods.handle_subtract_response">
+<code class="highlight language-python">handle_subtract_response(id=None, result=None, error=None)</code>
+</h3>
+<div class="doc doc-contents">
+<p>Response handler for subtract.</p>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Parameters:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>id</code></b>
+                  (<code><span title="typing.Any">Any</span></code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+<p>ID of the corresponding request.</p>
+</div>
+</li>
+<li>
+<b><code>result</code></b>
+                  (<code><span title="typing.Any">Any</span></code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+<p>Result (difference).</p>
+</div>
+</li>
+<li>
+<b><code>error</code></b>
+                  (<code><span title="typing.Any">Any</span></code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+<p>Error object if the request failed.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/RPCMethods.py</code></summary>
+<pre class="highlight"><code class="language-python">@rpc_method(method_type="response", name="subtract")
+def handle_subtract_response(self, id: Any = None, result: Any = None, error: Any = None) -&gt; None:
+    """
+    Response handler for subtract.
+
+    Args:
+        id (Any, optional): ID of the corresponding request.
+        result (Any, optional): Result (difference).
+        error (Any, optional): Error object if the request failed.
+    """
+    if error:
+        logger.error(f"Subtract operation failed: {error}")
+    else:
+        logger.debug(f"Subtract operation result: {result}")</code></pre>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="neuro_rpc.RPCMethods.RPCMethods.subtract">
+<code class="highlight language-python">subtract(a, b)</code>
+</h3>
+<div class="doc doc-contents">
+<p>RPC request method: subtract b from a.</p>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Parameters:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>a</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+<p>Minuend.</p>
+</div>
+</li>
+<li>
+<b><code>b</code></b>
+                  (<code><span title="float">float</span></code>)
+              –
+              <div class="doc-md-description">
+<p>Subtrahend.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Returns:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>float</code></b>(                  <code><span title="float">float</span></code>
+)              –
+              <div class="doc-md-description">
+<p>Result of a - b.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/RPCMethods.py</code></summary>
+<pre class="highlight"><code class="language-python">@rpc_method(method_type="request")
+def subtract(self, a: float, b: float) -&gt; float:
+    """
+    RPC request method: subtract b from a.
+
+    Args:
+        a (float): Minuend.
+        b (float): Subtrahend.
+
+    Returns:
+        float: Result of a - b.
+    """
+    return a - b</code></pre>
+</details>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div><footer>
+<div aria-label="Footer Navigation" class="rst-footer-buttons" role="navigation">
+<a class="btn btn-neutral float-left" href="../RPCMessage/" title="RPCMessage"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+<a class="btn btn-neutral float-right" href="../RPCTracker/" title="RPCTracker">Next <span class="icon icon-circle-arrow-right"></span></a>
+</div>
+<hr/>
+<div role="contentinfo">
+<!-- Copyright etc -->
+</div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+</div>
+</div>
+</section>
+</div>
+<div aria-label="Versions" class="rst-versions" role="note">
+<span class="rst-current-version" data-toggle="rst-current-version">
+<span>
+<a class="fa fa-github" href="https://github.com/faragoz/neuro" style="color: #fcfcfc"> GitHub</a>
+</span>
+<span><a href="../RPCMessage/" style="color: #fcfcfc">« Previous</a></span>
+<span><a href="../RPCTracker/" style="color: #fcfcfc">Next »</a></span>
+</span>
+</div>
+<script src="../../js/jquery-3.6.0.min.js"></script>
+<script>var base_url = "../..";</script>
+<script src="../../js/theme_extra.js"></script>
+<script src="../../js/theme.js"></script>
+<script src="../../search/main.js"></script>
+<script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+</body>
+</html>

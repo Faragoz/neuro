@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+
+<html class="writer-html5" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/><link href="https://faragoz.github.io/neuro/reference/RPCHandler/" rel="canonical"/>
+<link href="../../img/favicon.ico" rel="shortcut icon"/>
+<title>RPCHandler - NeuroRPC Docs</title>
+<link href="../../css/theme.css" rel="stylesheet"/>
+<link href="../../css/theme_extra.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" rel="stylesheet"/>
+<link href="../../assets/_mkdocstrings.css" rel="stylesheet"/>
+<script>
+        // Current page data
+        var mkdocs_page_name = "RPCHandler";
+        var mkdocs_page_input_path = "reference/RPCHandler.md";
+        var mkdocs_page_url = "/neuro/reference/RPCHandler/";
+      </script>
+<!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
+<link href="../../pdf/NeuroRPC.pdf" rel="alternate" title="PDF" type="application/pdf"/></head>
+<body class="wy-body-for-nav" role="document">
+<div class="wy-grid-for-nav">
+<nav class="wy-nav-side stickynav" data-toggle="wy-nav-shift">
+<div class="wy-side-scroll">
+<div class="wy-side-nav-search">
+<a class="icon icon-home" href="../.."> NeuroRPC Docs
+        </a><div role="search">
+<form action="../../search.html" class="wy-form" id="rtd-search-form" method="get">
+<input aria-label="Search docs" name="q" placeholder="Search docs" title="Type search term here" type="text"/>
+</form>
+</div>
+</div>
+<div aria-label="Navigation menu" class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Benchmark/">Benchmark</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Client/">Client</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Console/">Console</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Logger/">Logger</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Proxy/">Proxy</a>
+</li>
+<li class="toctree-l1 current"><a class="reference internal current" href="#">RPCHandler</a>
+<ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="#neuro_rpc.RPCHandler">RPCHandler</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#neuro_rpc.RPCHandler.RPCHandler">RPCHandler</a>
+<ul>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.RPCHandler.RPCHandler.create_error">create_error</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.RPCHandler.RPCHandler.create_request">create_request</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.RPCHandler.RPCHandler.create_response">create_response</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.RPCHandler.RPCHandler.next_request_id">next_request_id</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.RPCHandler.RPCHandler.process_message">process_message</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.RPCHandler.RPCHandler.register_methods">register_methods</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.RPCHandler.RPCHandler.register_request">register_request</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.RPCHandler.RPCHandler.register_response">register_response</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#neuro_rpc.RPCHandler.rpc_method">rpc_method</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../RPCMessage/">RPCMessage</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../RPCMethods/">RPCMethods</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../RPCTracker/">RPCTracker</a>
+</li>
+</ul>
+</div>
+</div>
+</nav>
+<section class="wy-nav-content-wrap" data-toggle="wy-nav-shift">
+<nav aria-label="Mobile navigation menu" class="wy-nav-top" role="navigation">
+<i class="fa fa-bars" data-toggle="wy-nav-top"></i>
+<a href="../..">NeuroRPC Docs</a>
+</nav>
+<div class="wy-nav-content">
+<div class="rst-content"><div aria-label="breadcrumbs navigation" role="navigation">
+<ul class="wy-breadcrumbs">
+<li><a aria-label="Docs" class="icon icon-home" href="../.."></a></li>
+<li class="breadcrumb-item">API Reference</li>
+<li class="breadcrumb-item active">RPCHandler</li>
+<li class="wy-breadcrumbs-aside">
+<a class="icon icon-github" href="https://github.com/faragoz/neuro/edit/master/docs/reference/RPCHandler.md"> Edit on GitHub</a>
+</li>
+</ul>
+<hr/>
+</div>
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div class="section" itemprop="articleBody">
+<h1 id="rpchandler">RPCHandler</h1>
+<div class="doc doc-object doc-module">
+<a id="neuro_rpc.RPCHandler"></a>
+<div class="doc doc-contents first">
+<p>Registration and dispatch of RPC request/response methods.</p>
+<p>Implements a handler for JSON-Message 2.0 (similar to JSON-RPC 2.0), providing:
+    - Method registration via the @rpc_method decorator.
+    - Creation of request, response, and error messages.
+    - Processing of incoming messages (both requests and responses).
+    - Integration with Benchmark to track latency and round-trip times.</p>
+<details class="notes" open="">
+<summary>Notes</summary>
+<ul>
+<li>Acts as the bridge between raw JSON messages and Python method calls.</li>
+</ul>
+</details>
+<div class="doc doc-children">
+<div class="doc doc-object doc-class">
+<h2 class="doc doc-heading" id="neuro_rpc.RPCHandler.RPCHandler">
+<code class="highlight language-python">RPCHandler()</code>
+</h2>
+<div class="doc doc-contents">
+<p class="doc doc-class-bases">
+              Bases: <code><span title="python.neuro_rpc.RPCMessage.RPCMessage">RPCMessage</span></code></p>
+<p>Core handler for JSON-Message 2.0 operations.</p>
+<p>Manages registration of request/response handlers, creation of message objects,
+and routing of incoming messages. Integrates with Benchmark to track requests
+and responses.</p>
+<p>Initialize the RPCHandler.</p>
+<p>Creates registries for request/response methods, sets up a Benchmark tracker,
+and initializes a logger.</p>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/RPCHandler.py</code></summary>
+<pre class="highlight"><code class="language-python">def __init__(self):
+    """
+    Initialize the RPCHandler.
+
+    Creates registries for request/response methods, sets up a Benchmark tracker,
+    and initializes a logger.
+    """
+    super().__init__()
+    self.request_methods: Dict[str, Callable] = {}
+    self.response_methods: Dict[str, Callable] = {}
+    self._request_id = 0
+    self.tracker = Benchmark()
+    self.logger = Logger.get_logger(self.__class__.__name__)</code></pre>
+</details>
+<div class="doc doc-children">
+<div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="neuro_rpc.RPCHandler.RPCHandler.create_error">
+<code class="highlight language-python">create_error(error_type, data=None, id=None)</code>
+</h3>
+<div class="doc doc-contents">
+<p>Create a JSON-Message error object.</p>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Parameters:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>error_type</code></b>
+                  (<code><span title="str">str</span> | <span title="dict">dict</span></code>)
+              –
+              <div class="doc-md-description">
+<p>Error type (see RPCError constants).</p>
+</div>
+</li>
+<li>
+<b><code>data</code></b>
+                  (<code><span title="typing.Any">Any</span></code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+<p>Additional error details.</p>
+</div>
+</li>
+<li>
+<b><code>id</code></b>
+                  (<code><span title="str">str</span></code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+<p>ID of the related request.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Returns:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>dict</code></b>              –
+              <div class="doc-md-description">
+<p>Serialized error response object.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/RPCHandler.py</code></summary>
+<pre class="highlight"><code class="language-python">def create_error(self, error_type, data=None, id=None):
+    """
+    Create a JSON-Message error object.
+
+    Args:
+        error_type (str | dict): Error type (see RPCError constants).
+        data (Any, optional): Additional error details.
+        id (str, optional): ID of the related request.
+
+    Returns:
+        dict: Serialized error response object.
+    """
+    error = RPCError(error_type=error_type, data=data)
+    response = RPCResponse(error=error.error, id=id)
+
+    if self.tracker:
+        self.tracker.track_outgoing_response(response)
+
+    return response.to_dict()</code></pre>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="neuro_rpc.RPCHandler.RPCHandler.create_request">
+<code class="highlight language-python">create_request(method, params=None, request_id=None)</code>
+</h3>
+<div class="doc doc-contents">
+<p>Create a JSON-Message request object.</p>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Parameters:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>method</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+<p>Method name to call.</p>
+</div>
+</li>
+<li>
+<b><code>params</code></b>
+                  (<code><span title="dict">dict</span> | <span title="list">list</span></code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+<p>Parameters for the request.</p>
+</div>
+</li>
+<li>
+<b><code>request_id</code></b>
+                  (<code><span title="str">str</span></code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+<p>Custom request ID (UUID by default).</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Returns:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>dict</code></b>              –
+              <div class="doc-md-description">
+<p>Serialized request object.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/RPCHandler.py</code></summary>
+<pre class="highlight"><code class="language-python">def create_request(self, method, params=None, request_id=None):
+    """
+    Create a JSON-Message request object.
+
+    Args:
+        method (str): Method name to call.
+        params (dict | list, optional): Parameters for the request.
+        request_id (str, optional): Custom request ID (UUID by default).
+
+    Returns:
+        dict: Serialized request object.
+    """
+    if request_id is None:
+        request_id = str(uuid.uuid4())
+
+    request = RPCRequest(method=method, id=request_id, params=params)
+    request_dict = request.to_dict()
+
+    if self.tracker:
+        self.tracker.track_outgoing_request(request)
+
+    return request_dict</code></pre>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="neuro_rpc.RPCHandler.RPCHandler.create_response">
+<code class="highlight language-python">create_response(result, request_id)</code>
+</h3>
+<div class="doc doc-contents">
+<p>Create a JSON-Message response object.</p>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Parameters:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>result</code></b>
+                  (<code><span title="typing.Any">Any</span></code>)
+              –
+              <div class="doc-md-description">
+<p>The result to return.</p>
+</div>
+</li>
+<li>
+<b><code>request_id</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+<p>ID of the original request.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Returns:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>dict</code></b>              –
+              <div class="doc-md-description">
+<p>Serialized response object.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/RPCHandler.py</code></summary>
+<pre class="highlight"><code class="language-python">def create_response(self, result, request_id):
+    """
+    Create a JSON-Message response object.
+
+    Args:
+        result (Any): The result to return.
+        request_id (str): ID of the original request.
+
+    Returns:
+        dict: Serialized response object.
+    """
+    response = RPCResponse(result=result, id=request_id)
+    response_dict = response.to_dict()
+
+    if self.tracker:
+        self.tracker.track_outgoing_response(response)
+
+    return response_dict</code></pre>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="neuro_rpc.RPCHandler.RPCHandler.next_request_id">
+<code class="highlight language-python">next_request_id()</code>
+</h3>
+<div class="doc doc-contents">
+<p>Generate a new request ID.</p>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Returns:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>int</code></b>(                  <code><span title="int">int</span></code>
+)              –
+              <div class="doc-md-description">
+<p>Incremental request ID.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/RPCHandler.py</code></summary>
+<pre class="highlight"><code class="language-python">def next_request_id(self) -&gt; int:
+    """
+    Generate a new request ID.
+
+    Returns:
+        int: Incremental request ID.
+    """
+    self._request_id += 1
+    return self._request_id</code></pre>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="neuro_rpc.RPCHandler.RPCHandler.process_message">
+<code class="highlight language-python">process_message(message)</code>
+</h3>
+<div class="doc doc-contents">
+<p>Process an incoming JSON-Message.</p>
+<p>Parses input (string/dict/RPCMessage), converts to RPCRequest or RPCResponse,
+and dispatches to the appropriate handler.</p>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Parameters:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>message</code></b>
+                  (<code><span title="dict">dict</span> | <span title="str">str</span> | <span title="python.neuro_rpc.RPCMessage.RPCMessage">RPCMessage</span></code>)
+              –
+              <div class="doc-md-description">
+<p>Incoming message.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Returns:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<code><span title="typing.Optional">Optional</span>[<span title="typing.Dict">Dict</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]]</code>
+              –
+              <div class="doc-md-description">
+<p>dict | None: Response dict if request, None if response.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Raises:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<code><span title="python.neuro_rpc.RPCMessage.RPCError">RPCError</span></code>
+              –
+              <div class="doc-md-description">
+<p>If message is invalid or cannot be parsed.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/RPCHandler.py</code></summary>
+<pre class="highlight"><code class="language-python">def process_message(self, message: Union[Dict[str, Any], str, RPCMessage]) -&gt; Optional[Dict[str, Any]]:
+    """
+    Process an incoming JSON-Message.
+
+    Parses input (string/dict/RPCMessage), converts to RPCRequest or RPCResponse,
+    and dispatches to the appropriate handler.
+
+    Args:
+        message (dict | str | RPCMessage): Incoming message.
+
+    Returns:
+        dict | None: Response dict if request, None if response.
+
+    Raises:
+        RPCError: If message is invalid or cannot be parsed.
+    """
+    try:
+        if isinstance(message, str):
+            try:
+                import json
+                message = json.loads(message)
+            except Exception as e:
+                self.logger.error(f"JSON parse error: {e}")
+                return self.create_error(RPCError.PARSE_ERROR)
+
+        if isinstance(message, dict):
+            if "method" in message:
+                try:
+                    rpc_message = RPCRequest.from_dict(message)
+                except Exception:
+                    return self.create_error(RPCError.INVALID_REQUEST)
+            elif "result" in message or "error" in message:
+                try:
+                    rpc_message = RPCResponse.from_dict(message)
+                except Exception:
+                    return self.create_error(RPCError.INVALID_REQUEST)
+            else:
+                return self.create_error(RPCError.INVALID_REQUEST)
+        else:
+            return self.create_error(RPCError.INVALID_REQUEST)
+
+        if isinstance(rpc_message, RPCRequest):
+            return self._process_request(rpc_message)
+        elif isinstance(rpc_message, RPCResponse):
+            self._process_response(rpc_message)
+            return None
+        else:
+            return self.create_error(RPCError.INVALID_REQUEST)
+    except Exception as e:
+        self.logger.error(f"Error processing message: {e}", exc_info=True)
+        return self.create_error(RPCError.INTERNAL_ERROR, data=str(e))</code></pre>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="neuro_rpc.RPCHandler.RPCHandler.register_methods">
+<code class="highlight language-python">register_methods(instance)</code>
+</h3>
+<div class="doc doc-contents">
+<p>Register decorated methods from an instance.</p>
+<p>Scans instance methods and registers those annotated with <code>@rpc_method</code>.</p>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Parameters:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>instance</code></b>
+                  (<code><span title="typing.Any">Any</span></code>)
+              –
+              <div class="doc-md-description">
+<p>Object instance containing decorated methods.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/RPCHandler.py</code></summary>
+<pre class="highlight"><code class="language-python">def register_methods(self, instance) -&gt; None:
+    """
+    Register decorated methods from an instance.
+
+    Scans instance methods and registers those annotated with ``@rpc_method``.
+
+    Args:
+        instance (Any): Object instance containing decorated methods.
+    """
+    for name, method in inspect.getmembers(instance, predicate=inspect.ismethod):
+        if hasattr(method, "_is_rpc_method"):
+            method_name = getattr(method, "_rpc_method_name", name)
+            method_type = getattr(method, "_rpc_method_type", "both")
+
+            if method_type in ["request", "both"]:
+                self.register_request(method_name, method)
+
+            if method_type in ["response", "both"]:
+                self.register_response(method_name, method)
+
+    self.logger.debug(f"Registered request methods: {list(self.request_methods.keys())}")
+    self.logger.debug(f"Registered response methods: {list(self.response_methods.keys())}")</code></pre>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="neuro_rpc.RPCHandler.RPCHandler.register_request">
+<code class="highlight language-python">register_request(method_name, method)</code>
+</h3>
+<div class="doc doc-contents">
+<p>Register a request handler.</p>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Parameters:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>method_name</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+<p>Name of the RPC method.</p>
+</div>
+</li>
+<li>
+<b><code>method</code></b>
+                  (<code><span title="typing.Callable">Callable</span></code>)
+              –
+              <div class="doc-md-description">
+<p>Function to call when this request is received.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Raises:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<code><span title="ValueError">ValueError</span></code>
+              –
+              <div class="doc-md-description">
+<p>If the provided method is not callable.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/RPCHandler.py</code></summary>
+<pre class="highlight"><code class="language-python">def register_request(self, method_name: str, method: Callable) -&gt; None:
+    """
+    Register a request handler.
+
+    Args:
+        method_name (str): Name of the RPC method.
+        method (Callable): Function to call when this request is received.
+
+    Raises:
+        ValueError: If the provided method is not callable.
+    """
+    if not callable(method):
+        raise ValueError(f"Request handler for {method_name} must be callable")
+
+    if method_name in self.request_methods:
+        self.logger.warning(f"Overriding existing request method: {method_name}")
+
+    self.request_methods[method_name] = method</code></pre>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="neuro_rpc.RPCHandler.RPCHandler.register_response">
+<code class="highlight language-python">register_response(method_name, method)</code>
+</h3>
+<div class="doc doc-contents">
+<p>Register a response handler.</p>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Parameters:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>method_name</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+<p>Name of the RPC method.</p>
+</div>
+</li>
+<li>
+<b><code>method</code></b>
+                  (<code><span title="typing.Callable">Callable</span></code>)
+              –
+              <div class="doc-md-description">
+<p>Function to call when a response is received.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Raises:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<code><span title="ValueError">ValueError</span></code>
+              –
+              <div class="doc-md-description">
+<p>If the provided method is not callable.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/RPCHandler.py</code></summary>
+<pre class="highlight"><code class="language-python">def register_response(self, method_name: str, method: Callable) -&gt; None:
+    """
+    Register a response handler.
+
+    Args:
+        method_name (str): Name of the RPC method.
+        method (Callable): Function to call when a response is received.
+
+    Raises:
+        ValueError: If the provided method is not callable.
+    """
+    if not callable(method):
+        raise ValueError(f"Response handler for {method_name} must be callable")
+
+    if method_name in self.response_methods:
+        self.logger.warning(f"Overriding existing response method: {method_name}")
+
+    self.response_methods[method_name] = method</code></pre>
+</details>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="doc doc-object doc-function">
+<h2 class="doc doc-heading" id="neuro_rpc.RPCHandler.rpc_method">
+<code class="highlight language-python">rpc_method(method_type='both', name=None)</code>
+</h2>
+<div class="doc doc-contents">
+<p>Decorator to mark methods for RPC registration.</p>
+<p>Annotates a function so that <code>RPCHandler.register_methods()</code> can discover
+and register it as a request and/or response handler.</p>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Parameters:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>method_type</code></b>
+                  (<code><span title="str">str</span></code>, default:
+                      <code>'both'</code>
+)
+              –
+              <div class="doc-md-description">
+<p>One of {"request", "response", "both"} (default "both").</p>
+</div>
+</li>
+<li>
+<b><code>name</code></b>
+                  (<code><span title="str">str</span></code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+<p>Optional alias under which the method is registered.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Returns:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>Callable</code></b>              –
+              <div class="doc-md-description">
+<p>The decorated function.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/RPCHandler.py</code></summary>
+<pre class="highlight"><code class="language-python">def rpc_method(method_type: str = "both", name: Optional[str] = None):
+    """
+    Decorator to mark methods for RPC registration.
+
+    Annotates a function so that ``RPCHandler.register_methods()`` can discover
+    and register it as a request and/or response handler.
+
+    Args:
+        method_type (str): One of {"request", "response", "both"} (default "both").
+        name (str, optional): Optional alias under which the method is registered.
+
+    Returns:
+        Callable: The decorated function.
+    """
+    def decorator(func):
+        func._is_rpc_method = True
+        func._rpc_method_type = method_type
+        func._rpc_method_name = name or func.__name__
+        return func
+
+    if callable(method_type):
+        func, method_type = method_type, "both"
+        return decorator(func)
+    return decorator</code></pre>
+</details>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div><footer>
+<div aria-label="Footer Navigation" class="rst-footer-buttons" role="navigation">
+<a class="btn btn-neutral float-left" href="../Proxy/" title="Proxy"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+<a class="btn btn-neutral float-right" href="../RPCMessage/" title="RPCMessage">Next <span class="icon icon-circle-arrow-right"></span></a>
+</div>
+<hr/>
+<div role="contentinfo">
+<!-- Copyright etc -->
+</div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+</div>
+</div>
+</section>
+</div>
+<div aria-label="Versions" class="rst-versions" role="note">
+<span class="rst-current-version" data-toggle="rst-current-version">
+<span>
+<a class="fa fa-github" href="https://github.com/faragoz/neuro" style="color: #fcfcfc"> GitHub</a>
+</span>
+<span><a href="../Proxy/" style="color: #fcfcfc">« Previous</a></span>
+<span><a href="../RPCMessage/" style="color: #fcfcfc">Next »</a></span>
+</span>
+</div>
+<script src="../../js/jquery-3.6.0.min.js"></script>
+<script>var base_url = "../..";</script>
+<script src="../../js/theme_extra.js"></script>
+<script src="../../js/theme.js"></script>
+<script src="../../search/main.js"></script>
+<script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+</body>
+</html>

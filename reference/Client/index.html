@@ -1,0 +1,1396 @@
+<!DOCTYPE html>
+
+<html class="writer-html5" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/><link href="https://faragoz.github.io/neuro/reference/Client/" rel="canonical"/>
+<link href="../../img/favicon.ico" rel="shortcut icon"/>
+<title>Client - NeuroRPC Docs</title>
+<link href="../../css/theme.css" rel="stylesheet"/>
+<link href="../../css/theme_extra.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" rel="stylesheet"/>
+<link href="../../assets/_mkdocstrings.css" rel="stylesheet"/>
+<script>
+        // Current page data
+        var mkdocs_page_name = "Client";
+        var mkdocs_page_input_path = "reference/Client.md";
+        var mkdocs_page_url = "/neuro/reference/Client/";
+      </script>
+<!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
+<link href="../../pdf/NeuroRPC.pdf" rel="alternate" title="PDF" type="application/pdf"/></head>
+<body class="wy-body-for-nav" role="document">
+<div class="wy-grid-for-nav">
+<nav class="wy-nav-side stickynav" data-toggle="wy-nav-shift">
+<div class="wy-side-scroll">
+<div class="wy-side-nav-search">
+<a class="icon icon-home" href="../.."> NeuroRPC Docs
+        </a><div role="search">
+<form action="../../search.html" class="wy-form" id="rtd-search-form" method="get">
+<input aria-label="Search docs" name="q" placeholder="Search docs" title="Type search term here" type="text"/>
+</form>
+</div>
+</div>
+<div aria-label="Navigation menu" class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Benchmark/">Benchmark</a>
+</li>
+<li class="toctree-l1 current"><a class="reference internal current" href="#">Client</a>
+<ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="#neuro_rpc.Client">Client</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#neuro_rpc.Client.Client">Client</a>
+<ul>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.Client.Client.connect">connect</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.Client.Client.disconnect">disconnect</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.Client.Client.echo">echo</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.Client.Client.echo_benchmark">echo_benchmark</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.Client.Client.ensure_connected">ensure_connected</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.Client.Client.receive_message">receive_message</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.Client.Client.recv_packet">recv_packet</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.Client.Client.rpc">rpc</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.Client.Client.send_and_receive">send_and_receive</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.Client.Client.send_message">send_message</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.Client.Client.send_packet">send_packet</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.Client.Client.start">start</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.Client.Client.stop">stop</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#neuro_rpc.Client.ConnectionError">ConnectionError</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#neuro_rpc.Client.MessageError">MessageError</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#neuro_rpc.Client.TimeoutError">TimeoutError</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Console/">Console</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Logger/">Logger</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Proxy/">Proxy</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../RPCHandler/">RPCHandler</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../RPCMessage/">RPCMessage</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../RPCMethods/">RPCMethods</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../RPCTracker/">RPCTracker</a>
+</li>
+</ul>
+</div>
+</div>
+</nav>
+<section class="wy-nav-content-wrap" data-toggle="wy-nav-shift">
+<nav aria-label="Mobile navigation menu" class="wy-nav-top" role="navigation">
+<i class="fa fa-bars" data-toggle="wy-nav-top"></i>
+<a href="../..">NeuroRPC Docs</a>
+</nav>
+<div class="wy-nav-content">
+<div class="rst-content"><div aria-label="breadcrumbs navigation" role="navigation">
+<ul class="wy-breadcrumbs">
+<li><a aria-label="Docs" class="icon icon-home" href="../.."></a></li>
+<li class="breadcrumb-item">API Reference</li>
+<li class="breadcrumb-item active">Client</li>
+<li class="wy-breadcrumbs-aside">
+<a class="icon icon-github" href="https://github.com/faragoz/neuro/edit/master/docs/reference/Client.md"> Edit on GitHub</a>
+</li>
+</ul>
+<hr/>
+</div>
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div class="section" itemprop="articleBody">
+<h1 id="client">Client</h1>
+<div class="doc doc-object doc-module">
+<a id="neuro_rpc.Client"></a>
+<div class="doc doc-contents first">
+<p>TCP client for framed JSON-RPC-like communication.</p>
+<p>This module implements a Python client that communicates with a LabVIEW/CompactRIO
+server using a custom framed JSON message protocol. It manages socket lifecycle,
+message serialization, connection retries, and integration with the RPC stack.</p>
+<details class="notes" open="">
+<summary>Notes</summary>
+<ul>
+<li>All socket operations are blocking.</li>
+<li>Background operation is achieved by running the client in a thread.</li>
+</ul>
+</details>
+<div class="doc doc-children">
+<div class="doc doc-object doc-class">
+<h2 class="doc doc-heading" id="neuro_rpc.Client.Client">
+<code class="highlight language-python">Client(host='127.0.0.1', port=6363, encoding='UTF-8', endian='&gt;I', timeout=10.0, max_retries=3, retry_delay=1.0, handler=None, no_delay=True)</code>
+</h2>
+<div class="doc doc-contents">
+<p>TCP Client for framed JSON messages.</p>
+<p>Manages connection lifecycle, sending/receiving messages, background thread execution,
+and integration with RPC handlers and trackers.</p>
+<p>Initialize a Client instance with connection parameters.</p>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Parameters:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>host</code></b>
+                  (<code><span title="str">str</span></code>, default:
+                      <code>'127.0.0.1'</code>
+)
+              –
+              <div class="doc-md-description">
+<p>Target hostname or IP address.</p>
+</div>
+</li>
+<li>
+<b><code>port</code></b>
+                  (<code><span title="int">int</span></code>, default:
+                      <code>6363</code>
+)
+              –
+              <div class="doc-md-description">
+<p>TCP port of the server.</p>
+</div>
+</li>
+<li>
+<b><code>encoding</code></b>
+                  (<code><span title="str">str</span></code>, default:
+                      <code>'UTF-8'</code>
+)
+              –
+              <div class="doc-md-description">
+<p>Encoding for JSON messages.</p>
+</div>
+</li>
+<li>
+<b><code>endian</code></b>
+                  (<code><span title="str">str</span></code>, default:
+                      <code>'&gt;I'</code>
+)
+              –
+              <div class="doc-md-description">
+<p>Struct format for message length (e.g., <code>'&gt;I'</code> big-endian).</p>
+</div>
+</li>
+<li>
+<b><code>timeout</code></b>
+                  (<code><span title="float">float</span></code>, default:
+                      <code>10.0</code>
+)
+              –
+              <div class="doc-md-description">
+<p>Socket timeout in seconds.</p>
+</div>
+</li>
+<li>
+<b><code>max_retries</code></b>
+                  (<code><span title="int">int</span></code>, default:
+                      <code>3</code>
+)
+              –
+              <div class="doc-md-description">
+<p>Maximum number of connection attempts.</p>
+</div>
+</li>
+<li>
+<b><code>retry_delay</code></b>
+                  (<code><span title="float">float</span></code>, default:
+                      <code>1.0</code>
+)
+              –
+              <div class="doc-md-description">
+<p>Delay between retry attempts in seconds.</p>
+</div>
+</li>
+<li>
+<b><code>handler</code></b>
+              –
+              <div class="doc-md-description">
+<p>Optional RPC handler, defaults to <code>RPCMethods()</code>.</p>
+</div>
+</li>
+<li>
+<b><code>no_delay</code></b>
+                  (<code><span title="bool">bool</span></code>, default:
+                      <code>True</code>
+)
+              –
+              <div class="doc-md-description">
+<p>If True, disables Nagle’s algorithm and sets DSCP EF.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/Client.py</code></summary>
+<pre class="highlight"><code class="language-python">def __init__(self,
+             host: str = "127.0.0.1",
+             port: int = 6363,
+             encoding: str = 'UTF-8',
+             endian: str = '&gt;I',
+             timeout: float = 10.0,
+             max_retries: int = 3,
+             retry_delay: float = 1.0,
+             handler=None,
+             no_delay = True):
+    """
+    Initialize a Client instance with connection parameters.
+
+    Args:
+        host (str): Target hostname or IP address.
+        port (int): TCP port of the server.
+        encoding (str): Encoding for JSON messages.
+        endian (str): Struct format for message length (e.g., ``'&gt;I'`` big-endian).
+        timeout (float): Socket timeout in seconds.
+        max_retries (int): Maximum number of connection attempts.
+        retry_delay (float): Delay between retry attempts in seconds.
+        handler: Optional RPC handler, defaults to ``RPCMethods()``.
+        no_delay (bool): If True, disables Nagle’s algorithm and sets DSCP EF.
+    """
+    self.host = host
+    self.port = port
+    self.encoding = encoding
+    self.endian = endian
+    self.timeout = timeout
+    self.max_retries = max_retries
+    self.retry_delay = retry_delay
+    self.no_delay = no_delay
+
+    self.client = None
+    self.client_thread = None
+    self.connected = False
+    self.thread_running = False
+
+    self.logger = Logger.get_logger(self.__class__.__name__())
+
+    # Handling methods
+    self.handler = RPCMethods()
+
+    self.header_bytes = 4
+    self.trailer_bytes = 4</code></pre>
+</details>
+<div class="doc doc-children">
+<div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="neuro_rpc.Client.Client.connect">
+<code class="highlight language-python">connect(retry=True)</code>
+</h3>
+<div class="doc doc-contents">
+<p>Establish a TCP connection with retry support.</p>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Parameters:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>retry</code></b>
+                  (<code><span title="bool">bool</span></code>, default:
+                      <code>True</code>
+)
+              –
+              <div class="doc-md-description">
+<p>Whether to retry failed attempts.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Returns:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>bool</code></b>(                  <code><span title="bool">bool</span></code>
+)              –
+              <div class="doc-md-description">
+<p>True if connected successfully.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Raises:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<code><a class="autorefs autorefs-internal" href="../Benchmark/#neuro_rpc.Client.ConnectionError" title="ConnectionError (neuro_rpc.Client.ConnectionError)">ConnectionError</a></code>
+              –
+              <div class="doc-md-description">
+<p>If all attempts fail.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/Client.py</code></summary>
+<pre class="highlight"><code class="language-python">def connect(self, retry: bool = True) -&gt; bool:
+    """
+    Establish a TCP connection with retry support.
+
+    Args:
+        retry (bool): Whether to retry failed attempts.
+
+    Returns:
+        bool: True if connected successfully.
+
+    Raises:
+        ConnectionError: If all attempts fail.
+    """
+    attempts = 1 if not retry else self.max_retries
+
+    for attempt in range(1, attempts + 1):
+        try:
+            if self.client:
+                self.disconnect()  # Close any existing connection
+
+            self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+            if self.no_delay:
+                self.client.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
+                self.client.setsockopt(socket.IPPROTO_IP , socket.IP_TOS, 46 &lt;&lt; 2)  # Set TOS for low latency
+                #self.client.setsockopt(socket.IPPROTO_IPV6, socket.IPV6_TCLASS, 0xB8)
+                self.logger.debug("Nagle's algorithm disabled for better latency. TOS set to EF.")
+
+                '''try:
+                    create_qos_policy_on_port(self.port)
+                    self.logger.debug("QoS2 DSCP EF applied via QOSAddSocketToFlow/QOSSetFlow2")
+                except Exception as e:
+                    self.logger.warning(f"QoS2 setup failed: {e}")'''
+
+            self.client.settimeout(self.timeout)
+            self.client.connect((self.host, self.port))
+            self.connected = True
+            self.logger.info(f"Connected to server at {self.host}:{self.port}")
+
+            return True
+
+        except socket.error as e:
+            if attempt &lt; attempts:
+                self.logger.warning(f"Connection attempt {attempt} failed: {e}. Retrying in {self.retry_delay}s...")
+                time.sleep(self.retry_delay)
+            else:
+                self.logger.error(f"Failed to connect after {attempts} attempts: {e}")
+                self.client = None
+                self.connected = False
+                raise ConnectionError(f"Failed to connect to {self.host}:{self.port}: {e}")
+
+    return False</code></pre>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="neuro_rpc.Client.Client.disconnect">
+<code class="highlight language-python">disconnect()</code>
+</h3>
+<div class="doc doc-contents">
+<p>Close the TCP connection.</p>
+<details class="notes" open="">
+<summary>Notes</summary>
+<p>Resets the socket and updates state to disconnected.</p>
+</details>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/Client.py</code></summary>
+<pre class="highlight"><code class="language-python">def disconnect(self) -&gt; None:
+    """
+    Close the TCP connection.
+
+    Notes:
+        Resets the socket and updates state to disconnected.
+    """
+    if self.client:
+        try:
+            self.client.close()
+        except socket.error as e:
+            self.logger.warning(f"Error during disconnection: {e}")
+        finally:
+            self.client = None
+            self.connected = False
+            self.logger.info("Disconnected from server")</code></pre>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="neuro_rpc.Client.Client.echo">
+<code class="highlight language-python">echo(message='test')</code>
+</h3>
+<div class="doc doc-contents">
+<p>Send an <code>echo</code> request and track its execution time.</p>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Parameters:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>message</code></b>
+                  (<code><span title="str">str</span></code>, default:
+                      <code>'test'</code>
+)
+              –
+              <div class="doc-md-description">
+<p>String to send.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/Client.py</code></summary>
+<pre class="highlight"><code class="language-python">def echo(self, message='test'):
+    """
+    Send an ``echo`` request and track its execution time.
+
+    Args:
+        message (str): String to send.
+    """
+    if isinstance(message, str):
+        size, data, tail = self.rpc("echo", {'Message': message})
+        data = json.loads(data)
+        exec_time = tail
+
+        self.handler.process_message(data)
+        self.handler.tracker.set_exec_time(data['id'], exec_time)
+    else:
+        self.logger.error("echo message must be a string")</code></pre>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="neuro_rpc.Client.Client.echo_benchmark">
+<code class="highlight language-python">echo_benchmark()</code>
+</h3>
+<div class="doc doc-contents">
+<p>Run a benchmark using echo requests with increasing payload sizes.</p>
+<p>Iterates over multiple message sizes, repeating each size multiple times,
+and records metrics through the Benchmark tracker.</p>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/Client.py</code></summary>
+<pre class="highlight"><code class="language-python">def echo_benchmark(self):
+    """
+    Run a benchmark using echo requests with increasing payload sizes.
+
+    Iterates over multiple message sizes, repeating each size multiple times,
+    and records metrics through the Benchmark tracker.
+    """
+    import numpy
+    sizes = numpy.linspace(0, 9600, 21, dtype=int)
+    iter = 10
+
+    self.handler.tracker.start_benchmark()
+    for i, size in enumerate(sizes):
+        size_progress = (i / len(sizes)) * 100
+        # self.logger.info(f"Testing payload size {size} bytes - {size_progress:.1f}% complete")
+
+        for j in range(iter):
+            payload = "X" * size
+            self.echo(payload)
+    self.handler.tracker.stop_benchmark()
+
+    self.handler.tracker.start_benchmark()
+    for i, size in enumerate(sizes):
+
+        for j in range(iter):
+            payload = "X" * size
+            self.echo(payload)
+    self.handler.tracker.stop_benchmark()
+
+    self.handler.tracker.start_benchmark()
+    for i, size in enumerate(sizes):
+        for j in range(iter):
+            payload = "X" * size
+            self.echo(payload)
+    self.handler.tracker.stop_benchmark()</code></pre>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="neuro_rpc.Client.Client.ensure_connected">
+<code class="highlight language-python">ensure_connected()</code>
+</h3>
+<div class="doc doc-contents">
+<p>Verify connection before sending/receiving.</p>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Raises:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<code><a class="autorefs autorefs-internal" href="../Benchmark/#neuro_rpc.Client.ConnectionError" title="ConnectionError (neuro_rpc.Client.ConnectionError)">ConnectionError</a></code>
+              –
+              <div class="doc-md-description">
+<p>If not connected.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/Client.py</code></summary>
+<pre class="highlight"><code class="language-python">def ensure_connected(self) -&gt; None:
+    """
+    Verify connection before sending/receiving.
+
+    Raises:
+        ConnectionError: If not connected.
+    """
+    if not self.connected or self.client is None:
+        raise ConnectionError("Not connected to server. Call connect() first.")</code></pre>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="neuro_rpc.Client.Client.receive_message">
+<code class="highlight language-python">receive_message(timeout=None, partial_timeout=None)</code>
+</h3>
+<div class="doc doc-contents">
+<p>Receive and parse a JSON message.</p>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Parameters:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>timeout</code></b>
+                  (<code><span title="float">float</span> | None</code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+<p>Optional override for socket timeout.</p>
+</div>
+</li>
+<li>
+<b><code>partial_timeout</code></b>
+                  (<code><span title="float">float</span> | None</code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+<p>Timeout for the remainder after the header.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Returns:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>dict</code></b>(                  <code><span title="typing.Any">Any</span></code>
+)              –
+              <div class="doc-md-description">
+<p>Parsed JSON response.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Raises:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<code><a class="autorefs autorefs-internal" href="../Benchmark/#neuro_rpc.Client.ConnectionError" title="ConnectionError (neuro_rpc.Client.ConnectionError)">ConnectionError</a></code>
+              –
+              <div class="doc-md-description">
+<p>If disconnected.</p>
+</div>
+</li>
+<li>
+<code><a class="autorefs autorefs-internal" href="../Benchmark/#neuro_rpc.Client.TimeoutError" title="TimeoutError (neuro_rpc.Client.TimeoutError)">TimeoutError</a></code>
+              –
+              <div class="doc-md-description">
+<p>If operation times out.</p>
+</div>
+</li>
+<li>
+<code><a class="autorefs autorefs-internal" href="../Benchmark/#neuro_rpc.Client.MessageError" title="MessageError (neuro_rpc.Client.MessageError)">MessageError</a></code>
+              –
+              <div class="doc-md-description">
+<p>If parsing fails.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/Client.py</code></summary>
+<pre class="highlight"><code class="language-python">def receive_message(self,
+                    timeout: Optional[float] = None,
+                    partial_timeout: Optional[float] = None) -&gt; Any:
+    """
+    Receive and parse a JSON message.
+
+    Args:
+        timeout (float | None): Optional override for socket timeout.
+        partial_timeout (float | None): Timeout for the remainder after the header.
+
+    Returns:
+        dict: Parsed JSON response.
+
+    Raises:
+        ConnectionError: If disconnected.
+        TimeoutError: If operation times out.
+        MessageError: If parsing fails.
+    """
+    self.ensure_connected()
+
+    # Set timeout for this operation if provided
+    original_timeout = None
+    if timeout is not None:
+        original_timeout = self.client.gettimeout()
+        self.client.settimeout(timeout)
+
+    try:
+        # Read the message size
+        message_size_data = self._recv_exactly(4)
+
+        # Unpack the message size
+        message_size = struct.unpack(self.endian, message_size_data)[0]
+
+        # Set partial timeout for remainder of message if specified
+        if partial_timeout is not None and original_timeout is None:
+            original_timeout = self.client.gettimeout()
+            self.client.settimeout(partial_timeout)
+
+        # Read the actual message based on the size
+        message_data = self._recv_exactly(message_size)
+
+        # Decode and parse the message
+        response = json.loads(message_data.decode(self.encoding))
+        return response
+
+    except socket.timeout as e:
+        self.logger.error(f"Timeout receiving message: {e}")
+        raise TimeoutError(f"Timed out waiting for response: {e}")
+
+    except socket.error as e:
+        self.logger.error(f"Socket error: {e}")
+        self.connected = False  # Mark as disconnected since the connection probably dropped
+        raise ConnectionError(f"Connection error while receiving: {e}")
+
+    except (struct.error, json.JSONDecodeError) as e:
+        self.logger.error(f"Error parsing message: {e}")
+        raise MessageError(f"Invalid message format: {e}")
+
+    finally:
+        # Restore original timeout if it was changed
+        if original_timeout is not None:
+            self.client.settimeout(original_timeout)</code></pre>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="neuro_rpc.Client.Client.recv_packet">
+<code class="highlight language-python">recv_packet()</code>
+</h3>
+<div class="doc doc-contents">
+<p>Receive a framed packet.</p>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Returns:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+              –
+              <div class="doc-md-description">
+<p>tuple[int, bytes, int] | None: <code>(size, data_bytes, trailer_int)</code> or <code>None</code> on error.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/Client.py</code></summary>
+<pre class="highlight"><code class="language-python">def recv_packet(self):
+    """
+    Receive a framed packet.
+
+    Returns:
+        tuple[int, bytes, int] | None: ``(size, data_bytes, trailer_int)`` or ``None`` on error.
+    """
+    try:
+        length_bytes = self._recv_exactly(self.header_bytes)
+        size = int.from_bytes(length_bytes)
+        full_packet = self._recv_exactly(size)
+        data, tail = self._unbuild_packet(full_packet, size)
+        # print(f"size: {size}, tail {tail}")
+        return size, data, tail
+
+    except Exception as e:
+        self.logger.error(f"Error receiving packet: {e}")
+        return None</code></pre>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="neuro_rpc.Client.Client.rpc">
+<code class="highlight language-python">rpc(method, params, response=True)</code>
+</h3>
+<div class="doc doc-contents">
+<p>Perform an RPC call using Proxy encoding.</p>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Parameters:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>method</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+<p>RPC method name.</p>
+</div>
+</li>
+<li>
+<b><code>params</code></b>
+                  (<code><span title="dict">dict</span></code>)
+              –
+              <div class="doc-md-description">
+<p>Parameters.</p>
+</div>
+</li>
+<li>
+<b><code>response</code></b>
+                  (<code><span title="bool">bool</span></code>, default:
+                      <code>True</code>
+)
+              –
+              <div class="doc-md-description">
+<p>Whether to wait for and return a response.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Returns:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+              –
+              <div class="doc-md-description">
+<p>tuple[int, str, int] | None: <code>(size, json_str, tail)</code> if <code>response=True</code>, else <code>None</code>.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/Client.py</code></summary>
+<pre class="highlight"><code class="language-python">def rpc(self, method, params, response=True):
+    """
+    Perform an RPC call using Proxy encoding.
+
+    Args:
+        method (str): RPC method name.
+        params (dict): Parameters.
+        response (bool): Whether to wait for and return a response.
+
+    Returns:
+        tuple[int, str, int] | None: ``(size, json_str, tail)`` if ``response=True``, else ``None``.
+    """
+    proxy = Proxy()
+    request = self.handler.create_request(method, params)
+    request, hdr_tree = proxy.to_act(request)
+    packet = self._build_packet(request)
+
+    if response:
+        self.send_packet(packet)
+        size, data, tail = self.recv_packet()
+        data = proxy.from_act(data, hdr_tree)
+        tail = tail
+        data = json.dumps(data, cls=NpEncoder)
+        return size, data, tail
+    else:
+        self.send_packet(packet)
+        return None</code></pre>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="neuro_rpc.Client.Client.send_and_receive">
+<code class="highlight language-python">send_and_receive(message, timeout=None, retry_on_error=True)</code>
+</h3>
+<div class="doc doc-contents">
+<p>Convenience wrapper to send and immediately receive a message.</p>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Parameters:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>message</code></b>
+                  (<code><span title="dict">dict</span></code>)
+              –
+              <div class="doc-md-description">
+<p>Message to send.</p>
+</div>
+</li>
+<li>
+<b><code>timeout</code></b>
+                  (<code><span title="float">float</span> | None</code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+<p>Optional receive timeout.</p>
+</div>
+</li>
+<li>
+<b><code>retry_on_error</code></b>
+                  (<code><span title="bool">bool</span></code>, default:
+                      <code>True</code>
+)
+              –
+              <div class="doc-md-description">
+<p>Whether to retry on send errors.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Returns:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>dict</code></b>(                  <code><span title="typing.Any">Any</span></code>
+)              –
+              <div class="doc-md-description">
+<p>Parsed JSON response.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/Client.py</code></summary>
+<pre class="highlight"><code class="language-python">def send_and_receive(self,
+                     message: Dict[str, Any],
+                     timeout: Optional[float] = None,
+                     retry_on_error: bool = True) -&gt; Any:
+    """
+    Convenience wrapper to send and immediately receive a message.
+
+    Args:
+        message (dict): Message to send.
+        timeout (float | None): Optional receive timeout.
+        retry_on_error (bool): Whether to retry on send errors.
+
+    Returns:
+        dict: Parsed JSON response.
+    """
+    self.send_message(message, retry_on_error)
+    return self.receive_message(timeout)</code></pre>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="neuro_rpc.Client.Client.send_message">
+<code class="highlight language-python">send_message(message, retry_on_error=True)</code>
+</h3>
+<div class="doc doc-contents">
+<p>Send a JSON message with retry support.</p>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Parameters:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>message</code></b>
+                  (<code><span title="dict">dict</span></code>)
+              –
+              <div class="doc-md-description">
+<p>JSON-compatible message.</p>
+</div>
+</li>
+<li>
+<b><code>retry_on_error</code></b>
+                  (<code><span title="bool">bool</span></code>, default:
+                      <code>True</code>
+)
+              –
+              <div class="doc-md-description">
+<p>Whether to retry on socket errors.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Returns:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>bool</code></b>(                  <code><span title="bool">bool</span></code>
+)              –
+              <div class="doc-md-description">
+<p>True if sent successfully.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Raises:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<code><a class="autorefs autorefs-internal" href="../Benchmark/#neuro_rpc.Client.ConnectionError" title="ConnectionError (neuro_rpc.Client.ConnectionError)">ConnectionError</a></code>
+              –
+              <div class="doc-md-description">
+<p>If not connected.</p>
+</div>
+</li>
+<li>
+<code><a class="autorefs autorefs-internal" href="../Benchmark/#neuro_rpc.Client.MessageError" title="MessageError (neuro_rpc.Client.MessageError)">MessageError</a></code>
+              –
+              <div class="doc-md-description">
+<p>If serialization or send fails.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/Client.py</code></summary>
+<pre class="highlight"><code class="language-python">def send_message(self,
+                 message: Dict[str, Any],
+                 retry_on_error: bool = True) -&gt; bool:
+    """
+    Send a JSON message with retry support.
+
+    Args:
+        message (dict): JSON-compatible message.
+        retry_on_error (bool): Whether to retry on socket errors.
+
+    Returns:
+        bool: True if sent successfully.
+
+    Raises:
+        ConnectionError: If not connected.
+        MessageError: If serialization or send fails.
+    """
+    self.ensure_connected()
+
+    attempts = 1 if not retry_on_error else self.max_retries
+
+    for attempt in range(1, attempts + 1):
+        try:
+            # Serialize message as JSON
+            message_json = json.dumps(message)
+
+            # Send the size of the message first
+            message_size = len(message_json)
+            self.client.sendall(struct.pack(self.endian, message_size))
+
+            # Send the actual message
+            self.client.sendall(message_json.encode(self.encoding))
+
+            #self.logger.debug(f"Sent: {message}")
+            return True
+
+        except (socket.error, struct.error) as e:
+            if attempt &lt; attempts:
+                self.logger.warning(f"Send attempt {attempt} failed: {e}. Retrying...")
+                # Try to reconnect before retrying
+                try:
+                    self.connect(retry=False)
+                except ConnectionError:
+                    pass  # Will be caught in the next iteration
+            else:
+                self.logger.error(f"Failed to send message after {attempts} attempts: {e}")
+                raise MessageError(f"Failed to send message: {e}")
+
+    return False</code></pre>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="neuro_rpc.Client.Client.send_packet">
+<code class="highlight language-python">send_packet(packet)</code>
+</h3>
+<div class="doc doc-contents">
+<p>Send a raw packet.</p>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Parameters:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>packet</code></b>
+                  (<code><span title="bytes">bytes</span></code>)
+              –
+              <div class="doc-md-description">
+<p>Complete framed packet.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Returns:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>bool</code></b>              –
+              <div class="doc-md-description">
+<p>True if sent successfully.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/Client.py</code></summary>
+<pre class="highlight"><code class="language-python">def send_packet(self, packet):
+    """
+    Send a raw packet.
+
+    Args:
+        packet (bytes): Complete framed packet.
+
+    Returns:
+        bool: True if sent successfully.
+    """
+    try:
+        # Send packet
+        self.client.sendall(packet)
+        return True
+    except Exception as e:
+        self.logger.error(f"Error sending packet: {e}")
+        return False</code></pre>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="neuro_rpc.Client.Client.start">
+<code class="highlight language-python">start()</code>
+</h3>
+<div class="doc doc-contents">
+<p>Start the client in a background thread.</p>
+<details class="notes" open="">
+<summary>Notes</summary>
+<p>Spawns a daemon thread that calls <code>connect()</code> and maintains the connection.</p>
+</details>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/Client.py</code></summary>
+<pre class="highlight"><code class="language-python">def start(self):
+    """
+    Start the client in a background thread.
+
+    Notes:
+        Spawns a daemon thread that calls ``connect()`` and maintains the connection.
+    """
+    if self.thread_running:
+        self.logger.error(f"Client is already running in thread {self.client_thread.name}")
+        return
+
+    # Start the client in a separate thread
+    def client_thread_func():
+        try:
+            self.logger.debug(f"Starting client on thread {threading.current_thread().name}")
+            self.connect()
+            self.thread_running = True
+
+            # Main thread loop
+            while self.thread_running:
+                # TODO: handle reconnection logic here
+                time.sleep(0.1)  # Prevent CPU hogging
+
+        except Exception as e:
+            self.logger.error(f"Client error: {e}")
+        finally:
+            self.logger.info("Client thread terminated")
+            self.thread_running = False
+
+    self.client_thread = threading.Thread(
+        target=client_thread_func,
+        name="ClientThread",
+        daemon=True  # Make it a daemon so it exits when the main thread exits
+    )
+
+    self.client_thread.start()
+    self.logger.debug("Client started in background thread")</code></pre>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="neuro_rpc.Client.Client.stop">
+<code class="highlight language-python">stop()</code>
+</h3>
+<div class="doc doc-contents">
+<p>Stop the client thread and disconnect.</p>
+<p>Calls <code>disconnect()</code>, stops monitoring, and joins the thread.</p>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/Client.py</code></summary>
+<pre class="highlight"><code class="language-python">def stop(self):
+    """
+    Stop the client thread and disconnect.
+
+    Calls ``disconnect()``, stops monitoring, and joins the thread.
+    """
+    if not self.thread_running:
+        self.logger.error("Client is not running")
+        return
+
+    self.logger.info("Stopping client...")
+    try:
+        self.disconnect()
+
+        # Stop monitor tracker
+        self.handler.tracker.stop_monitoring()
+
+        # Wait for thread to terminate (with timeout)
+        self.client_thread.join(timeout=2.0)
+        if self.client_thread.is_alive():
+            self.logger.warning("Client thread did not terminate properly")
+
+        self.thread_running = False
+        self.logger.info("Client stopped")
+
+    except Exception as e:
+        self.logger.error(f"Error stopping client: {e}")</code></pre>
+</details>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="doc doc-object doc-class">
+<h2 class="doc doc-heading" id="neuro_rpc.Client.ConnectionError">
+<code>ConnectionError</code>
+</h2>
+<div class="doc doc-contents">
+<p class="doc doc-class-bases">
+              Bases: <code><span title="Exception">Exception</span></code></p>
+<p>Raised for connection-related errors (e.g., failed connect or lost connection).</p>
+</div>
+</div>
+<div class="doc doc-object doc-class">
+<h2 class="doc doc-heading" id="neuro_rpc.Client.MessageError">
+<code>MessageError</code>
+</h2>
+<div class="doc doc-contents">
+<p class="doc doc-class-bases">
+              Bases: <code><span title="Exception">Exception</span></code></p>
+<p>Raised when a message cannot be serialized, sent, or parsed.</p>
+</div>
+</div>
+<div class="doc doc-object doc-class">
+<h2 class="doc doc-heading" id="neuro_rpc.Client.TimeoutError">
+<code>TimeoutError</code>
+</h2>
+<div class="doc doc-contents">
+<p class="doc doc-class-bases">
+              Bases: <code><span title="Exception">Exception</span></code></p>
+<p>Raised when a receive operation exceeds the configured timeout.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div><footer>
+<div aria-label="Footer Navigation" class="rst-footer-buttons" role="navigation">
+<a class="btn btn-neutral float-left" href="../Benchmark/" title="Benchmark"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+<a class="btn btn-neutral float-right" href="../Console/" title="Console">Next <span class="icon icon-circle-arrow-right"></span></a>
+</div>
+<hr/>
+<div role="contentinfo">
+<!-- Copyright etc -->
+</div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+</div>
+</div>
+</section>
+</div>
+<div aria-label="Versions" class="rst-versions" role="note">
+<span class="rst-current-version" data-toggle="rst-current-version">
+<span>
+<a class="fa fa-github" href="https://github.com/faragoz/neuro" style="color: #fcfcfc"> GitHub</a>
+</span>
+<span><a href="../Benchmark/" style="color: #fcfcfc">« Previous</a></span>
+<span><a href="../Console/" style="color: #fcfcfc">Next »</a></span>
+</span>
+</div>
+<script src="../../js/jquery-3.6.0.min.js"></script>
+<script>var base_url = "../..";</script>
+<script src="../../js/theme_extra.js"></script>
+<script src="../../js/theme.js"></script>
+<script src="../../search/main.js"></script>
+<script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+</body>
+</html>

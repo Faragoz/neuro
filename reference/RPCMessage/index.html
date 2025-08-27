@@ -1,0 +1,1162 @@
+<!DOCTYPE html>
+
+<html class="writer-html5" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/><link href="https://faragoz.github.io/neuro/reference/RPCMessage/" rel="canonical"/>
+<link href="../../img/favicon.ico" rel="shortcut icon"/>
+<title>RPCMessage - NeuroRPC Docs</title>
+<link href="../../css/theme.css" rel="stylesheet"/>
+<link href="../../css/theme_extra.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" rel="stylesheet"/>
+<link href="../../assets/_mkdocstrings.css" rel="stylesheet"/>
+<script>
+        // Current page data
+        var mkdocs_page_name = "RPCMessage";
+        var mkdocs_page_input_path = "reference/RPCMessage.md";
+        var mkdocs_page_url = "/neuro/reference/RPCMessage/";
+      </script>
+<!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
+<link href="../../pdf/NeuroRPC.pdf" rel="alternate" title="PDF" type="application/pdf"/></head>
+<body class="wy-body-for-nav" role="document">
+<div class="wy-grid-for-nav">
+<nav class="wy-nav-side stickynav" data-toggle="wy-nav-shift">
+<div class="wy-side-scroll">
+<div class="wy-side-nav-search">
+<a class="icon icon-home" href="../.."> NeuroRPC Docs
+        </a><div role="search">
+<form action="../../search.html" class="wy-form" id="rtd-search-form" method="get">
+<input aria-label="Search docs" name="q" placeholder="Search docs" title="Type search term here" type="text"/>
+</form>
+</div>
+</div>
+<div aria-label="Navigation menu" class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Benchmark/">Benchmark</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Client/">Client</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Console/">Console</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Logger/">Logger</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Proxy/">Proxy</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../RPCHandler/">RPCHandler</a>
+</li>
+<li class="toctree-l1 current"><a class="reference internal current" href="#">RPCMessage</a>
+<ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="#neuro_rpc.RPCMessage">RPCMessage</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#neuro_rpc.RPCMessage.RPCError">RPCError</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#neuro_rpc.RPCMessage.RPCMessage">RPCMessage</a>
+<ul>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.RPCMessage.RPCMessage.from_dict">from_dict</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.RPCMessage.RPCMessage.from_json">from_json</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.RPCMessage.RPCMessage.to_dict">to_dict</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.RPCMessage.RPCMessage.to_json">to_json</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#neuro_rpc.RPCMessage.RPCRequest">RPCRequest</a>
+<ul>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.RPCMessage.RPCRequest.is_notification">is_notification</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.RPCMessage.RPCRequest.from_dict">from_dict</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.RPCMessage.RPCRequest.to_dict">to_dict</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#neuro_rpc.RPCMessage.RPCResponse">RPCResponse</a>
+<ul>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.RPCMessage.RPCResponse.is_error">is_error</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.RPCMessage.RPCResponse.is_success">is_success</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.RPCMessage.RPCResponse.from_dict">from_dict</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.RPCMessage.RPCResponse.to_dict">to_dict</a>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../RPCMethods/">RPCMethods</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../RPCTracker/">RPCTracker</a>
+</li>
+</ul>
+</div>
+</div>
+</nav>
+<section class="wy-nav-content-wrap" data-toggle="wy-nav-shift">
+<nav aria-label="Mobile navigation menu" class="wy-nav-top" role="navigation">
+<i class="fa fa-bars" data-toggle="wy-nav-top"></i>
+<a href="../..">NeuroRPC Docs</a>
+</nav>
+<div class="wy-nav-content">
+<div class="rst-content"><div aria-label="breadcrumbs navigation" role="navigation">
+<ul class="wy-breadcrumbs">
+<li><a aria-label="Docs" class="icon icon-home" href="../.."></a></li>
+<li class="breadcrumb-item">API Reference</li>
+<li class="breadcrumb-item active">RPCMessage</li>
+<li class="wy-breadcrumbs-aside">
+<a class="icon icon-github" href="https://github.com/faragoz/neuro/edit/master/docs/reference/RPCMessage.md"> Edit on GitHub</a>
+</li>
+</ul>
+<hr/>
+</div>
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div class="section" itemprop="articleBody">
+<h1 id="rpcmessage">RPCMessage</h1>
+<div class="doc doc-object doc-module">
+<a id="neuro_rpc.RPCMessage"></a>
+<div class="doc doc-contents first">
+<p>Message and error classes for JSON-Message 2.0 protocol.</p>
+<p>Provides base classes for JSON-Message 2.0 communication (similar to JSON-RPC 2.0):
+    - RPCError: structured error objects.
+    - RPCMessage: base class for all messages.
+    - RPCRequest: request with method, params, and id.
+    - RPCResponse: response with result or error.</p>
+<details class="notes" open="">
+<summary>Notes</summary>
+<ul>
+<li>Ensures compatibility with NeuroRPC stack (Client, RPCHandler, Benchmark).</li>
+</ul>
+</details>
+<div class="doc doc-children">
+<div class="doc doc-object doc-class">
+<h2 class="doc doc-heading" id="neuro_rpc.RPCMessage.RPCError">
+<code class="highlight language-python">RPCError(error_type=None, data=None)</code>
+</h2>
+<div class="doc doc-contents">
+<p class="doc doc-class-bases">
+              Bases: <code><span title="Exception">Exception</span></code></p>
+<p>Exception class for JSON-Message 2.0 errors.</p>
+<p>Encapsulates standard and implementation-specific error codes as structured
+dictionaries, used for request/response validation.</p>
+<p>Initialize RPCError with a given type and optional metadata.</p>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Parameters:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>error_type</code></b>
+                  (<code><span title="str">str</span> | <span title="dict">dict</span></code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+<p>One of the error constants or a full error dict.</p>
+</div>
+</li>
+<li>
+<b><code>data</code></b>
+                  (<code><span title="typing.Any">Any</span></code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+<p>Additional metadata attached as "metadata" field.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/RPCMessage.py</code></summary>
+<pre class="highlight"><code class="language-python">def __init__(self, error_type=None, data: Any = None):
+    """
+    Initialize RPCError with a given type and optional metadata.
+
+    Args:
+        error_type (str | dict): One of the error constants or a full error dict.
+        data (Any, optional): Additional metadata attached as "metadata" field.
+    """
+    if isinstance(error_type, dict):
+        self.error_type = None
+        self.error = error_type.copy()
+        if data is not None:
+            self.error["metadata"] = data
+    else:
+        self.error_type = error_type
+        self.error = self._create_error(error_type, data)
+
+    super().__init__(f"{self.error['code']}: {self.error['message']} - {data if data else ''}")</code></pre>
+</details>
+<div class="doc doc-children">
+</div>
+</div>
+</div>
+<div class="doc doc-object doc-class">
+<h2 class="doc doc-heading" id="neuro_rpc.RPCMessage.RPCMessage">
+<code class="highlight language-python">RPCMessage()</code>
+</h2>
+<div class="doc doc-contents">
+<p>Base class for JSON-Message 2.0 messages.</p>
+<p>Defines the <code>jsonrpc</code> version and common serialization/deserialization helpers.</p>
+<p>Initialize with version '2.0'.</p>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/RPCMessage.py</code></summary>
+<pre class="highlight"><code class="language-python">def __init__(self):
+    """Initialize with version '2.0'."""
+    self.jsonrpc = "2.0"</code></pre>
+</details>
+<div class="doc doc-children">
+<div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="neuro_rpc.RPCMessage.RPCMessage.from_dict">
+<code class="highlight language-python">from_dict(data)</code>
+<span class="doc doc-labels">
+<small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
+</span>
+</h3>
+<div class="doc doc-contents">
+<p>Validate and create a message from dictionary.</p>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Parameters:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>data</code></b>
+                  (<code><span title="dict">dict</span></code>)
+              –
+              <div class="doc-md-description">
+<p>Dictionary to parse.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Returns:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>RPCMessage</code></b>(                  <code><a class="autorefs autorefs-internal" href="#neuro_rpc.RPCMessage.RPCMessage" title="RPCMessage() (neuro_rpc.RPCMessage.RPCMessage)">RPCMessage</a></code>
+)              –
+              <div class="doc-md-description">
+<p>Instance of the base class.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Raises:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<code><a class="autorefs autorefs-internal" href="#neuro_rpc.RPCMessage.RPCError" title="RPCError(error_type=None, data=None) (neuro_rpc.RPCMessage.RPCError)">RPCError</a></code>
+              –
+              <div class="doc-md-description">
+<p>If input is not a dict or version is invalid.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/RPCMessage.py</code></summary>
+<pre class="highlight"><code class="language-python">@classmethod
+def from_dict(cls, data: Dict[str, Any]) -&gt; 'RPCMessage':
+    """
+    Validate and create a message from dictionary.
+
+    Args:
+        data (dict): Dictionary to parse.
+
+    Returns:
+        RPCMessage: Instance of the base class.
+
+    Raises:
+        RPCError: If input is not a dict or version is invalid.
+    """
+    if not isinstance(data, dict):
+        raise RPCError(RPCError.INVALID_REQUEST, "Data must be a dictionary")
+    if data.get("jsonrpc") != "2.0":
+        raise RPCError(RPCError.INVALID_REQUEST, "Invalid JSON-Message version")
+    return cls()</code></pre>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="neuro_rpc.RPCMessage.RPCMessage.from_json">
+<code class="highlight language-python">from_json(json_str)</code>
+<span class="doc doc-labels">
+<small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
+</span>
+</h3>
+<div class="doc doc-contents">
+<p>Create message from JSON string.</p>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Parameters:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>json_str</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+<p>Input JSON string.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Returns:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>RPCMessage</code></b>(                  <code><a class="autorefs autorefs-internal" href="#neuro_rpc.RPCMessage.RPCMessage" title="RPCMessage() (neuro_rpc.RPCMessage.RPCMessage)">RPCMessage</a></code>
+)              –
+              <div class="doc-md-description">
+<p>Parsed object.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Raises:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<code><a class="autorefs autorefs-internal" href="#neuro_rpc.RPCMessage.RPCError" title="RPCError(error_type=None, data=None) (neuro_rpc.RPCMessage.RPCError)">RPCError</a></code>
+              –
+              <div class="doc-md-description">
+<p>If parsing fails.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/RPCMessage.py</code></summary>
+<pre class="highlight"><code class="language-python">@classmethod
+def from_json(cls, json_str: str) -&gt; 'RPCMessage':
+    """
+    Create message from JSON string.
+
+    Args:
+        json_str (str): Input JSON string.
+
+    Returns:
+        RPCMessage: Parsed object.
+
+    Raises:
+        RPCError: If parsing fails.
+    """
+    try:
+        data = json.loads(json_str)
+        return cls.from_dict(data)
+    except json.JSONDecodeError:
+        raise RPCError(RPCError.PARSE_ERROR, "Invalid JSON string")</code></pre>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="neuro_rpc.RPCMessage.RPCMessage.to_dict">
+<code class="highlight language-python">to_dict()</code>
+</h3>
+<div class="doc doc-contents">
+<p>Serialize the message to a dictionary.</p>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Returns:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>dict</code></b>(                  <code><span title="typing.Dict">Dict</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]</code>
+)              –
+              <div class="doc-md-description">
+<p>Dictionary containing the <code>jsonrpc</code> version.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/RPCMessage.py</code></summary>
+<pre class="highlight"><code class="language-python">def to_dict(self) -&gt; Dict[str, Any]:
+    """
+    Serialize the message to a dictionary.
+
+    Returns:
+        dict: Dictionary containing the ``jsonrpc`` version.
+    """
+    return {"jsonrpc": self.jsonrpc}</code></pre>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="neuro_rpc.RPCMessage.RPCMessage.to_json">
+<code class="highlight language-python">to_json()</code>
+</h3>
+<div class="doc doc-contents">
+<p>Serialize the message to a JSON string.</p>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Returns:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>str</code></b>(                  <code><span title="str">str</span></code>
+)              –
+              <div class="doc-md-description">
+<p>JSON string with message content.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/RPCMessage.py</code></summary>
+<pre class="highlight"><code class="language-python">def to_json(self) -&gt; str:
+    """
+    Serialize the message to a JSON string.
+
+    Returns:
+        str: JSON string with message content.
+    """
+    return json.dumps(self.to_dict())</code></pre>
+</details>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="doc doc-object doc-class">
+<h2 class="doc doc-heading" id="neuro_rpc.RPCMessage.RPCRequest">
+<code class="highlight language-python">RPCRequest(method, id=None, params=None)</code>
+</h2>
+<div class="doc doc-contents">
+<p class="doc doc-class-bases">
+              Bases: <code><a class="autorefs autorefs-internal" href="#neuro_rpc.RPCMessage.RPCMessage" title="RPCMessage() (neuro_rpc.RPCMessage.RPCMessage)">RPCMessage</a></code></p>
+<p>JSON-Message 2.0 Request.</p>
+<p>Contains method name, parameters, and identifier (id). Supports both positional
+(list) and named (dict) parameters.</p>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Parameters:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>method</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+<p>Method name to call.</p>
+</div>
+</li>
+<li>
+<b><code>id</code></b>
+                  (<code><span title="typing.Any">Any</span></code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+<p>Identifier for correlation (None for notifications).</p>
+</div>
+</li>
+<li>
+<b><code>params</code></b>
+                  (<code><span title="dict">dict</span> | <span title="list">list</span></code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+<p>Parameters for the call.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/RPCMessage.py</code></summary>
+<pre class="highlight"><code class="language-python">def __init__(self, method: str, id: Any = None, params: Optional[Union[Dict, List]] = None):
+    """
+    Args:
+        method (str): Method name to call.
+        id (Any, optional): Identifier for correlation (None for notifications).
+        params (dict | list, optional): Parameters for the call.
+    """
+    super().__init__()
+    self.method = method
+    self.id = id
+    self.params = params</code></pre>
+</details>
+<div class="doc doc-children">
+<div class="doc doc-object doc-attribute">
+<h3 class="doc doc-heading" id="neuro_rpc.RPCMessage.RPCRequest.is_notification">
+<code class="highlight language-python">is_notification</code>
+<span class="doc doc-labels">
+<small class="doc doc-label doc-label-property"><code>property</code></small>
+</span>
+</h3>
+<div class="doc doc-contents">
+<p>Check if this request is a notification.</p>
+<p>Notifications do not have an id and therefore do not expect a response.</p>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Returns:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>bool</code></b>(                  <code><span title="bool">bool</span></code>
+)              –
+              <div class="doc-md-description">
+<p>True if id is None.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="neuro_rpc.RPCMessage.RPCRequest.from_dict">
+<code class="highlight language-python">from_dict(data)</code>
+<span class="doc doc-labels">
+<small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
+</span>
+</h3>
+<div class="doc doc-contents">
+<p>Create a request from dictionary.</p>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Parameters:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>data</code></b>
+                  (<code><span title="dict">dict</span></code>)
+              –
+              <div class="doc-md-description">
+<p>Input dictionary.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Returns:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>RPCRequest</code></b>(                  <code><a class="autorefs autorefs-internal" href="#neuro_rpc.RPCMessage.RPCRequest" title="RPCRequest(method, id=None, params=None) (neuro_rpc.RPCMessage.RPCRequest)">RPCRequest</a></code>
+)              –
+              <div class="doc-md-description">
+<p>Parsed request.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Raises:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<code><a class="autorefs autorefs-internal" href="#neuro_rpc.RPCMessage.RPCError" title="RPCError(error_type=None, data=None) (neuro_rpc.RPCMessage.RPCError)">RPCError</a></code>
+              –
+              <div class="doc-md-description">
+<p>If validation fails.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/RPCMessage.py</code></summary>
+<pre class="highlight"><code class="language-python">@classmethod
+def from_dict(cls, data: Dict[str, Any]) -&gt; 'RPCRequest':
+    """
+    Create a request from dictionary.
+
+    Args:
+        data (dict): Input dictionary.
+
+    Returns:
+        RPCRequest: Parsed request.
+
+    Raises:
+        RPCError: If validation fails.
+    """
+    RPCMessage.from_dict(data)
+
+    if "method" not in data or not isinstance(data["method"], str):
+        raise RPCError(RPCError.INVALID_REQUEST, "Request must include a valid method name")
+
+    method = data["method"]
+    id = data.get("id")
+    params = data.get("params")
+
+    return cls(method=method, id=id, params=params)</code></pre>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="neuro_rpc.RPCMessage.RPCRequest.to_dict">
+<code class="highlight language-python">to_dict()</code>
+</h3>
+<div class="doc doc-contents">
+<p>Serialize the request to a dictionary.</p>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Returns:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>dict</code></b>(                  <code><span title="typing.Dict">Dict</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]</code>
+)              –
+              <div class="doc-md-description">
+<p>Request with jsonrpc, method, id, and params.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/RPCMessage.py</code></summary>
+<pre class="highlight"><code class="language-python">def to_dict(self) -&gt; Dict[str, Any]:
+    """
+    Serialize the request to a dictionary.
+
+    Returns:
+        dict: Request with jsonrpc, method, id, and params.
+    """
+    request = super().to_dict()
+    request["method"] = self.method
+
+    if self.id is not None:
+        request["id"] = self.id
+
+    if self.params is not None:
+        request["params"] = self.params
+
+    return request</code></pre>
+</details>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="doc doc-object doc-class">
+<h2 class="doc doc-heading" id="neuro_rpc.RPCMessage.RPCResponse">
+<code class="highlight language-python">RPCResponse(id, result=None, error=None, exec_time=None)</code>
+</h2>
+<div class="doc doc-contents">
+<p class="doc doc-class-bases">
+              Bases: <code><a class="autorefs autorefs-internal" href="#neuro_rpc.RPCMessage.RPCMessage" title="RPCMessage() (neuro_rpc.RPCMessage.RPCMessage)">RPCMessage</a></code></p>
+<p>JSON-Message 2.0 Response.</p>
+<p>Contains either a <code>result</code> or an <code>error</code>, but never both.
+Optionally includes execution time (exec_time) for benchmarking.</p>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Parameters:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>id</code></b>
+                  (<code><span title="typing.Any">Any</span></code>)
+              –
+              <div class="doc-md-description">
+<p>ID of the original request.</p>
+</div>
+</li>
+<li>
+<b><code>result</code></b>
+                  (<code><span title="typing.Any">Any</span></code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+<p>Result of the request.</p>
+</div>
+</li>
+<li>
+<b><code>error</code></b>
+                  (<code><span title="dict">dict</span></code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+<p>Error object.</p>
+</div>
+</li>
+<li>
+<b><code>exec_time</code></b>
+                  (<code><span title="int">int</span></code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+<p>Execution time (μs, provided by server).</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Raises:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<code><a class="autorefs autorefs-internal" href="#neuro_rpc.RPCMessage.RPCError" title="RPCError(error_type=None, data=None) (neuro_rpc.RPCMessage.RPCError)">RPCError</a></code>
+              –
+              <div class="doc-md-description">
+<p>If both result and error are provided.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/RPCMessage.py</code></summary>
+<pre class="highlight"><code class="language-python">def __init__(
+    self,
+    id: Any,
+    result: Any = None,
+    error: Optional[Dict[str, Any]] = None,
+    exec_time: Optional[int] = None,
+):
+    """
+    Args:
+        id (Any): ID of the original request.
+        result (Any, optional): Result of the request.
+        error (dict, optional): Error object.
+        exec_time (int, optional): Execution time (μs, provided by server).
+
+    Raises:
+        RPCError: If both result and error are provided.
+    """
+    super().__init__()
+    self.id = id
+
+    if error is not None and result is not None:
+        raise RPCError("INVALID_REQUEST", "Response cannot contain both result and error")
+
+    self.result = result
+    self.error = error
+    self.exec_time = exec_time</code></pre>
+</details>
+<div class="doc doc-children">
+<div class="doc doc-object doc-attribute">
+<h3 class="doc doc-heading" id="neuro_rpc.RPCMessage.RPCResponse.is_error">
+<code class="highlight language-python">is_error</code>
+<span class="doc doc-labels">
+<small class="doc doc-label doc-label-property"><code>property</code></small>
+</span>
+</h3>
+<div class="doc doc-contents">
+<p>Check if this response is an error response.</p>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Returns:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>bool</code></b>(                  <code><span title="bool">bool</span></code>
+)              –
+              <div class="doc-md-description">
+<p>True if error is not None.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="doc doc-object doc-attribute">
+<h3 class="doc doc-heading" id="neuro_rpc.RPCMessage.RPCResponse.is_success">
+<code class="highlight language-python">is_success</code>
+<span class="doc doc-labels">
+<small class="doc doc-label doc-label-property"><code>property</code></small>
+</span>
+</h3>
+<div class="doc doc-contents">
+<p>Check if this response is a success response.</p>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Returns:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>bool</code></b>(                  <code><span title="bool">bool</span></code>
+)              –
+              <div class="doc-md-description">
+<p>True if error is None.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="neuro_rpc.RPCMessage.RPCResponse.from_dict">
+<code class="highlight language-python">from_dict(data)</code>
+<span class="doc doc-labels">
+<small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
+</span>
+</h3>
+<div class="doc doc-contents">
+<p>Create a response from dictionary.</p>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Parameters:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>data</code></b>
+                  (<code><span title="dict">dict</span></code>)
+              –
+              <div class="doc-md-description">
+<p>Input dictionary.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Returns:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>RPCResponse</code></b>(                  <code><a class="autorefs autorefs-internal" href="#neuro_rpc.RPCMessage.RPCResponse" title="RPCResponse(id, result=None, error=None, exec_time=None) (neuro_rpc.RPCMessage.RPCResponse)">RPCResponse</a></code>
+)              –
+              <div class="doc-md-description">
+<p>Parsed response.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Raises:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<code><a class="autorefs autorefs-internal" href="#neuro_rpc.RPCMessage.RPCError" title="RPCError(error_type=None, data=None) (neuro_rpc.RPCMessage.RPCError)">RPCError</a></code>
+              –
+              <div class="doc-md-description">
+<p>If validation fails.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/RPCMessage.py</code></summary>
+<pre class="highlight"><code class="language-python">@classmethod
+def from_dict(cls, data: Dict[str, Any]) -&gt; 'RPCResponse':
+    """
+    Create a response from dictionary.
+
+    Args:
+        data (dict): Input dictionary.
+
+    Returns:
+        RPCResponse: Parsed response.
+
+    Raises:
+        RPCError: If validation fails.
+    """
+    RPCMessage.from_dict(data)
+
+    if "id" not in data:
+        raise RPCError(RPCError.INVALID_REQUEST, "Response must include an ID")
+
+    if "result" in data and "error" in data:
+        raise RPCError(RPCError.INVALID_REQUEST, "Response cannot contain both result and error")
+
+    if "result" not in data and "error" not in data:
+        raise RPCError(RPCError.INVALID_REQUEST, "Response must contain either result or error")
+
+    id = data["id"]
+    result = data.get("result")
+    error = data.get("error")
+    exec_time = data.get("exec_time", 0)
+
+    return cls(id=id, result=result, error=error, exec_time=exec_time)</code></pre>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="neuro_rpc.RPCMessage.RPCResponse.to_dict">
+<code class="highlight language-python">to_dict()</code>
+</h3>
+<div class="doc doc-contents">
+<p>Serialize the response to a dictionary.</p>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Returns:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>dict</code></b>(                  <code><span title="typing.Dict">Dict</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]</code>
+)              –
+              <div class="doc-md-description">
+<p>Response with jsonrpc, id, and either result or error.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/RPCMessage.py</code></summary>
+<pre class="highlight"><code class="language-python">def to_dict(self) -&gt; Dict[str, Any]:
+    """
+    Serialize the response to a dictionary.
+
+    Returns:
+        dict: Response with jsonrpc, id, and either result or error.
+    """
+    response = super().to_dict()
+    response["id"] = self.id
+
+    if self.error is not None:
+        response["error"] = self.error
+    else:
+        response["result"] = self.result
+
+    if self.exec_time is not None:
+        response["exec_time"] = self.exec_time
+
+    return response</code></pre>
+</details>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div><footer>
+<div aria-label="Footer Navigation" class="rst-footer-buttons" role="navigation">
+<a class="btn btn-neutral float-left" href="../RPCHandler/" title="RPCHandler"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+<a class="btn btn-neutral float-right" href="../RPCMethods/" title="RPCMethods">Next <span class="icon icon-circle-arrow-right"></span></a>
+</div>
+<hr/>
+<div role="contentinfo">
+<!-- Copyright etc -->
+</div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+</div>
+</div>
+</section>
+</div>
+<div aria-label="Versions" class="rst-versions" role="note">
+<span class="rst-current-version" data-toggle="rst-current-version">
+<span>
+<a class="fa fa-github" href="https://github.com/faragoz/neuro" style="color: #fcfcfc"> GitHub</a>
+</span>
+<span><a href="../RPCHandler/" style="color: #fcfcfc">« Previous</a></span>
+<span><a href="../RPCMethods/" style="color: #fcfcfc">Next »</a></span>
+</span>
+</div>
+<script src="../../js/jquery-3.6.0.min.js"></script>
+<script>var base_url = "../..";</script>
+<script src="../../js/theme_extra.js"></script>
+<script src="../../js/theme.js"></script>
+<script src="../../search/main.js"></script>
+<script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+</body>
+</html>

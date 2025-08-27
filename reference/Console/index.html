@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+
+<html class="writer-html5" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/><link href="https://faragoz.github.io/neuro/reference/Console/" rel="canonical"/>
+<link href="../../img/favicon.ico" rel="shortcut icon"/>
+<title>Console - NeuroRPC Docs</title>
+<link href="../../css/theme.css" rel="stylesheet"/>
+<link href="../../css/theme_extra.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" rel="stylesheet"/>
+<link href="../../assets/_mkdocstrings.css" rel="stylesheet"/>
+<script>
+        // Current page data
+        var mkdocs_page_name = "Console";
+        var mkdocs_page_input_path = "reference/Console.md";
+        var mkdocs_page_url = "/neuro/reference/Console/";
+      </script>
+<!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
+<link href="../../pdf/NeuroRPC.pdf" rel="alternate" title="PDF" type="application/pdf"/></head>
+<body class="wy-body-for-nav" role="document">
+<div class="wy-grid-for-nav">
+<nav class="wy-nav-side stickynav" data-toggle="wy-nav-shift">
+<div class="wy-side-scroll">
+<div class="wy-side-nav-search">
+<a class="icon icon-home" href="../.."> NeuroRPC Docs
+        </a><div role="search">
+<form action="../../search.html" class="wy-form" id="rtd-search-form" method="get">
+<input aria-label="Search docs" name="q" placeholder="Search docs" title="Type search term here" type="text"/>
+</form>
+</div>
+</div>
+<div aria-label="Navigation menu" class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Benchmark/">Benchmark</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Client/">Client</a>
+</li>
+<li class="toctree-l1 current"><a class="reference internal current" href="#">Console</a>
+<ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="#neuro_rpc.Console">Console</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#neuro_rpc.Console.Console">Console</a>
+<ul>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.Console.Console.clear_screen">clear_screen</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.Console.Console.client_status">client_status</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.Console.Console.run">run</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.Console.Console.start_client">start_client</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.Console.Console.start_interactive_console">start_interactive_console</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.Console.Console.stop_client">stop_client</a>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Logger/">Logger</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Proxy/">Proxy</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../RPCHandler/">RPCHandler</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../RPCMessage/">RPCMessage</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../RPCMethods/">RPCMethods</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../RPCTracker/">RPCTracker</a>
+</li>
+</ul>
+</div>
+</div>
+</nav>
+<section class="wy-nav-content-wrap" data-toggle="wy-nav-shift">
+<nav aria-label="Mobile navigation menu" class="wy-nav-top" role="navigation">
+<i class="fa fa-bars" data-toggle="wy-nav-top"></i>
+<a href="../..">NeuroRPC Docs</a>
+</nav>
+<div class="wy-nav-content">
+<div class="rst-content"><div aria-label="breadcrumbs navigation" role="navigation">
+<ul class="wy-breadcrumbs">
+<li><a aria-label="Docs" class="icon icon-home" href="../.."></a></li>
+<li class="breadcrumb-item">API Reference</li>
+<li class="breadcrumb-item active">Console</li>
+<li class="wy-breadcrumbs-aside">
+<a class="icon icon-github" href="https://github.com/faragoz/neuro/edit/master/docs/reference/Console.md"> Edit on GitHub</a>
+</li>
+</ul>
+<hr/>
+</div>
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div class="section" itemprop="articleBody">
+<h1 id="console">Console</h1>
+<div class="doc doc-object doc-module">
+<a id="neuro_rpc.Console"></a>
+<div class="doc doc-contents first">
+<p>Interactive console wrapper for NeuroRPC client.</p>
+<p>Provides a REPL-style interface to manually start, stop, and inspect the state of
+the TCP client. Useful for debugging and testing RPC connections interactively.</p>
+<details class="notes" open="">
+<summary>Notes</summary>
+<ul>
+<li>Runs with Python's built-in InteractiveConsole.</li>
+<li>Available commands and modules are preloaded in the interactive namespace.</li>
+</ul>
+</details>
+<div class="doc doc-children">
+<div class="doc doc-object doc-class">
+<h2 class="doc doc-heading" id="neuro_rpc.Console.Console">
+<code class="highlight language-python">Console(client_config=None)</code>
+</h2>
+<div class="doc doc-contents">
+<p>Interactive console for manual client control.</p>
+<p>Encapsulates startup and shutdown logic for the NeuroRPC client and exposes
+convenience commands in an interactive REPL environment. Provides status checks
+and log outputs for debugging.</p>
+<p>Initialize the interactive console with client configuration.</p>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Parameters:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>client_config</code></b>
+                  (<code><span title="dict">dict</span> | None</code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+<p>Optional dictionary of client configuration
+parameters (host, port, etc.). If None, defaults from <code>Client</code> are used.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/Console.py</code></summary>
+<pre class="highlight"><code class="language-python">def __init__(self, client_config=None):
+    """
+    Initialize the interactive console with client configuration.
+
+    Args:
+        client_config (dict | None): Optional dictionary of client configuration
+            parameters (host, port, etc.). If None, defaults from ``Client`` are used.
+    """
+    self.client_class = Client
+    self.client_config = client_config or {}
+    self.client = None
+    self.running = False
+    self.logger = Logger.get_logger(self.__class__.__name__)</code></pre>
+</details>
+<div class="doc doc-children">
+<div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="neuro_rpc.Console.Console.clear_screen">
+<code class="highlight language-python">clear_screen()</code>
+</h3>
+<div class="doc doc-contents">
+<p>Clear the console screen.</p>
+<details class="notes" open="">
+<summary>Notes</summary>
+<p>Uses OS-specific commands: <code>cls</code> on Windows, <code>clear</code> on Unix-like systems.</p>
+</details>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/Console.py</code></summary>
+<pre class="highlight"><code class="language-python">def clear_screen(self) -&gt; None:
+    """
+    Clear the console screen.
+
+    Notes:
+        Uses OS-specific commands: ``cls`` on Windows, ``clear`` on Unix-like systems.
+    """
+    system = platform.system().lower()
+
+    if system == 'windows':
+        os.system('cls')
+    else:  # For Linux, macOS, etc.
+        os.system('clear')</code></pre>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="neuro_rpc.Console.Console.client_status">
+<code class="highlight language-python">client_status()</code>
+</h3>
+<div class="doc doc-contents">
+<p>Display current client status in the logger.</p>
+<p>Shows information about the client object, connection status,
+active thread, and registered RPC methods (if available).</p>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/Console.py</code></summary>
+<pre class="highlight"><code class="language-python">def client_status(self):
+    """
+    Display current client status in the logger.
+
+    Shows information about the client object, connection status,
+    active thread, and registered RPC methods (if available).
+    """
+    status = ["\n"]
+
+    # Check if client object exists
+    if self.client is None:
+        status.append("Client not initialized")
+        status.append("To initialize and connect the client, use: start()")
+        self.logger.error("\n".join(status))
+        return
+
+    # If client exists, check its status
+    status.append(f"Client object: {type(self.client).__name__}")
+    status.append(f"Client connected: {self.client.connected}")
+
+    if self.running:
+        status.append(f"Client thread_running in thread: {self.client.client_thread.name}")
+        status.append(f"Thread alive: {self.client.client_thread.is_alive()}")
+    else:
+        status.append("Client not thread_running in background")
+
+    # Show handler info if available
+    if hasattr(self.client, 'handler'):
+        handler = self.client.handler
+        if hasattr(handler, 'request_methods'):
+            status.append(f"Request methods: {list(handler.request_methods.keys())}")
+        if hasattr(handler, 'response_methods'):
+            status.append(f"Response methods: {list(handler.response_methods.keys())}")
+
+    self.logger.info("\n".join(status))</code></pre>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="neuro_rpc.Console.Console.run">
+<code class="highlight language-python">run()</code>
+</h3>
+<div class="doc doc-contents">
+<p>Run the interactive console.</p>
+<p>Initializes the interactive console and blocks until exit.
+Handles Ctrl+C gracefully, stopping the client if necessary.</p>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/Console.py</code></summary>
+<pre class="highlight"><code class="language-python">def run(self):
+    """
+    Run the interactive console.
+
+    Initializes the interactive console and blocks until exit.
+    Handles Ctrl+C gracefully, stopping the client if necessary.
+    """
+    try:
+        # Start the interactive console immediately
+        self.start_interactive_console()
+
+    except KeyboardInterrupt:
+        self.logger.error("\nInterrupted by user")
+    finally:
+        # Make sure to clean up
+        if self.running:
+            self.stop_client()
+        self.logger.info("Goodbye!")</code></pre>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="neuro_rpc.Console.Console.start_client">
+<code class="highlight language-python">start_client()</code>
+</h3>
+<div class="doc doc-contents">
+<p>Start the client in a background thread.</p>
+<details class="notes" open="">
+<summary>Notes</summary>
+<p>Instantiates <code>Client</code> if not yet created and calls <code>start()</code>.</p>
+</details>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/Console.py</code></summary>
+<pre class="highlight"><code class="language-python">def start_client(self):
+    """
+    Start the client in a background thread.
+
+    Notes:
+        Instantiates ``Client`` if not yet created and calls ``start()``.
+    """
+    # Use existing client instance or create a new one if needed
+    if self.client is None:
+        self.client = self.client_class(**self.client_config)
+
+    self.client.start()</code></pre>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="neuro_rpc.Console.Console.start_interactive_console">
+<code class="highlight language-python">start_interactive_console()</code>
+</h3>
+<div class="doc doc-contents">
+<p>Start the REPL console with preloaded commands.</p>
+<p>Provides start/stop/status/cls commands and access to Logger and LoggerConfig.
+A banner with usage instructions is displayed at startup.</p>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/Console.py</code></summary>
+<pre class="highlight"><code class="language-python">    def start_interactive_console(self):
+        """
+        Start the REPL console with preloaded commands.
+
+        Provides start/stop/status/cls commands and access to Logger and LoggerConfig.
+        A banner with usage instructions is displayed at startup.
+        """
+        # Prepare the welcome message
+        banner = """
+=================================================================
+Message Client Interactive Console
+=================================================================
+
+The client is not thread_running yet. To start it, use:
+    start()
+
+Client object is available as 'client' variable.
+Once started, use client().method() to interact with the client.
+
+Available commands:
+    start() - Start the client in background
+    stop()  - Stop the thread_running client
+    status() - Get the status of the client
+    cls() - Clear the console screen
+
+Available modules:
+    logger - NeuroRPC logger
+    config_logger - NeuroRPC logger configuration
+
+Press Ctrl+D (or Ctrl+Z on Windows) to exit the console.
+=================================================================
+"""
+
+        # Prepare the namespace for the console
+        namespace = {
+            'client': lambda: self.client,
+            'start': self.start_client,
+            'stop': self.stop_client,
+            'status': self.client_status,
+            'cls': self.clear_screen,
+            'logger': Logger,
+            'config_logger': LoggerConfig,
+        }
+
+        # Create and start the console
+        console = code.InteractiveConsole(locals=namespace)
+        console.interact(banner=banner)
+
+        # When console exits, make sure to clean up
+        self.logger.info("Exiting interactive console...")
+        if self.running:
+            self.stop_client()</code></pre>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="neuro_rpc.Console.Console.stop_client">
+<code class="highlight language-python">stop_client()</code>
+</h3>
+<div class="doc doc-contents">
+<p>Stop the running client thread.</p>
+<details class="notes" open="">
+<summary>Notes</summary>
+<p>Calls <code>Client.stop()</code>. Logs error if client is uninitialized.</p>
+</details>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/Console.py</code></summary>
+<pre class="highlight"><code class="language-python">def stop_client(self):
+    """
+    Stop the running client thread.
+
+    Notes:
+        Calls ``Client.stop()``. Logs error if client is uninitialized.
+    """
+    if self.client is None:
+        self.logger.error("Client object not initialized")
+        return
+
+    self.client.stop()</code></pre>
+</details>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div><footer>
+<div aria-label="Footer Navigation" class="rst-footer-buttons" role="navigation">
+<a class="btn btn-neutral float-left" href="../Client/" title="Client"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+<a class="btn btn-neutral float-right" href="../Logger/" title="Logger">Next <span class="icon icon-circle-arrow-right"></span></a>
+</div>
+<hr/>
+<div role="contentinfo">
+<!-- Copyright etc -->
+</div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+</div>
+</div>
+</section>
+</div>
+<div aria-label="Versions" class="rst-versions" role="note">
+<span class="rst-current-version" data-toggle="rst-current-version">
+<span>
+<a class="fa fa-github" href="https://github.com/faragoz/neuro" style="color: #fcfcfc"> GitHub</a>
+</span>
+<span><a href="../Client/" style="color: #fcfcfc">« Previous</a></span>
+<span><a href="../Logger/" style="color: #fcfcfc">Next »</a></span>
+</span>
+</div>
+<script src="../../js/jquery-3.6.0.min.js"></script>
+<script>var base_url = "../..";</script>
+<script src="../../js/theme_extra.js"></script>
+<script src="../../js/theme.js"></script>
+<script src="../../search/main.js"></script>
+<script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+</body>
+</html>

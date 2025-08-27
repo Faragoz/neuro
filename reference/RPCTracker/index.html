@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+
+<html class="writer-html5" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/><link href="https://faragoz.github.io/neuro/reference/RPCTracker/" rel="canonical"/>
+<link href="../../img/favicon.ico" rel="shortcut icon"/>
+<title>RPCTracker - NeuroRPC Docs</title>
+<link href="../../css/theme.css" rel="stylesheet"/>
+<link href="../../css/theme_extra.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" rel="stylesheet"/>
+<link href="../../assets/_mkdocstrings.css" rel="stylesheet"/>
+<script>
+        // Current page data
+        var mkdocs_page_name = "RPCTracker";
+        var mkdocs_page_input_path = "reference/RPCTracker.md";
+        var mkdocs_page_url = "/neuro/reference/RPCTracker/";
+      </script>
+<!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
+<link href="../../pdf/NeuroRPC.pdf" rel="alternate" title="PDF" type="application/pdf"/></head>
+<body class="wy-body-for-nav" role="document">
+<div class="wy-grid-for-nav">
+<nav class="wy-nav-side stickynav" data-toggle="wy-nav-shift">
+<div class="wy-side-scroll">
+<div class="wy-side-nav-search">
+<a class="icon icon-home" href="../.."> NeuroRPC Docs
+        </a><div role="search">
+<form action="../../search.html" class="wy-form" id="rtd-search-form" method="get">
+<input aria-label="Search docs" name="q" placeholder="Search docs" title="Type search term here" type="text"/>
+</form>
+</div>
+</div>
+<div aria-label="Navigation menu" class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Benchmark/">Benchmark</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Client/">Client</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Console/">Console</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Logger/">Logger</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Proxy/">Proxy</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../RPCHandler/">RPCHandler</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../RPCMessage/">RPCMessage</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../RPCMethods/">RPCMethods</a>
+</li>
+<li class="toctree-l1 current"><a class="reference internal current" href="#">RPCTracker</a>
+<ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="#neuro_rpc.RPCTracker">RPCTracker</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#neuro_rpc.RPCTracker.RPCTracker">RPCTracker</a>
+<ul>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.RPCTracker.RPCTracker.clean_tracking_data">clean_tracking_data</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.RPCTracker.RPCTracker.get_statistics">get_statistics</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.RPCTracker.RPCTracker.monitor_messages">monitor_messages</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.RPCTracker.RPCTracker.start_monitoring">start_monitoring</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.RPCTracker.RPCTracker.stop_monitoring">stop_monitoring</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.RPCTracker.RPCTracker.track_incoming_request">track_incoming_request</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.RPCTracker.RPCTracker.track_incoming_response">track_incoming_response</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.RPCTracker.RPCTracker.track_outgoing_request">track_outgoing_request</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.RPCTracker.RPCTracker.track_outgoing_response">track_outgoing_response</a>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</nav>
+<section class="wy-nav-content-wrap" data-toggle="wy-nav-shift">
+<nav aria-label="Mobile navigation menu" class="wy-nav-top" role="navigation">
+<i class="fa fa-bars" data-toggle="wy-nav-top"></i>
+<a href="../..">NeuroRPC Docs</a>
+</nav>
+<div class="wy-nav-content">
+<div class="rst-content"><div aria-label="breadcrumbs navigation" role="navigation">
+<ul class="wy-breadcrumbs">
+<li><a aria-label="Docs" class="icon icon-home" href="../.."></a></li>
+<li class="breadcrumb-item">API Reference</li>
+<li class="breadcrumb-item active">RPCTracker</li>
+<li class="wy-breadcrumbs-aside">
+<a class="icon icon-github" href="https://github.com/faragoz/neuro/edit/master/docs/reference/RPCTracker.md"> Edit on GitHub</a>
+</li>
+</ul>
+<hr/>
+</div>
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div class="section" itemprop="articleBody">
+<h1 id="rpctracker">RPCTracker</h1>
+<div class="doc doc-object doc-module">
+<a id="neuro_rpc.RPCTracker"></a>
+<div class="doc doc-contents first">
+<p>Message tracking utility for JSON-Message 2.0 protocol.</p>
+<p>Tracks outgoing/incoming requests and responses, monitors for timeouts,
+keeps statistics, and runs an optional background monitoring thread.
+Designed for integration with RPCHandler and Benchmark to provide runtime
+visibility of pending and completed RPC calls.</p>
+<details class="notes" open="">
+<summary>Notes</summary>
+<ul>
+<li>Thread-safe using locks.</li>
+<li>Intended for long-running client/server sessions.</li>
+</ul>
+</details>
+<div class="doc doc-children">
+<div class="doc doc-object doc-class">
+<h2 class="doc doc-heading" id="neuro_rpc.RPCTracker.RPCTracker">
+<code class="highlight language-python">RPCTracker(monitor_interval=1, cleanup_interval=60, autostart=True)</code>
+</h2>
+<div class="doc doc-contents">
+<p>Tracks request/response lifecycle for RPC messages.</p>
+<p>Maintains dictionaries of outgoing/incoming requests and responses,
+updates statistics, and detects timeouts via a background thread.</p>
+<p>Initialize RPCTracker.</p>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Parameters:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>monitor_interval</code></b>
+                  (<code><span title="int">int</span></code>, default:
+                      <code>1</code>
+)
+              –
+              <div class="doc-md-description">
+<p>Interval in seconds to check for timeouts.</p>
+</div>
+</li>
+<li>
+<b><code>cleanup_interval</code></b>
+                  (<code><span title="int">int</span></code>, default:
+                      <code>60</code>
+)
+              –
+              <div class="doc-md-description">
+<p>Interval in seconds to clean old entries.</p>
+</div>
+</li>
+<li>
+<b><code>autostart</code></b>
+                  (<code><span title="bool">bool</span></code>, default:
+                      <code>True</code>
+)
+              –
+              <div class="doc-md-description">
+<p>Whether to immediately start monitoring.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/RPCTracker.py</code></summary>
+<pre class="highlight"><code class="language-python">def __init__(self, monitor_interval=1, cleanup_interval=60, autostart=True):
+    """
+    Initialize RPCTracker.
+
+    Args:
+        monitor_interval (int): Interval in seconds to check for timeouts.
+        cleanup_interval (int): Interval in seconds to clean old entries.
+        autostart (bool): Whether to immediately start monitoring.
+    """
+    self.logger = Logger.get_logger(self.__class__.__name__)
+
+    self.monitor_interval = monitor_interval
+    self.cleanup_interval = cleanup_interval
+
+    self._tracking_lock = threading.Lock()
+
+    self.outgoing_requests = {}   # {id: (timestamp, method_name, timeout)}
+    self.incoming_requests = {}   # {id: (timestamp, method_name)}
+    self.outgoing_responses = {}  # {id: (timestamp, success)}
+    self.incoming_responses = {}  # {id: (timestamp, success)}
+
+    self.stats = {
+        "outgoing_requests_count": 0,
+        "incoming_requests_count": 0,
+        "outgoing_responses_count": 0,
+        "incoming_responses_count": 0,
+        "timed_out_requests": 0
+    }
+
+    self._monitor_thread = None
+    self._should_stop = threading.Event()
+
+    self.timeout_callback = None
+
+    if autostart:
+        self.start_monitoring()</code></pre>
+</details>
+<div class="doc doc-children">
+<div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="neuro_rpc.RPCTracker.RPCTracker.clean_tracking_data">
+<code class="highlight language-python">clean_tracking_data(max_age_seconds=3600)</code>
+</h3>
+<div class="doc doc-contents">
+<p>Remove old tracking entries.</p>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Parameters:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>max_age_seconds</code></b>
+                  (<code><span title="int">int</span></code>, default:
+                      <code>3600</code>
+)
+              –
+              <div class="doc-md-description">
+<p>Max age in seconds to keep entries.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Returns:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>int</code></b>              –
+              <div class="doc-md-description">
+<p>Number of entries cleaned.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/RPCTracker.py</code></summary>
+<pre class="highlight"><code class="language-python">def clean_tracking_data(self, max_age_seconds=3600):
+    """
+    Remove old tracking entries.
+
+    Args:
+        max_age_seconds (int): Max age in seconds to keep entries.
+
+    Returns:
+        int: Number of entries cleaned.
+    """
+    now = time.time()
+    cleaned = 0
+
+    with self._tracking_lock:
+        for storage in [self.outgoing_requests, self.incoming_requests,
+                        self.outgoing_responses, self.incoming_responses]:
+            for req_id, (timestamp, *_) in list(storage.items()):
+                if now - timestamp &gt; max_age_seconds:
+                    del storage[req_id]
+                    cleaned += 1
+    return cleaned</code></pre>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="neuro_rpc.RPCTracker.RPCTracker.get_statistics">
+<code class="highlight language-python">get_statistics()</code>
+</h3>
+<div class="doc doc-contents">
+<p>Get current statistics snapshot.</p>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Returns:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>dict</code></b>              –
+              <div class="doc-md-description">
+<p>Copy of statistics counters.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/RPCTracker.py</code></summary>
+<pre class="highlight"><code class="language-python">def get_statistics(self):
+    """
+    Get current statistics snapshot.
+
+    Returns:
+        dict: Copy of statistics counters.
+    """
+    with self._tracking_lock:
+        return self.stats.copy()</code></pre>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="neuro_rpc.RPCTracker.RPCTracker.monitor_messages">
+<code class="highlight language-python">monitor_messages()</code>
+</h3>
+<div class="doc doc-contents">
+<p>Inspect current requests for timeouts and pending states.</p>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Returns:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>dict</code></b>              –
+              <div class="doc-md-description">
+<p>Dictionary with lists of timed-out and pending requests.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/RPCTracker.py</code></summary>
+<pre class="highlight"><code class="language-python">def monitor_messages(self):
+    """
+    Inspect current requests for timeouts and pending states.
+
+    Returns:
+        dict: Dictionary with lists of timed-out and pending requests.
+    """
+    now = time.time()
+    results = {
+        "timed_out_requests": [],
+        "pending_outgoing_requests": [],
+        "pending_incoming_requests": []
+    }
+
+    with self._tracking_lock:
+        for req_id, (timestamp, method, timeout) in list(self.outgoing_requests.items()):
+            elapsed = now - timestamp
+            if elapsed &gt; timeout:
+                results["timed_out_requests"].append((req_id, method, elapsed))
+                del self.outgoing_requests[req_id]
+                self.stats["timed_out_requests"] += 1
+            else:
+                results["pending_outgoing_requests"].append((req_id, method, elapsed))
+
+        for req_id, (timestamp, method) in list(self.incoming_requests.items()):
+            elapsed = now - timestamp
+            results["pending_incoming_requests"].append((req_id, method, elapsed))
+
+    if self.logger:
+        for req_id, method, elapsed in results["timed_out_requests"]:
+            self.logger.warning(f"Request timed out: ID {req_id}, method {method}, elapsed {elapsed:.2f}s")
+
+    return results</code></pre>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="neuro_rpc.RPCTracker.RPCTracker.start_monitoring">
+<code class="highlight language-python">start_monitoring(timeout_callback=None)</code>
+</h3>
+<div class="doc doc-contents">
+<p>Start the background monitoring thread.</p>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Parameters:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>timeout_callback</code></b>
+                  (<code><span title="Callable">Callable</span></code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+<p>Callback called with a list of timed-out requests.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Returns:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>bool</code></b>              –
+              <div class="doc-md-description">
+<p>True if started, False if already running.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/RPCTracker.py</code></summary>
+<pre class="highlight"><code class="language-python">def start_monitoring(self, timeout_callback=None):
+    """
+    Start the background monitoring thread.
+
+    Args:
+        timeout_callback (Callable, optional): Callback called with a list of timed-out requests.
+
+    Returns:
+        bool: True if started, False if already running.
+    """
+    if self._monitor_thread is not None and self._monitor_thread.is_alive():
+        if self.logger:
+            self.logger.warning("Monitoring thread already running")
+        return False
+
+    self.timeout_callback = timeout_callback
+    self._should_stop.clear()
+    self._monitor_thread = threading.Thread(
+        target=self._monitor_loop,
+        name="RPCTracker-Monitor",
+        daemon=True
+    )
+    self._monitor_thread.start()
+
+    if self.logger:
+        self.logger.debug("Message tracking monitor started")
+    return True</code></pre>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="neuro_rpc.RPCTracker.RPCTracker.stop_monitoring">
+<code class="highlight language-python">stop_monitoring()</code>
+</h3>
+<div class="doc doc-contents">
+<p>Stop the background monitoring thread.</p>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Returns:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>bool</code></b>              –
+              <div class="doc-md-description">
+<p>True if stopped cleanly, False otherwise.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/RPCTracker.py</code></summary>
+<pre class="highlight"><code class="language-python">def stop_monitoring(self):
+    """
+    Stop the background monitoring thread.
+
+    Returns:
+        bool: True if stopped cleanly, False otherwise.
+    """
+    if self._monitor_thread is None or not self._monitor_thread.is_alive():
+        return False
+
+    self._should_stop.set()
+    self._monitor_thread.join(timeout=5.0)
+
+    if self._monitor_thread.is_alive():
+        if self.logger:
+            self.logger.warning("Monitoring thread did not shut down cleanly")
+        return False
+    else:
+        if self.logger:
+            self.logger.debug("Message tracking monitor stopped")
+        return True</code></pre>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="neuro_rpc.RPCTracker.RPCTracker.track_incoming_request">
+<code class="highlight language-python">track_incoming_request(request)</code>
+</h3>
+<div class="doc doc-contents">
+<p>Track an incoming request from server.</p>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Parameters:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>request</code></b>
+                  (<code><span title="python.neuro_rpc.RPCMessage.RPCRequest">RPCRequest</span></code>)
+              –
+              <div class="doc-md-description">
+<p>Request object received.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/RPCTracker.py</code></summary>
+<pre class="highlight"><code class="language-python">def track_incoming_request(self, request: RPCRequest):
+    """
+    Track an incoming request from server.
+
+    Args:
+        request (RPCRequest): Request object received.
+    """
+    with self._tracking_lock:
+        self.logger.debug(f"Tracking incoming request: {request}")
+        self.incoming_requests[request.id] = (time.time(), request.method)
+        self.stats["incoming_requests_count"] += 1</code></pre>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="neuro_rpc.RPCTracker.RPCTracker.track_incoming_response">
+<code class="highlight language-python">track_incoming_response(response)</code>
+</h3>
+<div class="doc doc-contents">
+<p>Track an incoming response from server.</p>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Parameters:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>response</code></b>
+                  (<code><span title="python.neuro_rpc.RPCMessage.RPCResponse">RPCResponse</span></code>)
+              –
+              <div class="doc-md-description">
+<p>Response object received.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/RPCTracker.py</code></summary>
+<pre class="highlight"><code class="language-python">def track_incoming_response(self, response: RPCResponse):
+    """
+    Track an incoming response from server.
+
+    Args:
+        response (RPCResponse): Response object received.
+    """
+    with self._tracking_lock:
+        if response.id in self.outgoing_requests:
+            del self.outgoing_requests[response.id]
+            self.stats["incoming_responses_count"] += 1
+        else:
+            if self.logger:
+                self.logger.warning(f"Received response for unknown request ID: {response.id}")</code></pre>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="neuro_rpc.RPCTracker.RPCTracker.track_outgoing_request">
+<code class="highlight language-python">track_outgoing_request(request, timeout=60)</code>
+</h3>
+<div class="doc doc-contents">
+<p>Track an outgoing request.</p>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Parameters:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>request</code></b>
+                  (<code><span title="python.neuro_rpc.RPCMessage.RPCRequest">RPCRequest</span></code>)
+              –
+              <div class="doc-md-description">
+<p>Request object being sent.</p>
+</div>
+</li>
+<li>
+<b><code>timeout</code></b>
+                  (<code><span title="int">int</span></code>, default:
+                      <code>60</code>
+)
+              –
+              <div class="doc-md-description">
+<p>Timeout in seconds for this request.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/RPCTracker.py</code></summary>
+<pre class="highlight"><code class="language-python">def track_outgoing_request(self, request: RPCRequest, timeout=60):
+    """
+    Track an outgoing request.
+
+    Args:
+        request (RPCRequest): Request object being sent.
+        timeout (int): Timeout in seconds for this request.
+    """
+    with self._tracking_lock:
+        self.outgoing_requests[request.id] = (time.time(), request.method, timeout)
+        self.stats["outgoing_requests_count"] += 1</code></pre>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="neuro_rpc.RPCTracker.RPCTracker.track_outgoing_response">
+<code class="highlight language-python">track_outgoing_response(response)</code>
+</h3>
+<div class="doc doc-contents">
+<p>Track an outgoing response.</p>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Parameters:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>response</code></b>
+                  (<code><span title="python.neuro_rpc.RPCMessage.RPCResponse">RPCResponse</span></code>)
+              –
+              <div class="doc-md-description">
+<p>Response object being sent.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/RPCTracker.py</code></summary>
+<pre class="highlight"><code class="language-python">def track_outgoing_response(self, response: RPCResponse):
+    """
+    Track an outgoing response.
+
+    Args:
+        response (RPCResponse): Response object being sent.
+    """
+    with self._tracking_lock:
+        self.logger.debug(f"Tracking outgoing response: {response.id}, {response.is_success}")
+        if response.id in self.incoming_requests:
+            del self.incoming_requests[response.id]
+        self.outgoing_responses[response.id] = (time.time(), response.is_success)
+        self.stats["outgoing_responses_count"] += 1</code></pre>
+</details>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div><footer>
+<div aria-label="Footer Navigation" class="rst-footer-buttons" role="navigation">
+<a class="btn btn-neutral float-left" href="../RPCMethods/" title="RPCMethods"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+</div>
+<hr/>
+<div role="contentinfo">
+<!-- Copyright etc -->
+</div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+</div>
+</div>
+</section>
+</div>
+<div aria-label="Versions" class="rst-versions" role="note">
+<span class="rst-current-version" data-toggle="rst-current-version">
+<span>
+<a class="fa fa-github" href="https://github.com/faragoz/neuro" style="color: #fcfcfc"> GitHub</a>
+</span>
+<span><a href="../RPCMethods/" style="color: #fcfcfc">« Previous</a></span>
+</span>
+</div>
+<script src="../../js/jquery-3.6.0.min.js"></script>
+<script>var base_url = "../..";</script>
+<script src="../../js/theme_extra.js"></script>
+<script src="../../js/theme.js"></script>
+<script src="../../search/main.js"></script>
+<script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+</body>
+</html>

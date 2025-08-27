@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+
+<html class="writer-html5" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/><link href="https://faragoz.github.io/neuro/reference/Proxy/" rel="canonical"/>
+<link href="../../img/favicon.ico" rel="shortcut icon"/>
+<title>Proxy - NeuroRPC Docs</title>
+<link href="../../css/theme.css" rel="stylesheet"/>
+<link href="../../css/theme_extra.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" rel="stylesheet"/>
+<link href="../../assets/_mkdocstrings.css" rel="stylesheet"/>
+<script>
+        // Current page data
+        var mkdocs_page_name = "Proxy";
+        var mkdocs_page_input_path = "reference/Proxy.md";
+        var mkdocs_page_url = "/neuro/reference/Proxy/";
+      </script>
+<!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
+<link href="../../pdf/NeuroRPC.pdf" rel="alternate" title="PDF" type="application/pdf"/></head>
+<body class="wy-body-for-nav" role="document">
+<div class="wy-grid-for-nav">
+<nav class="wy-nav-side stickynav" data-toggle="wy-nav-shift">
+<div class="wy-side-scroll">
+<div class="wy-side-nav-search">
+<a class="icon icon-home" href="../.."> NeuroRPC Docs
+        </a><div role="search">
+<form action="../../search.html" class="wy-form" id="rtd-search-form" method="get">
+<input aria-label="Search docs" name="q" placeholder="Search docs" title="Type search term here" type="text"/>
+</form>
+</div>
+</div>
+<div aria-label="Navigation menu" class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Benchmark/">Benchmark</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Client/">Client</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Console/">Console</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Logger/">Logger</a>
+</li>
+<li class="toctree-l1 current"><a class="reference internal current" href="#">Proxy</a>
+<ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="#neuro_rpc.Proxy">Proxy</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#neuro_rpc.Proxy.NpEncoder">NpEncoder</a>
+<ul>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.Proxy.NpEncoder.default">default</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#neuro_rpc.Proxy.Proxy">Proxy</a>
+<ul>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.Proxy.Proxy.dict_to_tuple">dict_to_tuple</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.Proxy.Proxy.from_act">from_act</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.Proxy.Proxy.from_cluster_bytes_and_tree">from_cluster_bytes_and_tree</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.Proxy.Proxy.to_act">to_act</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.Proxy.Proxy.to_cluster_bytes_with_tree">to_cluster_bytes_with_tree</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#neuro_rpc.Proxy.Proxy.tuple_to_dict">tuple_to_dict</a>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../RPCHandler/">RPCHandler</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../RPCMessage/">RPCMessage</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../RPCMethods/">RPCMethods</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../RPCTracker/">RPCTracker</a>
+</li>
+</ul>
+</div>
+</div>
+</nav>
+<section class="wy-nav-content-wrap" data-toggle="wy-nav-shift">
+<nav aria-label="Mobile navigation menu" class="wy-nav-top" role="navigation">
+<i class="fa fa-bars" data-toggle="wy-nav-top"></i>
+<a href="../..">NeuroRPC Docs</a>
+</nav>
+<div class="wy-nav-content">
+<div class="rst-content"><div aria-label="breadcrumbs navigation" role="navigation">
+<ul class="wy-breadcrumbs">
+<li><a aria-label="Docs" class="icon icon-home" href="../.."></a></li>
+<li class="breadcrumb-item">API Reference</li>
+<li class="breadcrumb-item active">Proxy</li>
+<li class="wy-breadcrumbs-aside">
+<a class="icon icon-github" href="https://github.com/faragoz/neuro/edit/master/docs/reference/Proxy.md"> Edit on GitHub</a>
+</li>
+</ul>
+<hr/>
+</div>
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div class="section" itemprop="articleBody">
+<h1 id="proxy">Proxy</h1>
+<div class="doc doc-object doc-module">
+<a id="neuro_rpc.Proxy"></a>
+<div class="doc doc-contents first">
+<p>Conversion utilities between Python dictionaries/tuples and LabVIEW Clusters.</p>
+<p>Provides serialization and deserialization helpers to encode/decode nested
+data structures into LabVIEW's Cluster representation. Also integrates with
+RPCRequest/RPCResponse to support actor-style communication with LabVIEW classes.</p>
+<details class="notes" open="">
+<summary>Notes</summary>
+<ul>
+<li>Extends ClusterConverter from <code>python.labview_data.type_converters</code>.</li>
+</ul>
+</details>
+<div class="doc doc-children">
+<div class="doc doc-object doc-class">
+<h2 class="doc doc-heading" id="neuro_rpc.Proxy.NpEncoder">
+<code>NpEncoder</code>
+</h2>
+<div class="doc doc-contents">
+<p class="doc doc-class-bases">
+              Bases: <code><span title="json.JSONEncoder">JSONEncoder</span></code></p>
+<p>JSON encoder for NumPy data types.</p>
+<p>Converts <code>numpy.integer</code>, <code>numpy.floating</code>, and <code>numpy.ndarray</code> into standard
+Python <code>int</code>, <code>float</code>, and <code>list</code> for JSON serialization compatibility.</p>
+<div class="doc doc-children">
+<div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="neuro_rpc.Proxy.NpEncoder.default">
+<code class="highlight language-python">default(obj)</code>
+</h3>
+<div class="doc doc-contents">
+<p>Override JSON encoding for NumPy objects.</p>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Parameters:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>obj</code></b>
+                  (<code><span title="Any">Any</span></code>)
+              –
+              <div class="doc-md-description">
+<p>Object to encode.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Returns:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>Any</code></b>              –
+              <div class="doc-md-description">
+<p>Encoded Python-native type.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/Proxy.py</code></summary>
+<pre class="highlight"><code class="language-python">def default(self, obj):
+    """
+    Override JSON encoding for NumPy objects.
+
+    Args:
+        obj (Any): Object to encode.
+
+    Returns:
+        Any: Encoded Python-native type.
+    """
+    if isinstance(obj, np.integer):
+        return int(obj)
+    if isinstance(obj, np.floating):
+        return float(obj)
+    if isinstance(obj, np.ndarray):
+        return obj.tolist()
+    return super().default(obj)</code></pre>
+</details>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="doc doc-object doc-class">
+<h2 class="doc doc-heading" id="neuro_rpc.Proxy.Proxy">
+<code>Proxy</code>
+</h2>
+<div class="doc doc-contents">
+<p class="doc doc-class-bases">
+              Bases: <code><span title="python.labview_data.type_converters.ClusterConverter">ClusterConverter</span></code></p>
+<p>Proxy class to convert between Python dicts and LabVIEW Cluster bytes.</p>
+<p>Implements bidirectional mapping of nested dict/tuple structures to LabVIEW
+Cluster format, supporting serialization for sending RPC requests and
+deserialization of responses.</p>
+<div class="doc doc-children">
+<div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="neuro_rpc.Proxy.Proxy.dict_to_tuple">
+<code class="highlight language-python">dict_to_tuple(d)</code>
+</h3>
+<div class="doc doc-contents">
+<p>Convert a dictionary into a (values, keys) tuple.</p>
+<p>Recursively descends into nested dictionaries to preserve structure.</p>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Parameters:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>d</code></b>
+                  (<code><span title="dict">dict</span></code>)
+              –
+              <div class="doc-md-description">
+<p>Input dictionary.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Returns:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<code><span title="tuple">tuple</span>[<span title="list">list</span>, <span title="list">list</span>]</code>
+              –
+              <div class="doc-md-description">
+<p>tuple[list, list]: (values, keys) representation of the dictionary.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/Proxy.py</code></summary>
+<pre class="highlight"><code class="language-python">def dict_to_tuple(self, d: dict) -&gt; tuple[list, list]:
+    """
+    Convert a dictionary into a (values, keys) tuple.
+
+    Recursively descends into nested dictionaries to preserve structure.
+
+    Args:
+        d (dict): Input dictionary.
+
+    Returns:
+        tuple[list, list]: (values, keys) representation of the dictionary.
+    """
+    keys = list(d.keys())
+    values = []
+    for k in keys:
+        v = d[k]
+        if isinstance(v, dict):
+            v = self.dict_to_tuple(v)
+        values.append(v)
+    return values, keys</code></pre>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="neuro_rpc.Proxy.Proxy.from_act">
+<code class="highlight language-python">from_act(raw_bytes, hdr_tree)</code>
+</h3>
+<div class="doc doc-contents">
+<p>Convert LabVIEW Actor Cluster bytes back into an RPCResponse.</p>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Parameters:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>raw_bytes</code></b>
+                  (<code><span title="bytes">bytes</span></code>)
+              –
+              <div class="doc-md-description">
+<p>Cluster flat buffer.</p>
+</div>
+</li>
+<li>
+<b><code>hdr_tree</code></b>
+                  (<code><span title="dict">dict</span></code>)
+              –
+              <div class="doc-md-description">
+<p>Metadata tree from serialization.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Returns:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>dict</code></b>              –
+              <div class="doc-md-description">
+<p>RPCResponse serialized as dictionary.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/Proxy.py</code></summary>
+<pre class="highlight"><code class="language-python">def from_act(self, raw_bytes: bytes, hdr_tree: dict):
+    """
+    Convert LabVIEW Actor Cluster bytes back into an RPCResponse.
+
+    Args:
+        raw_bytes (bytes): Cluster flat buffer.
+        hdr_tree (dict): Metadata tree from serialization.
+
+    Returns:
+        dict: RPCResponse serialized as dictionary.
+    """
+    recovered_vals, recovered_keys = self.from_cluster_bytes_and_tree(raw_bytes, hdr_tree)
+    dict_ = self.tuple_to_dict((recovered_vals, recovered_keys))
+    id = dict_["Data"].pop("id")
+
+    return RPCResponse(id=id, result=dict_["Data"]).to_dict()</code></pre>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="neuro_rpc.Proxy.Proxy.from_cluster_bytes_and_tree">
+<code class="highlight language-python">from_cluster_bytes_and_tree(raw_bytes, hdr_tree, sdata=None, encoding='ansi')</code>
+</h3>
+<div class="doc doc-contents">
+<p>Reconstruct a (values, keys) tuple from Cluster bytes and metadata tree.</p>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Parameters:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>raw_bytes</code></b>
+                  (<code><span title="bytes">bytes</span></code>)
+              –
+              <div class="doc-md-description">
+<p>Flat buffer for the cluster.</p>
+</div>
+</li>
+<li>
+<b><code>hdr_tree</code></b>
+                  (<code><span title="dict">dict</span></code>)
+              –
+              <div class="doc-md-description">
+<p>Metadata tree including headers, keys, and children.</p>
+</div>
+</li>
+<li>
+<b><code>sdata</code></b>
+                  (<code><span title="python.labview_data.utils.SerializationData">SerializationData</span></code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+<p>Deserialization context.</p>
+</div>
+</li>
+<li>
+<b><code>encoding</code></b>
+                  (<code><span title="str">str</span></code>, default:
+                      <code>'ansi'</code>
+)
+              –
+              <div class="doc-md-description">
+<p>Encoding used for string payloads. Defaults to "ansi".</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Returns:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<code><span title="tuple">tuple</span>[<span title="list">list</span>, <span title="list">list</span>]</code>
+              –
+              <div class="doc-md-description">
+<p>tuple[list, list]: (values, keys) structure.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/Proxy.py</code></summary>
+<pre class="highlight"><code class="language-python">def from_cluster_bytes_and_tree(
+    self,
+    raw_bytes: bytes,
+    hdr_tree: dict,
+    sdata: SerializationData = None,
+    encoding: str = "ansi"
+) -&gt; tuple[list, list]:
+    """
+    Reconstruct a (values, keys) tuple from Cluster bytes and metadata tree.
+
+    Args:
+        raw_bytes (bytes): Flat buffer for the cluster.
+        hdr_tree (dict): Metadata tree including headers, keys, and children.
+        sdata (SerializationData, optional): Deserialization context.
+        encoding (str): Encoding used for string payloads. Defaults to "ansi".
+
+    Returns:
+        tuple[list, list]: (values, keys) structure.
+    """
+    if sdata is None:
+        sdata = SerializationData(version=0)
+
+    full = hdr_tree["header"] + raw_bytes
+    hi = HeaderInfo.parse(full, offset_h=0)
+    dd = DeserializationData(
+        header=hi,
+        buffer=full,
+        offset_d=hi.end,
+        version=sdata.version
+    )
+
+    vals = list(ClusterConverter.deserialize(dd).value)
+    keys = hdr_tree["keys"]
+
+    for child in hdr_tree.get("children", []):
+        idx = child["index"]
+        sub_tree = child["tree"]
+        buf_sub = vals[idx].encode(encoding)
+        vals[idx] = self.from_cluster_bytes_and_tree(buf_sub, sub_tree, sdata, encoding)
+
+    return vals, keys</code></pre>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="neuro_rpc.Proxy.Proxy.to_act">
+<code class="highlight language-python">to_act(Message)</code>
+</h3>
+<div class="doc doc-contents">
+<p>Convert an RPCRequest/Message dict into a LabVIEW Actor Cluster.</p>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Parameters:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>Message</code></b>
+                  (<code><span title="dict">dict</span> | <span title="python.neuro_rpc.RPCMessage.RPCRequest">RPCRequest</span></code>)
+              –
+              <div class="doc-md-description">
+<p>Message to encode.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Returns:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+              –
+              <div class="doc-md-description">
+<p>tuple[bytes, dict]: (flat buffer, metadata tree).</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/Proxy.py</code></summary>
+<pre class="highlight"><code class="language-python">def to_act(self, Message):
+    """
+    Convert an RPCRequest/Message dict into a LabVIEW Actor Cluster.
+
+    Args:
+        Message (dict | RPCRequest): Message to encode.
+
+    Returns:
+        tuple[bytes, dict]: (flat buffer, metadata tree).
+    """
+    if isinstance(Message, RPCRequest):
+        Message = Message.to_dict()
+
+    id = Message.pop("id")
+    Message["params"] = {"id": id, **Message["params"]}
+
+    self.Actor["Class name"] = f"Chat Window.lvlib:{Message['method']} Msg.lvclass"
+    self.Actor["Data"] = {
+        "Message": Message["params"]["Message"],
+        "id": Message["params"]["id"],
+        "exec_time": np.int32(0)
+    }
+    tupla = self.dict_to_tuple(self.Actor)
+
+    self.to_cluster_bytes_with_tree(tupla)
+    return self.to_cluster_bytes_with_tree(tupla)</code></pre>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="neuro_rpc.Proxy.Proxy.to_cluster_bytes_with_tree">
+<code class="highlight language-python">to_cluster_bytes_with_tree(tup, sdata=None, encoding='ansi')</code>
+</h3>
+<div class="doc doc-contents">
+<p>Serialize a (values, keys) tuple into a LabVIEW Cluster flat buffer.</p>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Parameters:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>tup</code></b>
+                  (<code><span title="tuple">tuple</span>[<span title="list">list</span>, <span title="list">list</span>]</code>)
+              –
+              <div class="doc-md-description">
+<p>(values, keys) representation of the cluster.</p>
+</div>
+</li>
+<li>
+<b><code>sdata</code></b>
+                  (<code><span title="python.labview_data.utils.SerializationData">SerializationData</span></code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+<p>Serialization metadata. Defaults to version=0.</p>
+</div>
+</li>
+<li>
+<b><code>encoding</code></b>
+                  (<code><span title="str">str</span></code>, default:
+                      <code>'ansi'</code>
+)
+              –
+              <div class="doc-md-description">
+<p>Encoding to use for nested buffers. Defaults to "ansi".</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Returns:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<code><span title="tuple">tuple</span>[<span title="bytes">bytes</span>, <span title="dict">dict</span>]</code>
+              –
+              <div class="doc-md-description">
+<p>tuple[bytes, dict]: (flat buffer, metadata tree).</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/Proxy.py</code></summary>
+<pre class="highlight"><code class="language-python">def to_cluster_bytes_with_tree(
+    self,
+    tup: tuple[list, list],
+    sdata: SerializationData = None,
+    encoding: str = "ansi"
+) -&gt; tuple[bytes, dict]:
+    """
+    Serialize a (values, keys) tuple into a LabVIEW Cluster flat buffer.
+
+    Args:
+        tup (tuple[list, list]): (values, keys) representation of the cluster.
+        sdata (SerializationData, optional): Serialization metadata. Defaults to version=0.
+        encoding (str): Encoding to use for nested buffers. Defaults to "ansi".
+
+    Returns:
+        tuple[bytes, dict]: (flat buffer, metadata tree).
+    """
+    if sdata is None:
+        sdata = SerializationData(version=0)
+
+    values, keys = tup
+    processed = []
+    children = []
+
+    for idx, v in enumerate(values):
+        if isinstance(v, tuple):
+            buf_str, subtree = self.to_cluster_bytes_with_tree(v, sdata, encoding)
+            processed.append(buf_str.decode(encoding))
+            children.append({
+                "index": idx,
+                "keys": v[1],
+                "tree": subtree
+            })
+        else:
+            processed.append(v)
+
+    cluster = Cluster(processed, keys)
+    res = ClusterConverter.serialize(cluster, sdata)
+
+    return (
+        res.flat_buffer(),
+        {
+            "header": res.flat_header(),
+            "keys": keys,
+            "children": children
+        }
+    )</code></pre>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-function">
+<h3 class="doc doc-heading" id="neuro_rpc.Proxy.Proxy.tuple_to_dict">
+<code class="highlight language-python">tuple_to_dict(values_keys)</code>
+</h3>
+<div class="doc doc-contents">
+<p>Convert a (values, keys) tuple back into a dictionary.</p>
+<p>Recursively reconstructs nested dictionaries from tuple representations.</p>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Parameters:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>values_keys</code></b>
+                  (<code><span title="tuple">tuple</span>[<span title="list">list</span>, <span title="list">list</span>]</code>)
+              –
+              <div class="doc-md-description">
+<p>(values, keys) pair.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<table class="field-list">
+<colgroup>
+<col class="field-name"/>
+<col class="field-body"/>
+</colgroup>
+<tbody valign="top">
+<tr class="field">
+<th class="field-name">Returns:</th>
+<td class="field-body">
+<ul class="first simple">
+<li>
+<b><code>dict</code></b>(                  <code><span title="dict">dict</span></code>
+)              –
+              <div class="doc-md-description">
+<p>Reconstructed dictionary.</p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+<summary>Source code in <code>python/neuro_rpc/Proxy.py</code></summary>
+<pre class="highlight"><code class="language-python">def tuple_to_dict(self, values_keys) -&gt; dict:
+    """
+    Convert a (values, keys) tuple back into a dictionary.
+
+    Recursively reconstructs nested dictionaries from tuple representations.
+
+    Args:
+        values_keys (tuple[list, list]): (values, keys) pair.
+
+    Returns:
+        dict: Reconstructed dictionary.
+    """
+    values, keys = values_keys
+    result = {}
+    for key, val in zip(keys, values):
+        if (
+            isinstance(val, tuple)
+            and len(val) == 2
+            and isinstance(val[0], list)
+            and isinstance(val[1], list)
+        ):
+            result[key] = self.tuple_to_dict(val)
+        else:
+            result[key] = val
+    return result</code></pre>
+</details>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div><footer>
+<div aria-label="Footer Navigation" class="rst-footer-buttons" role="navigation">
+<a class="btn btn-neutral float-left" href="../Logger/" title="Logger"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+<a class="btn btn-neutral float-right" href="../RPCHandler/" title="RPCHandler">Next <span class="icon icon-circle-arrow-right"></span></a>
+</div>
+<hr/>
+<div role="contentinfo">
+<!-- Copyright etc -->
+</div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+</div>
+</div>
+</section>
+</div>
+<div aria-label="Versions" class="rst-versions" role="note">
+<span class="rst-current-version" data-toggle="rst-current-version">
+<span>
+<a class="fa fa-github" href="https://github.com/faragoz/neuro" style="color: #fcfcfc"> GitHub</a>
+</span>
+<span><a href="../Logger/" style="color: #fcfcfc">« Previous</a></span>
+<span><a href="../RPCHandler/" style="color: #fcfcfc">Next »</a></span>
+</span>
+</div>
+<script src="../../js/jquery-3.6.0.min.js"></script>
+<script>var base_url = "../..";</script>
+<script src="../../js/theme_extra.js"></script>
+<script src="../../js/theme.js"></script>
+<script src="../../search/main.js"></script>
+<script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+</body>
+</html>
