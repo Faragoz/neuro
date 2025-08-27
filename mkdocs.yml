@@ -15,6 +15,8 @@ plugins:
             show_source: true
             docstring_style: google
             merge_init_into_class: true
+  - with-pdf:
+      output_path: pdf/NeuroRPC.pdf
 nav:
   - Home: index.md
   - API Reference:
