@@ -17,6 +17,12 @@ plugins:
             merge_init_into_class: true
   - with-pdf:
       output_path: pdf/NeuroRPC.pdf
+      cover_title: "NeuroRPC Documentation"
+      cover_subtitle: "Client–Server Library for RPC over TCP (Python-LabView)"
+      author: "Froylan ARAGON"
+      copyright: "© 2025 FEMTO-ST Institute"
+      toc_title: "Contents"
+      heading_shift: 1
 nav:
   - Home: index.md
   - API Reference:
