@@ -20,9 +20,8 @@ plugins:
       cover_title: "NeuroRPC Documentation"
       cover_subtitle: "Client–Server Library for RPC over TCP (Python-LabView)"
       author: "Froylan ARAGON"
-      copyright: "© 2025 FEMTO-ST Institute"
-      toc_title: "Contents"
-      heading_shift: 1
+      copyright: "2025 FEMTO-ST Institute"
+      toc_title: "Table of Contents"
 nav:
   - Home: index.md
   - API Reference:
