@@ -81,7 +81,7 @@ class Client:
         self.connected = False
         self.thread_running = False
 
-        self.logger = Logger.get_logger(self.__class__.__name__())
+        self.logger = Logger.get_logger(self.__class__.__name__)
 
         # Handling methods
         self.handler = RPCMethods()
