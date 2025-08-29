@@ -4,9 +4,7 @@
 	<Property Name="NI.Lib.SourceVersion" Type="Int">536903680</Property>
 	<Property Name="NI.Lib.Version" Type="Str">1.0.0.0</Property>
 	<Property Name="NI.LV.All.SourceOnly" Type="Bool">true</Property>
-	<Item Name="Abstract Messages for Caller" Type="Folder">
-		<Item Name="echo reply_Msg.lvclass" Type="LVClass" URL="../Messages/echo reply_Msg/echo reply_Msg.lvclass"/>
-	</Item>
+	<Item Name="Abstract Messages for Caller" Type="Folder"/>
 	<Item Name="Messages for this Actor" Type="Folder">
 		<Item Name="Display Text Msg.lvclass" Type="LVClass" URL="../Chat Window Messages/Display Text Msg/Display Text Msg.lvclass"/>
 		<Item Name="echo Msg.lvclass" Type="LVClass" URL="../Chat Window Messages/echo Msg/echo Msg.lvclass"/>

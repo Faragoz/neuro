@@ -561,12 +561,16 @@ class Client:
         #self.handler.tracker.export(format='json', filename='actor_benchmark_optimized')
 
 if __name__ == "__main__":
-    local = True
+    device = 2
 
-    if local:
-        host = 'localhost'
-    else:
-        host = '172.16.100.9'
+    match device:
+        case 0:
+            host = 'localhost'
+        case 1:
+            host = '172.16.100.9'
+        case 2:
+            host = '172.22.11.2'
+
 
     server_config = {
         'host': host,
